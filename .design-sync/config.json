@@ -1,0 +1,38 @@
+{
+  "projectId": "0c2ebec3-1d75-4ea2-a507-0498d18abdbf",
+  "pkg": "daman-portfolio",
+  "globalName": "DamanPortfolio",
+  "shape": "package",
+  "readmeHeader": ".design-sync/conventions.md",
+  "buildCmd": "npm run build",
+  "entry": "./.design-sync/ds-entry.ts",
+  "provider": { "component": "Stage" },
+  "tsconfig": ".design-sync/tsconfig.sync.json",
+  "cssEntry": ".design-sync/sync-styles.css",
+  "overrides": {
+    "Hero": { "cardMode": "single", "viewport": "1280x820" },
+    "Work": { "cardMode": "single", "viewport": "1280x980" },
+    "Principles": { "cardMode": "single", "viewport": "1280x760" },
+    "Stack": { "cardMode": "single", "viewport": "1280x760" },
+    "Contact": { "cardMode": "single", "viewport": "1280x700" },
+    "CommandPalette": { "cardMode": "single", "primaryStory": "Open", "viewport": "1280x560" },
+    "Gallery": { "cardMode": "column" },
+    "StatusBar": { "cardMode": "single", "viewport": "1280x140" },
+    "DetailBar": { "cardMode": "single", "viewport": "1280x140" },
+    "Footer": { "cardMode": "single", "viewport": "1280x140" }
+  },
+  "componentSrcMap": {
+    "Hero": "src/components/Hero.tsx",
+    "StatusBar": "src/components/StatusBar.tsx",
+    "Work": "src/components/Work.tsx",
+    "Principles": "src/components/Principles.tsx",
+    "Stack": "src/components/Stack.tsx",
+    "Contact": "src/components/Contact.tsx",
+    "Footer": "src/components/Footer.tsx",
+    "CommandPalette": "src/components/CommandPalette.tsx",
+    "Gallery": "src/components/Gallery.tsx",
+    "DetailBar": "src/components/DetailBar.tsx",
+    "SmoothScroll": null,
+    "Stage": null
+  }
+}
