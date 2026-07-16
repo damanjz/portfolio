@@ -64,18 +64,6 @@ export type Shot = {
   caption: string;
 };
 
-/** One case-study block on a detail page (heading + prose). */
-export type Section = {
-  heading: string;
-  body: string;
-};
-
-/** One row of a decisions ledger — tradeoff on the left, reason right. */
-export type Decision = {
-  choice: string;
-  reason: string;
-};
-
 export type Project = {
   slug: string;
   name: string;
@@ -85,7 +73,6 @@ export type Project = {
   category: CategoryId;
   description: string; // short — used on the ledger row
   stack: string[]; // mono stack list on the row + spec sheet
-  primaryLang: string;
   status: "public" | "private" | "wip" | "live";
   href?: string;
   hrefLabel?: string; // e.g. "view source", "view on ArtStation"
@@ -95,8 +82,8 @@ export type Project = {
   summary: string; // one-line hero subtitle on the detail page
   youtube?: string; // full-length demo — YouTube video id, loaded on click only
   gallery: Shot[]; // figures — FIG.01, FIG.02 …
-  sections: Section[]; // numbered chapters: 01 Problem → 02 Build → …
-  decisions?: Decision[]; // the decisions ledger table
+  sections: { heading: string; body: string }[]; // numbered chapters
+  decisions?: { choice: string; reason: string }[]; // the decisions ledger table
   facts: { label: string; value: string }[]; // spec sheet sidebar
   specAccent?: string; // which spec label gets the accent (e.g. "NETWORK")
 };
@@ -111,7 +98,6 @@ export const projects: Project[] = [
     category: "security",
     description: "A password manager that never phones home.",
     stack: ["Rust", "Tauri", "Svelte", "WebExt", "Windows Hello"],
-    primaryLang: "Rust",
     status: "public",
     href: "https://github.com/damanjz/protec",
     metric: { label: "audit", value: "16 hardening fixes" },
@@ -162,7 +148,6 @@ export const projects: Project[] = [
     category: "automation",
     description: "Self-hosted AI support triage on local Ollama.",
     stack: ["n8n", "Ollama", "Eval-gated", "Docker"],
-    primaryLang: "TypeScript",
     status: "private",
     metric: { label: "routing", value: "88%" },
     year: "2026",
@@ -211,7 +196,6 @@ export const projects: Project[] = [
     category: "commerce",
     description: "Techwear commerce, end to end.",
     stack: ["Next.js 15", "Prisma", "Postgres", "NextAuth"],
-    primaryLang: "TypeScript",
     status: "public",
     href: "https://github.com/damanjz/volt-techwear-store",
     metric: { label: "stack", value: "Next 15 · Prisma 7" },
@@ -260,7 +244,6 @@ export const projects: Project[] = [
     category: "multimedia",
     description: "A native video player that starts instantly.",
     stack: ["Python", "PySide6"],
-    primaryLang: "Python",
     status: "public",
     href: "https://github.com/damanjz/flux-player",
     metric: { label: "runtime", value: "native" },
@@ -312,7 +295,6 @@ export const projects: Project[] = [
     description:
       "A composition-driven Unreal Engine 5 environment — round stone towers, red-tiled roofs, lanterns and ivy under a soft pink-and-blue sky. My MA Animation technical showcase.",
     stack: ["Unreal Engine 5.6", "Blender", "Substance", "Lumen", "Nanite"],
-    primaryLang: "Unreal Engine",
     status: "live",
     href: "https://www.artstation.com/damanpsd",
     hrefLabel: "view on ArtStation",
@@ -369,7 +351,6 @@ export const projects: Project[] = [
     description:
       "A moody Blender studio render — a sports car lit with dramatic rim light and red/blue gels against near-black, focused on form, reflection, and restraint.",
     stack: ["Blender", "Cycles", "Compositing"],
-    primaryLang: "Blender",
     status: "live",
     href: "https://www.artstation.com/damanpsd",
     hrefLabel: "view on ArtStation",
@@ -408,7 +389,6 @@ export const projects: Project[] = [
     description:
       "A run of stylized and procedural Blender work — clean cel-shaded objects and node-driven generators (castles, medieval cities, flocks) that build scenes from rules.",
     stack: ["Blender", "Geometry Nodes", "NPR / Toon"],
-    primaryLang: "Blender",
     status: "live",
     href: "https://www.artstation.com/damanpsd",
     hrefLabel: "view on ArtStation",
