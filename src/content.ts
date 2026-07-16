@@ -64,6 +64,15 @@ export type Shot = {
   caption: string;
 };
 
+/** A locally-hosted video reel. `src`/`poster` live under /public. `portrait`
+ *  flags 9:16 sources so the figure renders in a capped portrait frame. */
+export type Reel = {
+  src: string;
+  poster: string;
+  caption: string;
+  portrait?: boolean;
+};
+
 export type Project = {
   slug: string;
   name: string;
@@ -81,6 +90,7 @@ export type Project = {
   // ---- detail-page fields ----
   summary: string; // one-line hero subtitle on the detail page
   youtube?: string; // full-length demo — YouTube video id, loaded on click only
+  reels?: Reel[]; // locally-hosted video reels — no external request, played on click
   gallery: Shot[]; // figures — FIG.01, FIG.02 …
   sections: { heading: string; body: string }[]; // numbered chapters
   decisions?: { choice: string; reason: string }[]; // the decisions ledger table
@@ -415,6 +425,55 @@ export const projects: Project[] = [
       { label: "RANGE", value: "TOON / NPR · PROCEDURAL" },
       { label: "GENERATORS", value: "CASTLE · CITY · FLOCK" },
     ],
+  },
+  {
+    slug: "product-placement-dev",
+    name: "Product Placement Dev",
+    num: "PL.04",
+    tagline: "Studio looks-dev for a set of signature electric guitars.",
+    discipline: "craft",
+    category: "product-render",
+    description:
+      "Product-placement / looks-development for a set of signature-graphic electric guitars — lighting, texturing, and compositing built around a vertical social deliverable.",
+    stack: ["Blender", "Cycles", "Compositing"],
+    status: "live",
+    href: "https://www.artstation.com/artwork/8Bo3O6",
+    hrefLabel: "view on ArtStation",
+    metric: { label: "format", value: "9:16 · social" },
+    year: "2025",
+    summary:
+      "Looks-development for a set of graphic-finish electric guitars — low-key studio lighting, textured bodies, and compositing built for a vertical social cut. Made for the output, then posted.",
+    reels: [
+      { src: "/art/gtr-reel-lineup.mp4", poster: "/art/gtr-lineup.webp", portrait: true, caption: "REEL.01 — THE LINEUP · THREE SIGNATURE FINISHES · 9:16" },
+      { src: "/art/gtr-reel-1.mp4", poster: "/art/gtr-slayer.webp", portrait: true, caption: "REEL.02 — HEADSTOCK PASS · RIM-LIT ON BLACK" },
+      { src: "/art/gtr-reel-2.mp4", poster: "/art/gtr-detail.webp", portrait: true, caption: "REEL.03 — HARDWARE PASS · PICKUPS & BRIDGE" },
+      { src: "/art/gtr-reel-3.mp4", poster: "/art/gtr-body.webp", portrait: true, caption: "REEL.04 — BODY GRAPHIC PASS · TEXTURED WRAP" },
+    ],
+    gallery: [
+      { src: "/art/gtr-lineup.webp", alt: "three signature electric guitars lit against black", caption: "The lineup — three signature-graphic guitars, rim-lit against near-black so the silhouettes read first." },
+      { src: "/art/gtr-body.webp", alt: "guitar body with EMG pickups over graphic wrap", caption: "The body pass — EMG pickups and tune-o-matic bridge over a war-art graphic wrap, lit to hold the surface detail." },
+      { src: "/art/gtr-slayer.webp", alt: "guitar headstock with graphic decal, shallow depth of field", caption: "A headstock at shallow depth of field — the finish artwork and logo carry the frame; everything else falls to black." },
+      { src: "/art/gtr-detail.webp", alt: "guitar neck and body detail", caption: "Detail pass — hardware, inlays, and the graphic finish, framed vertical for the social cut." },
+    ],
+    sections: [
+      {
+        heading: "The brief",
+        body: "A set of signature-graphic electric guitars, treated as a product-placement piece rather than a modeling one. The job was looks-development: lighting, texturing, and compositing the guitars into a studio set that sells the object — the way a product ad would — with the final vertical cut in mind from the first frame.",
+      },
+      {
+        heading: "The approach",
+        body: "Rendered in Blender with Cycles. The set is low-key — near-black studio, guitars on wall mounts, described by rim light so the silhouette and the finish artwork read before anything else. Texturing carries the graphic body wraps and the hardware (EMG pickups, tune-o-matic bridges, logo decals); compositing ties the passes together. The whole scene was built for the output: framed 9:16, cut into short reels, and posted to Instagram.",
+      },
+    ],
+    facts: [
+      { label: "TYPE", value: "PRODUCT LOOKS-DEV" },
+      { label: "TOOL", value: "BLENDER · CYCLES" },
+      { label: "WORK", value: "LIGHTING · TEXTURING · COMP" },
+      { label: "SUBJECT", value: "SIGNATURE GUITARS" },
+      { label: "FORMAT", value: "9:16 · SOCIAL" },
+      { label: "SHIPPED", value: "INSTAGRAM" },
+    ],
+    specAccent: "FORMAT",
   },
 ];
 

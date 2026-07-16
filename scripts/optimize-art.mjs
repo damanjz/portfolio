@@ -7,7 +7,9 @@
  * Safe to re-run; overwrites outputs. Source files are never modified.
  */
 import sharp from "sharp";
-import { mkdirSync, existsSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { mkdirSync, existsSync, mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -31,26 +33,60 @@ const jobs = [
   ["BLENDER/Renders/Vendy/0015.png", "vending-toon", 1600],
 ];
 
+// Frame-sourced stills — pulled from render footage (MP4) at a chosen timestamp,
+// so they stay reproducible from Hub sources like the PNG jobs above. Needs ffmpeg.
+// [sourceMp4RelativeToHub, timestampSeconds, outputName, maxWidth]
+const frameJobs = [
+  // Product Placement Dev — a set of signature electric guitars (vertical product-viz)
+  ["BLENDER/metal/metal/footage/Scene [50001-50180].mp4", 4, "gtr-lineup", 1280],
+  ["BLENDER/metal/metal/footage/[0001-0180]1.mp4", 4, "gtr-slayer", 1080],
+  ["BLENDER/metal/metal/footage/[0001-0180]2.mp4", 4, "gtr-detail", 1080],
+  ["BLENDER/metal/metal/footage/[0001-0180]3.mp4", 4, "gtr-body", 1080],
+];
+
 const results = [];
-for (const [rel, name, maxW] of jobs) {
-  const src = join(HUB, rel);
-  if (!existsSync(src)) {
-    results.push(`SKIP (missing): ${rel}`);
-    continue;
-  }
-  // full-size webp
+
+/** Write a full-size + thumb webp from a source image path. */
+async function optimize(src, name, maxW) {
   const full = join(OUT, `${name}.webp`);
   const meta = await sharp(src)
     .resize({ width: maxW, withoutEnlargement: true })
     .webp({ quality: 82, effort: 5 })
     .toFile(full);
-  // small thumb for cards
   const thumb = join(OUT, `${name}-thumb.webp`);
   await sharp(src)
     .resize({ width: 900, withoutEnlargement: true })
     .webp({ quality: 78, effort: 5 })
     .toFile(thumb);
   results.push(`${name}.webp  ${meta.width}x${meta.height}  ${(meta.size / 1024).toFixed(0)}KB`);
+}
+
+for (const [rel, name, maxW] of jobs) {
+  const src = join(HUB, rel);
+  if (!existsSync(src)) {
+    results.push(`SKIP (missing): ${rel}`);
+    continue;
+  }
+  await optimize(src, name, maxW);
+}
+
+// frame-sourced stills: grab one PNG from the source video, then optimize it
+const frameTmp = mkdtempSync(join(tmpdir(), "art-frames-"));
+for (const [rel, ts, name, maxW] of frameJobs) {
+  const src = join(HUB, rel);
+  if (!existsSync(src)) {
+    results.push(`SKIP (missing): ${rel}`);
+    continue;
+  }
+  const png = join(frameTmp, `${name}.png`);
+  try {
+    execFileSync("ffmpeg", ["-hide_banner", "-loglevel", "error", "-y",
+      "-ss", String(ts), "-i", src, "-frames:v", "1", png], { stdio: "ignore" });
+  } catch {
+    results.push(`SKIP (ffmpeg failed): ${rel}`);
+    continue;
+  }
+  await optimize(png, name, maxW);
 }
 
 console.log(results.join("\n"));

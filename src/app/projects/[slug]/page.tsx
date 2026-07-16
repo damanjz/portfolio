@@ -5,6 +5,7 @@ import { projects, getProject, categoryLabel, site, seo } from "@/content";
 import DetailBar from "@/components/DetailBar";
 import Gallery from "@/components/Gallery";
 import YouTubeFigure from "@/components/YouTubeFigure";
+import VideoFigure from "@/components/VideoFigure";
 import Footer from "@/components/Footer";
 
 type Params = { slug: string };
@@ -83,6 +84,22 @@ export default async function ProjectPage({
                     title={`${p.name} — tech demo`}
                     caption="FIG.00 — TECH DEMO · FULL PIECE · YOUTUBE (LOADS ON CLICK)"
                   />
+                </div>
+              )}
+
+              {/* locally-hosted reels — no external request, played on click */}
+              {p.reels && p.reels.length > 0 && (
+                <div className="mb-10 grid gap-8 sm:grid-cols-2">
+                  {p.reels.map((r) => (
+                    <VideoFigure
+                      key={r.src}
+                      src={r.src}
+                      poster={r.poster}
+                      portrait={r.portrait}
+                      title={`${p.name} — reel`}
+                      caption={r.caption}
+                    />
+                  ))}
                 </div>
               )}
 
