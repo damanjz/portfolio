@@ -488,5 +488,5 @@ export const platesIntro =
   "Before engineering, an animation degree. The archive stays — evidence of a trained eye, not a second career.";
 
 export const seo = {
-  url: "https://damanjz.dev", // PLACEHOLDER — set your deployed URL
+  url: "https://damanjz.github.io/portfolio", // update if a custom domain lands
 } as const;
