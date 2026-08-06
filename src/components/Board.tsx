@@ -29,7 +29,7 @@ function Node({
   if (n.role === "origin") {
     return (
       <div className="node n-origin" style={base} {...nid} {...dragHandle}>
-        <div className="n-kicker kicker">
+        <div className="n-kicker kicker n-drag">
           <span className="dot" />
           Origin
         </div>
@@ -47,7 +47,7 @@ function Node({
   if (n.role === "howto") {
     return (
       <div className="node n-howto" style={base} {...nid} {...dragHandle}>
-        <div className="n-kicker kicker" style={{ color: "var(--acc)" }}>
+        <div className="n-kicker kicker n-drag" style={{ color: "var(--acc)" }}>
           <span className="dot" />
           How to read this board
         </div>
@@ -70,7 +70,7 @@ function Node({
   if (n.role === "about") {
     return (
       <div className="node n-about" style={base} {...nid} {...dragHandle}>
-        <div className="n-kicker kicker" style={{ color: "var(--art)" }}>
+        <div className="n-kicker kicker n-drag" style={{ color: "var(--art)" }}>
           <span className="dot" />
           About
         </div>
@@ -95,7 +95,7 @@ function Node({
   if (n.role === "contact") {
     return (
       <div className="node k-end" style={base} {...nid} {...dragHandle}>
-        <div className="n-kicker kicker">
+        <div className="n-kicker kicker n-drag">
           <span className="dot" />
           Contact
         </div>
@@ -116,7 +116,7 @@ function Node({
   if (n.role === "art") {
     return (
       <div className="node n-art" style={base} {...nid} {...dragHandle}>
-        <div className="n-kicker kicker">
+        <div className="n-kicker kicker n-drag">
           <span className="dot" />
           The Plates · art
         </div>
@@ -161,7 +161,7 @@ function Node({
     const p = n.project;
     return (
       <div className="node n-proj" style={base} {...nid} {...dragHandle} aria-expanded={expanded}>
-        <div className="n-kicker kicker">
+        <div className="n-kicker kicker n-drag">
           <span className="dot" />
           {p.num} · {p.category}
         </div>
@@ -201,7 +201,7 @@ function Node({
     const endCls = s.kind === "end" ? `k-end s-${n.project?.status ?? ""}` : `k-${s.kind}`;
     return (
       <div className={`node ${endCls}`} style={base} {...nid} {...dragHandle}>
-        <div className="n-kicker kicker">
+        <div className="n-kicker kicker n-drag">
           <span className="dot" />
           {s.label}
         </div>
@@ -352,19 +352,29 @@ export default function Board() {
     [visibleNodes, applyView, posOf],
   );
 
-  // ---- node drag: move a single card in board space (accounts for zoom) ----
-  const dragState = useRef<{ id: string; sx: number; sy: number; ox: number; oy: number; moved: boolean } | null>(null);
+  // ---- node drag: move a single card, but only past a movement threshold so
+  //      text stays selectable and clicks still work. The card is grabbed by
+  //      its DRAG STRIP (the kicker/handle row); the body allows text select. ─
+  const DRAG_THRESHOLD = 5; // px before a press becomes a drag
+  const dragState = useRef<
+    | { id: string; sx: number; sy: number; ox: number; oy: number; active: boolean; pointerId: number; captureEl: HTMLElement }
+    | null
+  >(null);
   const onNodeDragStart = useCallback(
     (e: React.PointerEvent, id: string) => {
-      // don't start a drag from a link or button inside the card — those are
-      // their own actions (open page / expand tree)
-      if ((e.target as HTMLElement).closest("a, button")) return;
+      // links, buttons, and selectable body text handle their own pointer;
+      // dragging is initiated only from the card's handle strip (.n-drag)
+      const t = e.target as HTMLElement;
+      if (t.closest("a, button")) return;
+      if (!t.closest(".n-drag")) return; // body/text is NOT a drag zone → selectable
       const node = model.nodes.find((n) => n.id === id);
       if (!node) return;
       const start = pos[id] ?? { x: node.x, y: node.y };
-      dragState.current = { id, sx: e.clientX, sy: e.clientY, ox: start.x, oy: start.y, moved: false };
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-      e.stopPropagation(); // don't also pan the board
+      dragState.current = {
+        id, sx: e.clientX, sy: e.clientY, ox: start.x, oy: start.y,
+        active: false, pointerId: e.pointerId, captureEl: e.currentTarget as HTMLElement,
+      };
+      e.stopPropagation();
     },
     [model.nodes, pos],
   );
@@ -375,19 +385,27 @@ export default function Board() {
       const s = view.current.s;
       const dx = (e.clientX - d.sx) / s;
       const dy = (e.clientY - d.sy) / s;
-      if (Math.abs(dx) + Math.abs(dy) > 3) d.moved = true;
+      // only begin the actual drag once past the threshold (keeps clicks/selection intact)
+      if (!d.active) {
+        if (Math.abs(e.clientX - d.sx) + Math.abs(e.clientY - d.sy) < DRAG_THRESHOLD) return;
+        d.active = true;
+        try {
+          d.captureEl.setPointerCapture(d.pointerId);
+        } catch {
+          /* ignore */
+        }
+      }
       const el = worldRef.current?.querySelector<HTMLElement>(`[data-node="${d.id}"]`);
       if (el) {
         el.style.left = `${d.ox + dx}px`;
         el.style.top = `${d.oy + dy}px`;
       }
-      // redraw wires live so they follow the card
       requestAnimationFrame(() => drawWiresRef.current?.());
     };
     const onUp = () => {
       const d = dragState.current;
       dragState.current = null;
-      if (!d || !d.moved) return;
+      if (!d || !d.active) return;
       const el = worldRef.current?.querySelector<HTMLElement>(`[data-node="${d.id}"]`);
       if (!el) return;
       const nx = parseFloat(el.style.left);

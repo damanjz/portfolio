@@ -38,11 +38,14 @@ export type BoardModel = {
   bounds: { w: number; h: number };
 };
 
-/* Layout (2026-08-07, Daman: "really spread out, no overlap of nodes").
-   Spacing is collision-safe by construction: every row reserves enough height
-   for a project's FULL open DAG, columns are far apart, and zones/plates never
-   share space. Estimated node heights drive the row pitch so tall cards (long
-   decisions, fuller text) can't run into the next row. */
+/* Layout (2026-08-07, Daman: "give each node its own section, no overlap;
+   the section name must be horizontal and not cover the nodes").
+
+   Model: each SYSTEMS project is a self-contained horizontal SECTION —
+   a header band (the ◆ label) + the root card + its full DAG on one row.
+   Sections stack vertically with a fixed, generous pitch big enough that an
+   OPEN DAG (one row of ~130px-tall cards) never reaches the next section, and
+   the label sits in the header band above the cards, never on top of them. */
 const ROOT_W = 240;
 const STAGE_W = 220;
 const STAGE_GAP_X = 320; // wide horizontal DAG steps
@@ -50,11 +53,10 @@ const ROW0 = 160;
 const WELCOME_X = 60;
 const WELCOME_W = 320;
 
-// generous, height-aware row pitch: a system row must clear its tallest stage
-// card even when the DAG fans vertically. These are deliberate over-estimates.
-const ROOT_ROW_PITCH = 340; // vertical distance between consecutive project rows
-const STAGE_FAN = 150; // how far a stage can sit above/below its root row
-const COL_GAP = 260; // clear gap between the systems block and the art column
+const SECTION_LABEL_H = 56; // header band the ◆ label lives in (clear of cards)
+const SECTION_PITCH = 420; // vertical distance between systems sections — big
+                           //  enough for an open DAG row + the next label band
+const COL_GAP = 300; // clear gap between the systems block and the art column
 
 export function buildBoard(projects: Project[]): BoardModel {
   const systems = projects.filter((p) => p.discipline === "systems");
@@ -78,32 +80,40 @@ export function buildBoard(projects: Project[]): BoardModel {
   edges.push(["howto", "about"]);
   edges.push(["about", "contact"]);
 
-  // ── SYSTEMS ZONE: its own column to the RIGHT of the welcome column, so a
-  //    system root never overlaps the welcome cards. Roots stack down; each
-  //    DAG flows right on its own row with a tall, collision-safe pitch. ─────
+  // ── SYSTEMS: each project is its OWN section (label band + root + DAG row).
+  //    Sections stack with SECTION_PITCH so an open DAG never reaches the next.
   const SYS_COL = WELCOME_X + WELCOME_W + COL_GAP; // clear of the welcome column
   const SYS_STAGE0 = SYS_COL + ROOT_W + 120;
-  const sysTop = ROW0 + 40;
+  const sysTop = ROW0 + SECTION_LABEL_H; // first section's cards sit below its label
   let maxRight = SYS_STAGE0;
+  const sysZones: Zone[] = [];
   systems.forEach((p, i) => {
-    const rootY = sysTop + i * ROOT_ROW_PITCH;
+    const sectionTop = sysTop + i * SECTION_PITCH; // top of this section's card row
+    const rootY = sectionTop;
     const rootId = `root-${p.slug}`;
     nodes.push({ id: rootId, role: "proj", x: SYS_COL, y: rootY, w: ROOT_W, project: p });
     edges.push(["origin", rootId]);
 
+    // per-project section label, in the header band ABOVE the cards (never over)
+    sysZones.push({
+      label: `◆ ${p.num} · ${p.name.toUpperCase()}`,
+      anchor: rootId, dx: 0, dy: -(SECTION_LABEL_H - 12),
+      x: SYS_COL, y: rootY - (SECTION_LABEL_H - 12),
+    });
+
+    // the DAG flows straight right on the SAME row — no vertical fan, so the
+    // whole section is one clean horizontal band that can't touch its neighbours
     const stages = deriveStages(p);
     let prevId = rootId;
     stages.forEach((s, j) => {
       const sx = SYS_STAGE0 + j * STAGE_GAP_X;
-      // small deterministic fan, bounded so it stays inside the row's reserved band
-      const sy = rootY + (j % 2 === 0 ? -STAGE_FAN * 0.16 : STAGE_FAN * 0.22);
-      nodes.push({ id: s.id, role: "stage", x: sx, y: sy, w: STAGE_W, stage: s, project: p });
+      nodes.push({ id: s.id, role: "stage", x: sx, y: rootY, w: STAGE_W, stage: s, project: p });
       edges.push([prevId, s.id, s.kind === "end" ? "ship" : undefined]);
       prevId = s.id;
       if (sx + STAGE_W > maxRight) maxRight = sx + STAGE_W;
     });
   });
-  const sysBottom = sysTop + (systems.length - 1) * ROOT_ROW_PITCH + STAGE_FAN + 200;
+  const sysBottom = sysTop + (systems.length - 1) * SECTION_PITCH + 260;
 
   // ── CREATIVE / ART ZONE: far right, its own column, well clear of systems.
   const ART_COL = maxRight + COL_GAP;
@@ -127,25 +137,22 @@ export function buildBoard(projects: Project[]): BoardModel {
     h: Math.max(sysBottom, artBottom, wContact + 300) + 120,
   };
 
-  // ── ZONE LABELS — each anchored to its section's LEAD node, so the label
-  //    follows its project section live (Daman: "can it move according to
-  //    project section"). The Board recomputes x/y from the anchor's current
-  //    position; the static x/y here are just the first-paint fallback. ──────
+  // ── ZONE LABELS — each label anchors to its section's lead node and sits in
+  //    a clear band ABOVE it (never over the cards), horizontal, and follows
+  //    the node when dragged. Every systems project gets its OWN section label.
+  const LABEL_DY = -(SECTION_LABEL_H - 12);
   const zones: Zone[] = [
     {
       label: "◆ START HERE — who I am + how to read this board",
-      anchor: "origin", dx: 0, dy: -50,
-      x: WELCOME_X, y: wOrigin - 50,
+      anchor: "origin", dx: 0, dy: LABEL_DY,
+      x: WELCOME_X, y: wOrigin + LABEL_DY,
     },
-    {
-      label: "◆ THE WORK — systems, each drawn as how it got built",
-      anchor: `root-${systems[0]?.slug ?? ""}`, dx: 0, dy: -50,
-      x: SYS_COL, y: sysTop - 50,
-    },
+    // per-project systems section labels (built in the loop above)
+    ...sysZones,
     {
       label: "◆ THE CRAFT — 3D / technical art",
-      anchor: "art-hub", dx: 0, dy: -50,
-      x: ART_COL, y: artHubY - 50,
+      anchor: "art-hub", dx: 0, dy: LABEL_DY,
+      x: ART_COL, y: artHubY + LABEL_DY,
     },
   ];
 
