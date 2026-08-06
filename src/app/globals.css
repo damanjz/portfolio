@@ -1,188 +1,205 @@
 @import "tailwindcss";
 
 /* ===========================================================================
-   DESIGN TOKENS — "The Monograph" (Direction v3, from Claude Design).
-   A printed engineering volume: warm paper, ink typography, drafting-blue
-   annotation — with the art bound in as glossy plates on umber stock.
-   Replaces: Cinematic Atelier (v1) · Phosphor Terminal (v2).
+   DESIGN TOKENS — v4 "Flow-board" (from Claude Design).
+   The whole site is one pannable 2D board; each project is its production DAG.
+   TWO THEMES, one toggle:
+     · TERMINAL  (light)  — warm paper, monospace-forward, git-graph wires
+     · NOCTURNE  (dark)   — near-black gallery, one warm signal, glowing wires
+   Themed via [data-theme] on <html>; system preference is the default,
+   the toggle persists to localStorage. Replaces "The Monograph" (v3).
    =========================================================================== */
 :root {
-  --paper: #f7f5f0; /* page canvas */
-  --raised: #fdfcfa; /* raised surface (folio bar, index panel) */
-  --ink: #1c1b18; /* primary text */
-  --graphite: #6b675e; /* secondary text */
-  --faint: #98938a; /* captions, mono meta */
-  --hairline: #e3dfd6; /* rules between rows */
-  --acc: #2a41c8; /* drafting ink — accent, <5% of any viewport */
-  --wash: #e9ebf8; /* accent wash (selection) */
-
-  /* the plate insert — the site's single inversion */
-  --plate: #23201a; /* plate ground */
-  --plate-text: #ede8de; /* plate primary text */
-  --plate-faint: #a89f8f; /* plate captions */
-  --plate-acc: #b8c2f2; /* accent on plate ground */
-
-  /* fonts wired from next/font in layout.tsx */
   --font-serif: var(--font-source-serif);
   --font-mono: var(--font-plex-mono);
+
+  /* semantic roles — the two themes only re-point these */
+  --ground: #f4f2ec;
+  --grid: #e7e4da;
+  --ink: #1a1917;
+  --dim: #77736a;
+  --faint: #a9a295;
+  --line: #c3bdaf;
+  --node: #fffdf8;
+  --node-bd: #d8d3c6;
+  --node-hi: #fbf9f3;
+  --acc: #d1442b;
+  --art: #a06a1e;
+  --ship: #2f8f5f;
+  --dev: #c98a2e;
+  --shadow: rgba(26, 25, 23, 0.08);
+  --glow: transparent;
+  color-scheme: light;
+}
+:root[data-theme="light"] { color-scheme: light; }
+
+:root[data-theme="dark"] {
+  --ground: #0c0c0e;
+  --grid: #17171a;
+  --ink: #f0ede8;
+  --dim: #8f8b85;
+  --faint: #6f6b65;
+  --line: #2b2b30;
+  --node: #151517;
+  --node-bd: #26262b;
+  --node-hi: #1b1b1e;
+  --acc: #ff7a3c;
+  --art: #e0a24a;
+  --ship: #57c98a;
+  --dev: #e0b45a;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --glow: rgba(255, 122, 60, 0.18);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --ground: #0c0c0e; --grid: #17171a; --ink: #f0ede8; --dim: #8f8b85;
+    --faint: #6f6b65; --line: #2b2b30; --node: #151517; --node-bd: #26262b;
+    --node-hi: #1b1b1e; --acc: #ff7a3c; --art: #e0a24a; --ship: #57c98a;
+    --dev: #e0b45a; --shadow: rgba(0,0,0,0.5); --glow: rgba(255,122,60,0.18);
+    color-scheme: dark;
+  }
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-raised: var(--raised);
+  --color-ground: var(--ground);
+  --color-grid: var(--grid);
   --color-ink: var(--ink);
-  --color-graphite: var(--graphite);
+  --color-dim: var(--dim);
   --color-faint: var(--faint);
-  --color-hairline: var(--hairline);
+  --color-line: var(--line);
+  --color-node: var(--node);
+  --color-node-bd: var(--node-bd);
   --color-acc: var(--acc);
-  --color-wash: var(--wash);
-  --color-plate: var(--plate);
-  --color-plate-text: var(--plate-text);
-  --color-plate-faint: var(--plate-faint);
-  --color-plate-acc: var(--plate-acc);
-
+  --color-art: var(--art);
+  --color-ship: var(--ship);
+  --color-dev: var(--dev);
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
 }
 
-/* Default border color — layered so utilities like border-transparent
-   still win (unlayered rules would outrank every @layer utility). */
 @layer base {
-  * {
-    border-color: var(--hairline);
-  }
+  * { border-color: var(--line); }
+  p { text-wrap: pretty; }
 }
 
 html {
-  /* Native scroll — a document scrolls like a document. Anchor jumps are
-     smooth via CSS; no Lenis, no scroll-jacking (design: motion is 160ms
-     opacity/underline + rules drawing in once). */
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  /* the board owns the viewport; the page itself does not scroll */
+  height: 100%;
 }
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
-
 body {
-  background: var(--paper);
+  height: 100%;
+  background: var(--ground);
   color: var(--ink);
   font-family: var(--font-serif), Georgia, serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  overflow: hidden;
+  transition: background 200ms ease, color 200ms ease;
 }
+::selection { background: color-mix(in srgb, var(--acc) 22%, transparent); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; border-radius: 3px; }
 
-::selection {
-  background: var(--wash);
-  color: var(--ink);
-}
-
-/* Thin document scrollbar */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--hairline) transparent;
-}
-
-/* Focus ring — drafting blue, sharp */
-:focus-visible {
-  outline: 2px solid var(--acc);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* ---- typographic utilities ---- */
+/* ---- type utilities ---- */
 .mono {
   font-family: var(--font-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
 }
-.serif {
-  font-family: var(--font-serif), Georgia, serif;
-}
-
-/* Mono label — the small-caps annotation voice */
-.label {
+.serif { font-family: var(--font-serif), Georgia, serif; }
+.kicker {
   font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 9px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
 }
 
-/* ---- THE LEDGER RULE — the signature element ----
-   number — title — right-aligned mono readout, on a full-width ink line.
-   The line draws in once when the section scrolls into view (600ms). */
-.ledger {
-  position: relative;
-  padding-top: 10px;
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
+/* ===== the board ===== */
+.board-stage {
+  position: fixed; inset: 0; z-index: 10; cursor: grab;
+  background:
+    radial-gradient(circle, var(--grid) 1.1px, transparent 1.1px) 0 0 / 24px 24px,
+    var(--ground);
+  touch-action: none;
 }
-.ledger::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 1px;
-  width: 100%;
-  background: currentColor;
-  transform-origin: left center;
-  transform: scaleX(1);
+.board-stage.dragging { cursor: grabbing; }
+.board-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+
+svg.board-wires { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 1; }
+svg.board-wires path { fill: none; stroke: var(--line); stroke-width: 1.5; }
+svg.board-wires path.w-ship { stroke: color-mix(in oklab, var(--ship) 60%, var(--line)); }
+svg.board-wires path.w-art  { stroke: color-mix(in oklab, var(--art) 45%, var(--line)); }
+:root[data-theme="dark"] svg.board-wires path { filter: drop-shadow(0 0 3px var(--glow)); }
+
+/* ===== nodes ===== */
+.node {
+  position: absolute; z-index: 2;
+  background: var(--node); border: 1px solid var(--node-bd); border-radius: 4px;
+  padding: 12px 14px; color: var(--ink); box-shadow: 2px 2px 0 var(--shadow);
+  transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
 }
-/* draw-in variant, activated by [data-inview] from useReveal */
-.ledger-draw::before {
-  transform: scaleX(0);
-  transition: transform 600ms cubic-bezier(0.25, 1, 0.5, 1);
-}
-[data-inview="true"] .ledger-draw::before,
-.ledger-draw[data-inview="true"]::before {
-  transform: scaleX(1);
+:root[data-theme="dark"] .node { border-radius: 12px; box-shadow: 0 10px 40px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.03); }
+.node:hover { background: var(--node-hi); border-color: color-mix(in srgb, var(--acc) 40%, var(--node-bd)); }
+.node .n-kicker { color: var(--dim); margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+.node .n-kicker .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.node .n-title { font-family: var(--font-mono), ui-monospace, monospace; font-size: 14px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; }
+.node .n-body { font-size: 12px; color: var(--dim); margin-top: 4px; line-height: 1.45; }
+.node .n-met { font-family: var(--font-mono), ui-monospace, monospace; font-size: 10px; color: var(--dim); margin-top: 8px; }
+.node .n-met em { font-style: normal; color: var(--acc); font-weight: 600; }
+
+/* project root node — the openable one */
+.node.n-proj { cursor: pointer; }
+.node.n-proj:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.node.n-proj .n-open { font-family: var(--font-mono), ui-monospace, monospace; font-size: 9px; color: var(--faint); margin-top: 9px; letter-spacing: 0.08em; }
+
+/* stage-kind accents */
+.k-idea .n-kicker, .k-idea .dot { color: var(--acc); }
+.k-decision .n-kicker { color: var(--dim); }
+.k-production .n-kicker { color: var(--dim); }
+.k-end { border-color: color-mix(in oklab, var(--ship) 45%, var(--node-bd)); }
+.k-end .n-kicker { color: var(--ship); }
+.k-end.s-wip { border-color: color-mix(in oklab, var(--dev) 50%, var(--node-bd)); border-style: dashed; }
+.k-end.s-wip .n-kicker { color: var(--dev); }
+
+/* origin + contact + art nodes */
+.node.n-origin { border-color: color-mix(in srgb, var(--acc) 50%, var(--node-bd)); }
+.node.n-origin .n-title { font-family: var(--font-serif), serif; font-size: 19px; letter-spacing: -0.01em; }
+.node.n-origin .n-lede { font-size: 12.5px; color: var(--dim); margin-top: 8px; line-height: 1.5; }
+.node.n-origin .n-lede .em { color: var(--acc); }
+.node.n-art .n-kicker { color: var(--art); }
+.node.n-plate { padding: 0; overflow: hidden; cursor: pointer; }
+.node.n-plate img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.node.n-plate .p-cap { position: absolute; left: 10px; bottom: 8px; font-family: var(--font-mono), ui-monospace, monospace; font-size: 9px; letter-spacing: 0.1em; color: #eee; text-shadow: 0 1px 3px rgba(0,0,0,.8); }
+
+.zone-title {
+  position: absolute; z-index: 2;
+  font-family: var(--font-mono), ui-monospace, monospace; font-size: 11px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--faint);
 }
 
-/* content fade — 160ms ease-out opacity only (no translate) */
-.fade {
-  opacity: 0;
-  transition: opacity 160ms ease-out;
+/* ===== fixed chrome over the board ===== */
+.hud { position: fixed; z-index: 30; }
+.hud-btn {
+  font-family: var(--font-mono), ui-monospace, monospace; font-size: 10.5px; letter-spacing: 0.1em;
+  color: var(--dim); background: color-mix(in srgb, var(--ground) 82%, transparent);
+  border: 1px solid var(--line); border-radius: 6px; padding: 7px 11px; cursor: pointer;
+  backdrop-filter: blur(8px); transition: color 150ms, border-color 150ms;
 }
-[data-inview="true"] .fade,
-.fade[data-inview="true"] {
-  opacity: 1;
-}
+.hud-btn:hover { color: var(--ink); border-color: color-mix(in srgb, var(--acc) 45%, var(--line)); }
+.hud-btn[aria-current="true"] { color: var(--ink); border-color: var(--ink); }
 
-/* hatched figure placeholder — engineering-print texture for missing images */
-.hatch {
-  background: repeating-linear-gradient(
-    45deg,
-    #edeae2 0 8px,
-    var(--hairline) 8px 9px
-  );
-  border: 1px solid var(--hairline);
-}
+/* ===== a11y / linear outline fallback ===== */
+.outline-view { position: fixed; inset: 0; z-index: 60; background: var(--ground); overflow: auto; padding: 44px clamp(20px, 6vw, 80px); display: none; }
+.outline-view.on { display: block; }
+.outline-view h1 { font-family: var(--font-serif), serif; font-size: clamp(24px, 4vw, 36px); letter-spacing: -0.02em; max-width: 20ch; }
+.outline-view h2 { font-family: var(--font-mono), ui-monospace, monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin: 28px 0 10px; }
+.outline-view .o-proj { border-left: 2px solid var(--line); padding-left: 16px; margin-bottom: 18px; max-width: 70ch; }
+.outline-view .o-proj b { font-size: 16px; }
+.outline-view .o-proj .o-desc { color: var(--dim); font-size: 14px; margin-top: 2px; }
+.outline-view ol { margin: 8px 0 0 20px; color: var(--dim); font-size: 13.5px; line-height: 1.7; }
 
-/* link underline behaviour — 160ms, the only hover motion */
-.link-acc {
-  color: var(--acc);
-  border-bottom: 1px solid transparent;
-  transition: border-color 160ms ease-out;
-}
-.link-acc:hover {
-  border-bottom-color: var(--acc);
-}
+.skip-link { position: fixed; left: -999px; top: 8px; z-index: 100; background: var(--acc); color: #fff; padding: 8px 14px; border-radius: 6px; }
+.skip-link:focus { left: 8px; }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-  .fade,
-  .ledger-draw::before {
-    opacity: 1;
-    transform: none;
-  }
+  *, *::before, *::after { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
 }

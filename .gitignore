@@ -39,3 +39,8 @@ ds-bundle/
 
 # static export
 out/
+
+# impeccable design hook (machine-local cache)
+.impeccable/hook.cache.json
+.impeccable/config.local.json
+.design-v4/art-source/

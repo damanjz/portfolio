@@ -13,15 +13,15 @@ export const site = {
   // Folio line, mono, uppercase — the whole positioning in three words.
   role: "Systems · Security · Local-first",
   // 00 — THESIS. The only italic on the page is the em phrase.
-  thesisLead: "Local-first software. No cloud, no telemetry,",
-  thesisEm: "no rent.",
+  thesisLead: "Secure systems, engineered to run on your machine —",
+  thesisEm: "private by design.",
   intro:
     "I'm Daman — a systems engineer in Hyderabad building software that runs entirely on your machine: hardened, measured, and yours.",
   location: "Hyderabad, IN",
   status: "Open to work",
   replies: "replies in ~24h",
   email: "hello@example.com", // PLACEHOLDER — set your real contact address
-  metaTitle: "Daman — Local-first software. No cloud, no telemetry, no rent.",
+  metaTitle: "Daman — Secure systems, engineered to run on your machine.",
   metaDescription:
     "Daman is a systems engineer in Hyderabad building local-first, security-hardened software: a Rust password manager, self-hosted AI automation, commerce systems, and native desktop apps.",
 } as const;
@@ -290,6 +290,102 @@ export const projects: Project[] = [
       { label: "STATUS", value: "PUBLIC" },
     ],
     specAccent: "RUNTIME",
+  },
+  {
+    slug: "noctra",
+    name: "NOCTRA",
+    num: "P.05",
+    tagline: "A full-stack street-luxury app — and the call to pause it.",
+    discipline: "systems",
+    category: "commerce",
+    description:
+      "A premium Indian street-luxury mobile app taken deep into a full-stack build — then paused on a business call.",
+    stack: ["React Native", "Expo", "Express", "Prisma", "Postgres", "Redis", "Razorpay"],
+    status: "wip",
+    href: "https://github.com/damanjz/NOCTRA",
+    hrefLabel: "view source",
+    metric: { label: "state", value: "under development" },
+    year: "2026",
+    summary:
+      "\"Own the after hours.\" A cultural-membership commerce app — React Native front end, a security-hardened Node backend, Razorpay payments — built deep, then paused when the business case didn't hold.",
+    gallery: [],
+    sections: [
+      {
+        heading: "Idea",
+        body: "NOCTRA was a business idea before it was code: a premium Indian street-luxury app where buying clothes earns access, not just a transaction. A cultural-membership layer — tiers, drop windows, waitlist position, referral clout — rather than a points program. The goal was to take a real product concept from strategy all the way to a working full-stack system.",
+      },
+      {
+        heading: "Build",
+        body: "A React Native (Expo) app over a Node/Express/Prisma backend, PostgreSQL and Redis, Socket.io for live drops, and a Next.js admin panel — a documented 12-table schema behind it. Auth runs Firebase phone-OTP into custom RS256 JWTs with single-use refresh rotation; the backend carries helmet, rate-limiting, zod validation and sanitize-html. The same security instinct as protec, in a commerce backend. Payments are Razorpay, UPI-first — built for how India actually pays.",
+      },
+      {
+        heading: "The decision most portfolios hide",
+        body: "I paused it. Once the system was real enough to judge the business case honestly, it didn't hold — so I stepped back rather than sink more time into something that wouldn't be profitable. The repo is still there to pick back up. Scoping a real product, building it deep, and knowing when to pause is part of the work too. The full docs set — architecture, security, scalability, deployment — is a real artifact of that thinking.",
+      },
+    ],
+    decisions: [
+      { choice: "MEMBERSHIP AS PRODUCT", reason: "the app is the brand — status, not a points program" },
+      { choice: "RS256 JWT + ROTATION", reason: "single-use refresh tokens; the protec instinct in a commerce backend" },
+      { choice: "UPI-FIRST (RAZORPAY)", reason: "built for how India actually pays" },
+      { choice: "PAUSE ON A BUSINESS CALL", reason: "judged the case honestly, then stopped — a skill too" },
+    ],
+    facts: [
+      { label: "TYPE", value: "FULL-STACK MOBILE" },
+      { label: "APP", value: "REACT NATIVE · EXPO" },
+      { label: "BACKEND", value: "NODE · EXPRESS · PRISMA" },
+      { label: "DATA", value: "POSTGRES · REDIS" },
+      { label: "AUTH", value: "FIREBASE + RS256 JWT" },
+      { label: "PAYMENTS", value: "RAZORPAY (UPI)" },
+      { label: "STATUS", value: "UNDER DEVELOPMENT" },
+    ],
+    specAccent: "STATUS",
+  },
+  {
+    slug: "umbra",
+    name: "umbra",
+    num: "P.06",
+    tagline: "A storefront built from scratch — no framework, real WebGL.",
+    discipline: "systems",
+    category: "commerce",
+    description:
+      "\"Shadow of style.\" A complete athletic-wear storefront hand-built in vanilla HTML/CSS/JS, with a custom mouse-reactive WebGL shader hero.",
+    stack: ["Vanilla JS", "WebGL", "HTML", "CSS"],
+    status: "live",
+    href: "https://umbrav.vercel.app",
+    hrefLabel: "view live",
+    metric: { label: "dependencies", value: "zero" },
+    year: "2026",
+    summary:
+      "A full multi-page athletic-wear storefront built with no framework and no build step — 34 products, a scroll-driven hero, and a custom WebGL shader up top, all hand-written.",
+    gallery: [],
+    sections: [
+      {
+        heading: "Idea",
+        body: "Umbra — \"shadow of style,\" premium athletic gear forged in the shadows. I wanted to build a complete storefront by hand: no framework, no build step, no dependencies to hide behind. Just HTML, CSS, and JavaScript, taken as far as they go — the fundamentals, proven.",
+      },
+      {
+        heading: "Build",
+        body: "A full multi-page site — men, women, kids, sport categories, 34 products with detail pages — plus a scroll-driven hero and a working cart and checkout on localStorage, no backend. Everything is hand-written; the deployed build (umbra_v) is the tightened version.",
+      },
+      {
+        heading: "The shader",
+        body: "The hero runs a real WebGL shader — custom vertex and fragment programs in the brand's deep-violet palette, reactive to the mouse. It's the 3D instinct from my art years showing up in the browser: not a library's default effect, but shader code written to match the brand.",
+      },
+    ],
+    decisions: [
+      { choice: "VANILLA > FRAMEWORK", reason: "prove the fundamentals; every page and animation is mine" },
+      { choice: "CUSTOM WEBGL HERO", reason: "hand-written shaders, brand palette — the art instinct in the browser" },
+      { choice: "LOCALSTORAGE CART", reason: "a working checkout with zero backend; fully static" },
+    ],
+    facts: [
+      { label: "TYPE", value: "STOREFRONT · FRONT-END" },
+      { label: "BUILT", value: "VANILLA HTML · CSS · JS" },
+      { label: "HERO", value: "CUSTOM WEBGL SHADER" },
+      { label: "CART", value: "LOCALSTORAGE" },
+      { label: "SCOPE", value: "34 PRODUCTS · MULTI-PAGE" },
+      { label: "STATUS", value: "LIVE" },
+    ],
+    specAccent: "HERO",
   },
 
   /* ----------------------------------------------------------------------- */
