@@ -49,28 +49,30 @@ export function buildBoard(projects: Project[]): BoardModel {
   const nodes: PlacedNode[] = [];
   const edges: BoardModel["edges"] = [];
 
-  // LEFT WELCOME COLUMN — how-to (top) → origin → about (below)
-  // The site opens focused here, so a first-time visitor is oriented.
-  nodes.push({ id: "howto", role: "howto", x: COL.about, y: ROW0 - 40, w: 300 });
-  nodes.push({ id: "origin", role: "origin", x: COL.origin, y: ROW0 + 190, w: 300 });
-  nodes.push({ id: "about", role: "about", x: COL.about, y: ROW0 + 470, w: 300 });
-  edges.push(["howto", "origin"]);
-  edges.push(["origin", "about"]);
+  // ── WELCOME COLUMN (top-left): Origin → How-to → About, stacked. ──────────
+  // The site opens focused here so a first-time visitor is oriented.
+  nodes.push({ id: "origin", role: "origin", x: COL.about, y: ROW0, w: 300 });
+  nodes.push({ id: "howto", role: "howto", x: COL.about, y: ROW0 + 250, w: 300 });
+  nodes.push({ id: "about", role: "about", x: COL.about, y: ROW0 + 560, w: 300 });
+  edges.push(["origin", "howto"]);
+  edges.push(["howto", "about"]);
 
-  // PROJECT ROOTS + their derived DAG stages
-  let maxRight = COL.stage0;
+  // ── SYSTEMS ZONE (left/centre): roots stacked below the welcome column, ──
+  //    each DAG flowing to the right within the left half of the board. ──────
+  const sysTop = ROW0 + 920; // clear the welcome column
+  const SYS_COL = COL.about; // systems roots share the left column
+  const SYS_STAGE0 = SYS_COL + 340;
+  let maxRight = SYS_STAGE0;
   systems.forEach((p, i) => {
-    const rootY = ROW0 + i * ROOT_GAP_Y;
+    const rootY = sysTop + i * ROOT_GAP_Y;
     const rootId = `root-${p.slug}`;
-    nodes.push({ id: rootId, role: "proj", x: COL.root, y: rootY, w: ROOT_W, project: p });
+    nodes.push({ id: rootId, role: "proj", x: SYS_COL, y: rootY, w: ROOT_W, project: p });
     edges.push(["origin", rootId]);
 
-    // stages flow to the right of the root, on the root's row
     const stages = deriveStages(p);
     let prevId = rootId;
     stages.forEach((s, j) => {
-      const sx = COL.stage0 + j * STAGE_GAP_X;
-      // gentle vertical fan so a long chain doesn't collide with the next root
+      const sx = SYS_STAGE0 + j * STAGE_GAP_X;
       const sy = rootY + (j % 2 === 0 ? -6 : 10) + (s.kind === "decision" ? -2 : 0);
       nodes.push({ id: s.id, role: "stage", x: sx, y: sy, w: STAGE_W, stage: s, project: p });
       edges.push([prevId, s.id, s.kind === "end" ? "ship" : undefined]);
@@ -78,34 +80,36 @@ export function buildBoard(projects: Project[]): BoardModel {
       if (sx + STAGE_W > maxRight) maxRight = sx + STAGE_W;
     });
   });
+  const sysBottom = sysTop + systems.length * ROOT_GAP_Y;
 
-  // art band sits below the work rows, spanning under the whole board
-  const artBandY = ROW0 + systems.length * ROOT_GAP_Y + 110;
-
-  // ART HUB + PLATES — the plates get room to breathe, wider gaps
-  nodes.push({ id: "art-hub", role: "art", x: COL.root, y: artBandY, w: 220 });
+  // ── CREATIVE / ART ZONE (right): its own column, well clear of systems. ──
+  const ART_COL = maxRight + 260; // hard right of the widest systems DAG
+  nodes.push({ id: "art-hub", role: "art", x: ART_COL, y: ROW0, w: 240 });
   edges.push(["origin", "art-hub", "art"]);
   art.forEach((p, i) => {
-    const px = COL.stage0 + i * 240;
-    const py = artBandY + (i % 2 === 0 ? 20 : 150);
+    // plates flow down the right column in two gentle sub-columns
+    const px = ART_COL + (i % 2 === 0 ? 20 : 240);
+    const py = ROW0 + 240 + i * 210;
     const id = `plate-${p.slug}`;
-    nodes.push({ id, role: "plate", x: px, y: py, w: 190, plate: p });
+    nodes.push({ id, role: "plate", x: px, y: py, w: 220, plate: p });
     edges.push([i === 0 ? "art-hub" : `plate-${art[i - 1].slug}`, id, "art"]);
   });
+  const artBottom = ROW0 + 240 + art.length * 210;
 
-  // CONTACT — far right, aligned with the origin row
-  const contactX = maxRight + 120;
-  nodes.push({ id: "contact", role: "contact", x: contactX, y: ROW0 + 190, w: 220 });
+  // ── CONTACT — bottom of the welcome column. ──────────────────────────────
+  nodes.push({ id: "contact", role: "contact", x: COL.about, y: ROW0 + 820, w: 300 });
+  edges.push(["about", "contact"]);
 
+  const rightEdge = ART_COL + 240 + 260;
   const bounds = {
-    w: contactX + 280,
-    h: artBandY + 300,
+    w: rightEdge,
+    h: Math.max(sysBottom, artBottom) + 260,
   };
 
   const zones = [
-    { label: "◆ START HERE — who I am + how to read this board", x: COL.about, y: ROW0 - 84 },
-    { label: "◆ THE WORK — how each system got built", x: COL.root, y: ROW0 - 40 },
-    { label: "◆ THE PLATES — 3D / technical art", x: COL.root, y: artBandY - 40 },
+    { label: "◆ START HERE — who I am + how to read this board", x: COL.about, y: ROW0 - 44 },
+    { label: "◆ THE WORK — systems, each drawn as how it got built", x: SYS_COL, y: sysTop - 44 },
+    { label: "◆ THE CRAFT — 3D / technical art", x: ART_COL, y: ROW0 - 44 },
   ];
 
   return { nodes, edges, zones, bounds };

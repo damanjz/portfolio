@@ -160,10 +160,30 @@ svg.board-wires path.w-art  { stroke: color-mix(in oklab, var(--art) 45%, var(--
 .node .n-met { font-family: var(--font-mono), ui-monospace, monospace; font-size: 10px; color: var(--dim); margin-top: 8px; }
 .node .n-met em { font-style: normal; color: var(--acc); font-weight: 600; }
 
-/* project root node — the openable one */
-.node.n-proj { cursor: pointer; }
-.node.n-proj:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
-.node.n-proj .n-open { font-family: var(--font-mono), ui-monospace, monospace; font-size: 9px; color: var(--faint); margin-top: 9px; letter-spacing: 0.08em; }
+/* project root node */
+.node.n-proj .n-title-link { display: inline-flex; align-items: baseline; gap: 5px; color: var(--ink); text-decoration: none; }
+.node.n-proj .n-title-link:hover { color: var(--acc); }
+.node.n-proj .n-go { font-size: 11px; color: var(--faint); transition: color 150ms, transform 150ms; }
+.node.n-proj .n-title-link:hover .n-go { color: var(--acc); }
+.node .n-metlbl { color: var(--faint); font-weight: 400; }
+/* the explicit expand control — clearly a button, separate from drag + page */
+.n-expand {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 11px;
+  font-family: var(--font-mono), ui-monospace, monospace; font-size: 9.5px; letter-spacing: 0.1em;
+  color: var(--dim); background: color-mix(in srgb, var(--acc) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--acc) 30%, var(--node-bd)); border-radius: 5px;
+  padding: 5px 9px; cursor: pointer; transition: background 150ms, color 150ms, border-color 150ms;
+}
+.n-expand:hover { color: var(--ink); background: color-mix(in srgb, var(--acc) 16%, transparent); border-color: var(--acc); }
+.n-expand:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.n-expand-ico { font-size: 13px; line-height: 1; width: 12px; text-align: center; color: var(--acc); }
+
+/* stage decisions: choice + reason, all shown (the tree carries the meat) */
+.n-decisions { list-style: none; margin: 8px 0 0; padding: 0; }
+.n-decisions li { margin-top: 6px; font-size: 11px; line-height: 1.45; }
+.n-decisions li:first-child { margin-top: 0; }
+.n-decisions .d-choice { color: var(--acc); font-size: 10.5px; font-weight: 600; }
+.n-decisions .d-reason { color: var(--dim); }
 
 /* stage-kind accents */
 .k-idea .n-kicker, .k-idea .dot { color: var(--acc); }

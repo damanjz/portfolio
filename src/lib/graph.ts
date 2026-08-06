@@ -28,12 +28,14 @@ export type Stage = {
   status?: Project["status"];
 };
 
-/** A short, node-sized excerpt: first sentence(s) up to ~140 chars. */
-function excerpt(body: string, max = 150): string {
+/** Node-sized excerpt. Generous by default so stage cards carry real substance
+ *  (the tree is the meat; the project page is the full deep-dive). Only very
+ *  long sections get trimmed at a sentence boundary. */
+function excerpt(body: string, max = 320): string {
   if (body.length <= max) return body;
   const cut = body.slice(0, max);
   const lastStop = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("; "));
-  return (lastStop > 60 ? cut.slice(0, lastStop + 1) : cut.trimEnd()) + "…";
+  return (lastStop > 120 ? cut.slice(0, lastStop + 1) : cut.trimEnd()) + "…";
 }
 
 const STATUS_END_LABEL: Record<Project["status"], string> = {

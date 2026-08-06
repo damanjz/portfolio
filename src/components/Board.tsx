@@ -141,7 +141,7 @@ function Node({
       <Link
         href={`/projects/${p.slug}`}
         className="node n-plate"
-        style={{ ...base, height: 132 }}
+        style={{ ...base, height: 150 }}
         {...nid} {...dragHandle}
         aria-label={`${p.name} — ${p.tagline}`}
       >
@@ -160,33 +160,37 @@ function Node({
   if (n.role === "proj" && n.project) {
     const p = n.project;
     return (
-      <div
-        className="node n-proj"
-        style={base}
-        {...nid} {...dragHandle}
-        role="button"
-        tabIndex={0}
-        aria-expanded={expanded}
-        onClick={() => onToggle(p.slug)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            onToggle(p.slug);
-          }
-        }}
-      >
+      <div className="node n-proj" style={base} {...nid} {...dragHandle} aria-expanded={expanded}>
         <div className="n-kicker kicker">
           <span className="dot" />
           {p.num} · {p.category}
         </div>
-        <div className="n-title">{p.name}</div>
+        {/* title navigates into the project's deep-dive page */}
+        <Link href={`/projects/${p.slug}`} className="n-title n-title-link" draggable={false}>
+          {p.name} <span className="n-go">↗</span>
+        </Link>
         <div className="n-body">{p.description}</div>
         {p.metric && (
           <div className="n-met">
             <em>{p.metric.value}</em>
+            {p.metric.label ? <span className="n-metlbl"> {p.metric.label}</span> : null}
           </div>
         )}
-        <div className="n-open">{expanded ? "▾ TRACING THE BUILD" : "▸ CLICK TO TRACE THE BUILD"}</div>
+        {/* explicit expand control — toggles the DAG tree; separate from drag + page */}
+        <button
+          type="button"
+          className="n-expand"
+          aria-expanded={expanded}
+          aria-label={expanded ? `Collapse ${p.name} build tree` : `Expand ${p.name} build tree`}
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggle(p.slug);
+          }}
+        >
+          <span className="n-expand-ico">{expanded ? "−" : "+"}</span>
+          {expanded ? "COLLAPSE BUILD" : "TRACE THE BUILD"}
+        </button>
       </div>
     );
   }
@@ -204,15 +208,14 @@ function Node({
         <div className="n-title">{s.title}</div>
         {s.body && <div className="n-body">{s.body}</div>}
         {s.decisions && (
-          <div className="n-body" style={{ marginTop: 6 }}>
-            {s.decisions.slice(0, 3).map((d, i) => (
-              <div key={i} style={{ marginTop: i ? 4 : 0 }}>
-                <span className="mono" style={{ fontSize: 10.5, color: "var(--acc)" }}>
-                  {d.choice}
-                </span>
-              </div>
+          <ul className="n-decisions">
+            {s.decisions.map((d, i) => (
+              <li key={i}>
+                <span className="d-choice mono">{d.choice}</span>
+                <span className="d-reason"> — {d.reason}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
     );
@@ -353,7 +356,9 @@ export default function Board() {
   const dragState = useRef<{ id: string; sx: number; sy: number; ox: number; oy: number; moved: boolean } | null>(null);
   const onNodeDragStart = useCallback(
     (e: React.PointerEvent, id: string) => {
-      // let real links/buttons inside a node work; drag starts on the card body
+      // don't start a drag from a link or button inside the card — those are
+      // their own actions (open page / expand tree)
+      if ((e.target as HTMLElement).closest("a, button")) return;
       const node = model.nodes.find((n) => n.id === id);
       if (!node) return;
       const start = pos[id] ?? { x: node.x, y: node.y };
@@ -479,7 +484,9 @@ export default function Board() {
       ox = 0,
       oy = 0;
     const onDown = (e: PointerEvent) => {
-      if ((e.target as HTMLElement).closest(".n-proj, .n-plate, a, button")) return;
+      // any node (and any control) handles its own pointer — the board only
+      // pans from the empty background, so dragging a card never moves the board
+      if ((e.target as HTMLElement).closest(".node, a, button")) return;
       down = true;
       sx = e.clientX;
       sy = e.clientY;
