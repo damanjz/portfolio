@@ -31,10 +31,25 @@ export type Zone = {
   dy: number;
 };
 
+/** A backing container rectangle drawn behind nodes. `kind` picks its styling
+ *  ("group" = the big outer container, "item" = one project/plate). `member`
+ *  ids let the Board recompute a box's bounds live from its nodes' positions. */
+export type Box = {
+  id: string;
+  kind: "group" | "item";
+  label?: string; // shown as the box's header (groups + items)
+  members: string[]; // node ids this box wraps
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
 export type BoardModel = {
   nodes: PlacedNode[];
   edges: [string, string, ("ship" | "art" | undefined)?][];
   zones: Zone[];
+  boxes: Box[];
   bounds: { w: number; h: number };
 };
 
@@ -80,66 +95,105 @@ export function buildBoard(projects: Project[]): BoardModel {
   edges.push(["howto", "about"]);
   edges.push(["about", "contact"]);
 
-  // ── SYSTEMS: each project is its OWN section (label band + root + DAG row).
-  //    Sections stack with SECTION_PITCH so an open DAG never reaches the next.
-  const SYS_COL = WELCOME_X + WELCOME_W + COL_GAP; // clear of the welcome column
-  const SYS_STAGE0 = SYS_COL + ROOT_W + 120;
-  const sysTop = ROW0 + SECTION_LABEL_H; // first section's cards sit below its label
+  const boxes: Box[] = [];
+  const BOX_PAD = 26; // inner padding of item boxes around their cards
+  const GROUP_PAD = 44; // outer padding of the group container
+  const GROUP_HEADER = 52; // header band inside a group box for its title
+
+  // ══ ART GROUP (LEFT of systems, fully separated) ══════════════════════════
+  //    Each plate is its own item box; all plates live in one group box.
+  const ART_COL = WELCOME_X + WELCOME_W + COL_GAP;
+  const PLATE_W = 260;
+  const PLATE_H = 168;
+  const PLATE_PITCH = 250; // vertical distance between plate item boxes
+  const artInnerTop = ROW0 + GROUP_HEADER + GROUP_PAD;
+  const artHubY = artInnerTop;
+  nodes.push({ id: "art-hub", role: "art", x: ART_COL + GROUP_PAD, y: artHubY, w: 260 });
+  edges.push(["origin", "art-hub", "art"]);
+  const artItemBoxes: Box[] = [];
+  let artMaxRight = ART_COL + GROUP_PAD + 260;
+  art.forEach((p, i) => {
+    const px = ART_COL + GROUP_PAD;
+    const py = artHubY + 240 + i * PLATE_PITCH;
+    const id = `plate-${p.slug}`;
+    nodes.push({ id, role: "plate", x: px, y: py, w: PLATE_W, plate: p });
+    edges.push([i === 0 ? "art-hub" : `plate-${art[i - 1].slug}`, id, "art"]);
+    artItemBoxes.push({
+      id: `box-${id}`, kind: "item", label: `${p.num} · ${p.name}`,
+      members: [id],
+      x: px - BOX_PAD, y: py - BOX_PAD - 22, w: PLATE_W + BOX_PAD * 2, h: PLATE_H + BOX_PAD * 2 + 22,
+    });
+    if (px + PLATE_W > artMaxRight) artMaxRight = px + PLATE_W;
+  });
+  const artInnerBottom = artHubY + 240 + (art.length - 1) * PLATE_PITCH + PLATE_H + BOX_PAD;
+  const ART_GROUP = {
+    id: "group-art", kind: "group" as const, label: "◆ THE CRAFT — 3D / TECHNICAL ART",
+    members: ["art-hub", ...art.map((p) => `plate-${p.slug}`)],
+    x: ART_COL, y: ROW0,
+    w: artMaxRight + GROUP_PAD - ART_COL,
+    h: artInnerBottom + GROUP_PAD - ROW0,
+  };
+  boxes.push(ART_GROUP, ...artItemBoxes);
+
+  // ══ SYSTEMS GROUP (RIGHT of art) ══════════════════════════════════════════
+  //    Each project is an item box (root + its DAG row); all in one group box.
+  const SYS_COL = ART_GROUP.x + ART_GROUP.w + COL_GAP;
+  const SYS_INNER_X = SYS_COL + GROUP_PAD;
+  const SYS_STAGE0 = SYS_INNER_X + ROOT_W + 110;
+  const sysTop = ROW0 + GROUP_HEADER + GROUP_PAD;
   let maxRight = SYS_STAGE0;
-  const sysZones: Zone[] = [];
+  const sysItemBoxes: Box[] = [];
   systems.forEach((p, i) => {
-    const sectionTop = sysTop + i * SECTION_PITCH; // top of this section's card row
-    const rootY = sectionTop;
+    const rootY = sysTop + i * SECTION_PITCH;
     const rootId = `root-${p.slug}`;
-    nodes.push({ id: rootId, role: "proj", x: SYS_COL, y: rootY, w: ROOT_W, project: p });
+    nodes.push({ id: rootId, role: "proj", x: SYS_INNER_X, y: rootY, w: ROOT_W, project: p });
     edges.push(["origin", rootId]);
 
-    // per-project section label, in the header band ABOVE the cards (never over)
-    sysZones.push({
-      label: `◆ ${p.num} · ${p.name.toUpperCase()}`,
-      anchor: rootId, dx: 0, dy: -(SECTION_LABEL_H - 12),
-      x: SYS_COL, y: rootY - (SECTION_LABEL_H - 12),
-    });
-
-    // the DAG flows straight right on the SAME row — no vertical fan, so the
-    // whole section is one clean horizontal band that can't touch its neighbours
     const stages = deriveStages(p);
+    const members = [rootId];
     let prevId = rootId;
+    let rowRight = SYS_INNER_X + ROOT_W;
     stages.forEach((s, j) => {
       const sx = SYS_STAGE0 + j * STAGE_GAP_X;
       nodes.push({ id: s.id, role: "stage", x: sx, y: rootY, w: STAGE_W, stage: s, project: p });
       edges.push([prevId, s.id, s.kind === "end" ? "ship" : undefined]);
       prevId = s.id;
-      if (sx + STAGE_W > maxRight) maxRight = sx + STAGE_W;
+      members.push(s.id);
+      rowRight = sx + STAGE_W;
+      if (rowRight > maxRight) maxRight = rowRight;
+    });
+    sysItemBoxes.push({
+      id: `box-${rootId}`, kind: "item", label: `${p.num} · ${p.name}`,
+      members,
+      x: SYS_INNER_X - BOX_PAD, y: rootY - BOX_PAD - 22,
+      w: rowRight - SYS_INNER_X + BOX_PAD * 2, h: 150 + BOX_PAD * 2 + 22,
     });
   });
-  const sysBottom = sysTop + (systems.length - 1) * SECTION_PITCH + 260;
+  const sysInnerBottom = sysTop + (systems.length - 1) * SECTION_PITCH + 150 + BOX_PAD;
+  // widen every systems item box to the group's common right edge (tidy column)
+  const sysGroupInnerRight = maxRight;
+  sysItemBoxes.forEach((b) => { b.w = sysGroupInnerRight - (SYS_INNER_X - BOX_PAD) + BOX_PAD; });
+  // the group box must wrap EVERY card in the section (roots + all DAG stages),
+  // so its live bounds include the full DAG width even when expanded
+  const sysAllMembers = nodes
+    .filter((n) => (n.role === "proj" || n.role === "stage") && systems.some((p) => n.project?.slug === p.slug))
+    .map((n) => n.id);
+  const SYS_GROUP: Box = {
+    id: "group-systems", kind: "group", label: "◆ THE WORK — SYSTEMS, EACH DRAWN AS HOW IT GOT BUILT",
+    members: sysAllMembers,
+    x: SYS_COL, y: ROW0,
+    w: sysGroupInnerRight + GROUP_PAD - SYS_COL,
+    h: sysInnerBottom + GROUP_PAD - ROW0,
+  };
+  boxes.push(SYS_GROUP, ...sysItemBoxes);
 
-  // ── CREATIVE / ART ZONE: far right, its own column, well clear of systems.
-  const ART_COL = maxRight + COL_GAP;
-  const artHubY = ROW0;
-  nodes.push({ id: "art-hub", role: "art", x: ART_COL, y: artHubY, w: 240 });
-  edges.push(["origin", "art-hub", "art"]);
-  const PLATE_W = 240;
-  const PLATE_PITCH = 260; // tall plates + caption, no overlap
-  art.forEach((p, i) => {
-    const px = ART_COL + (i % 2 === 0 ? 0 : 300); // two staggered sub-columns, far apart
-    const py = artHubY + 280 + i * PLATE_PITCH;
-    const id = `plate-${p.slug}`;
-    nodes.push({ id, role: "plate", x: px, y: py, w: PLATE_W, plate: p });
-    edges.push([i === 0 ? "art-hub" : `plate-${art[i - 1].slug}`, id, "art"]);
-  });
-  const artBottom = artHubY + 280 + (art.length - 1) * PLATE_PITCH + 220;
-
-  const rightEdge = ART_COL + 300 + PLATE_W + 200;
+  const rightEdge = SYS_GROUP.x + SYS_GROUP.w + 200;
   const bounds = {
     w: rightEdge,
-    h: Math.max(sysBottom, artBottom, wContact + 300) + 120,
+    h: Math.max(SYS_GROUP.y + SYS_GROUP.h, ART_GROUP.y + ART_GROUP.h, wContact + 300) + 120,
   };
 
-  // ── ZONE LABELS — each label anchors to its section's lead node and sits in
-  //    a clear band ABOVE it (never over the cards), horizontal, and follows
-  //    the node when dragged. Every systems project gets its OWN section label.
+  // welcome-column label only (project/art labels now live on their boxes)
   const LABEL_DY = -(SECTION_LABEL_H - 12);
   const zones: Zone[] = [
     {
@@ -147,14 +201,7 @@ export function buildBoard(projects: Project[]): BoardModel {
       anchor: "origin", dx: 0, dy: LABEL_DY,
       x: WELCOME_X, y: wOrigin + LABEL_DY,
     },
-    // per-project systems section labels (built in the loop above)
-    ...sysZones,
-    {
-      label: "◆ THE CRAFT — 3D / technical art",
-      anchor: "art-hub", dx: 0, dy: LABEL_DY,
-      x: ART_COL, y: artHubY + LABEL_DY,
-    },
   ];
 
-  return { nodes, edges, zones, bounds };
+  return { nodes, edges, zones, boxes, bounds };
 }

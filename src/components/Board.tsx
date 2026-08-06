@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { projects, site } from "@/content";
 import { asset } from "@/lib/asset";
-import { buildBoard, type PlacedNode } from "@/lib/board-layout";
+import { buildBoard, type PlacedNode, type Box } from "@/lib/board-layout";
 import type { Stage } from "@/lib/graph";
 
 /* ---- one node ---- */
@@ -578,10 +578,48 @@ export default function Board() {
     return fitTo(ids, 70);
   };
 
+  // Box bounds:
+  //  · GROUP boxes keep their designed static rect (a stable container that
+  //    doesn't jump when DAGs open/close).
+  //  · ITEM boxes follow their members' CURRENT positions (so a dragged card's
+  //    box moves with it), sized from measured heights.
+  const liveBox = (b: Box) => {
+    if (b.kind === "group") return { x: b.x, y: b.y, w: b.w, h: b.h };
+    const world = worldRef.current;
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const id of b.members) {
+      const node = model.nodes.find((n) => n.id === id);
+      if (!node) continue;
+      const p = posOf(node);
+      const el = world?.querySelector<HTMLElement>(`[data-node="${id}"]`);
+      const h = el?.offsetHeight ?? 120;
+      x0 = Math.min(x0, p.x);
+      y0 = Math.min(y0, p.y);
+      x1 = Math.max(x1, p.x + node.w);
+      y1 = Math.max(y1, p.y + h);
+    }
+    if (!isFinite(x0)) return { x: b.x, y: b.y, w: b.w, h: b.h };
+    const padX = 24, padTop = 34, padBottom = 22;
+    return { x: x0 - padX, y: y0 - padTop, w: x1 - x0 + padX * 2, h: y1 - y0 + padTop + padBottom };
+  };
+
   return (
     <div ref={stageRef} className="board-stage" aria-label="Portfolio board — drag to pan, scroll to zoom">
       <div ref={worldRef} className="board-world">
         <svg ref={svgRef} className="board-wires" />
+        {/* container boxes render BEHIND nodes: group boxes first, then item boxes */}
+        {[...model.boxes].sort((a, b) => (a.kind === "group" ? -1 : 1) - (b.kind === "group" ? -1 : 1)).map((b) => {
+          const r = liveBox(b);
+          return (
+            <div
+              key={b.id}
+              className={`board-box board-box-${b.kind}`}
+              style={{ left: r.x, top: r.y, width: r.w, height: r.h }}
+            >
+              {b.label && <span className="board-box-label">{b.label}</span>}
+            </div>
+          );
+        })}
         {model.zones.map((z) => {
           // the label tracks its section's lead node's CURRENT position, so it
           // follows when that node is dragged
