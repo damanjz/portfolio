@@ -62,7 +62,7 @@ function Node({
           <li><b>Drag</b> the background to pan · <b>scroll</b> to zoom out</li>
           <li><b>Click a project</b> to trace its build, idea → shipped</li>
           <li><b>Grab a card&apos;s top strip</b> to move it · body text selects</li>
-          <li><b>Shift-drag</b> a box to select many · then drag them together</li>
+          <li><b>⿴ Select tool</b> (bottom-left) → box several cards, move together</li>
           <li><b>☰ Outline</b> up top = the whole thing as a plain list</li>
           <li><b>◑ / ◐</b> toggles light / dark</li>
         </ul>
@@ -240,11 +240,16 @@ export default function Board() {
 
   // per-node position overrides (drag) — persisted, resettable
   const [pos, setPos] = useState<Record<string, { x: number; y: number }>>({});
-  // marquee multi-select: the set of selected node ids + the live marquee rect
+  // marquee multi-select: a SELECT TOOL toggles marquee mode (no modifier key)
+  const [tool, setTool] = useState<"pan" | "select">("pan");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [marquee, setMarquee] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
+  const toolRef = useRef(tool);
+  toolRef.current = tool;
+  // bumped after DAG stages mount/unmount so item boxes re-measure their bounds
+  const [, setBoxTick] = useState(0);
   useEffect(() => {
     try {
       const raw = localStorage.getItem(POS_KEY);
@@ -493,11 +498,11 @@ export default function Board() {
     [model.nodes, fitTo],
   );
 
-  // redraw wires when the visible set changes — after a frame so newly-mounted
-  // stage nodes are measurable, and once more after fonts settle node heights.
+  // redraw wires + re-measure boxes when the visible set changes — after a
+  // frame so newly-mounted stage nodes are measurable (box hugs then grows).
   useEffect(() => {
-    const r1 = requestAnimationFrame(drawWires);
-    const t = setTimeout(drawWires, 120);
+    const r1 = requestAnimationFrame(() => { drawWires(); setBoxTick((t) => t + 1); });
+    const t = setTimeout(() => { drawWires(); setBoxTick((t) => t + 1); }, 140);
     return () => {
       cancelAnimationFrame(r1);
       clearTimeout(t);
@@ -542,8 +547,8 @@ export default function Board() {
       if ((e.target as HTMLElement).closest(".node, a, button")) return;
       sx = e.clientX;
       sy = e.clientY;
-      if (e.shiftKey) {
-        // Shift + drag on empty = rubber-band marquee select
+      if (toolRef.current === "select") {
+        // SELECT tool active: drag on empty = rubber-band marquee select
         mode = "marquee";
         const w = toWorld(e.clientX, e.clientY);
         mwx = w.x;
@@ -655,21 +660,23 @@ export default function Board() {
     for (const id of b.members) {
       const node = model.nodes.find((n) => n.id === id);
       if (!node) continue;
-      const p = posOf(node);
+      // ONLY wrap members that are actually on screen — a collapsed DAG's stage
+      // nodes aren't rendered, so the box hugs just the visible card(s).
       const el = world?.querySelector<HTMLElement>(`[data-node="${id}"]`);
-      const h = el?.offsetHeight ?? 120;
+      if (!el) continue;
+      const p = posOf(node);
       x0 = Math.min(x0, p.x);
       y0 = Math.min(y0, p.y);
-      x1 = Math.max(x1, p.x + node.w);
-      y1 = Math.max(y1, p.y + h);
+      x1 = Math.max(x1, p.x + el.offsetWidth);
+      y1 = Math.max(y1, p.y + el.offsetHeight);
     }
     if (!isFinite(x0)) return { x: b.x, y: b.y, w: b.w, h: b.h };
-    const padX = 24, padTop = 34, padBottom = 22;
+    const padX = 22, padTop = 32, padBottom = 20;
     return { x: x0 - padX, y: y0 - padTop, w: x1 - x0 + padX * 2, h: y1 - y0 + padTop + padBottom };
   };
 
   return (
-    <div ref={stageRef} className="board-stage" aria-label="Portfolio board — drag to pan, scroll to zoom">
+    <div ref={stageRef} className={`board-stage ${tool === "select" ? "selecting" : ""}`} aria-label="Portfolio board — drag to pan, scroll to zoom">
       <div ref={worldRef} className="board-world">
         <svg ref={svgRef} className="board-wires" />
         {/* per-project / per-plate item boxes (group section boxes removed on
@@ -719,12 +726,25 @@ export default function Board() {
         ))}
       </div>
 
-      {/* zone rail */}
-      <div className="hud" style={{ left: 18, bottom: 18, display: "flex", gap: 7, flexWrap: "wrap", maxWidth: "60vw" }}>
+      {/* tool rail (bottom-left): pan vs select, fits, reset */}
+      <div className="hud" style={{ left: 18, bottom: 18, display: "flex", gap: 7, flexWrap: "wrap", maxWidth: "62vw" }}>
+        <button
+          className="hud-btn"
+          aria-current={tool === "pan"}
+          onClick={() => { setTool("pan"); setSelected(new Set()); }}
+          title="Pan / move tool"
+        >✋ MOVE</button>
+        <button
+          className="hud-btn"
+          aria-current={tool === "select"}
+          onClick={() => setTool("select")}
+          title="Drag a box to select multiple cards, then drag them together"
+        >⿴ SELECT{selected.size ? ` (${selected.size})` : ""}</button>
+        <span style={{ width: 1, alignSelf: "stretch", background: "var(--line)", margin: "2px 2px" }} />
         <button className="hud-btn" onClick={() => fitZone("all")}>◱ WHOLE BOARD</button>
         <button className="hud-btn" onClick={() => fitZone("work")}>◧ THE WORK</button>
         <button className="hud-btn" onClick={() => fitZone("art")}>◨ THE PLATES</button>
-        <button className="hud-btn" onClick={resetLayout} title="Restore the default arrangement">↺ RESET LAYOUT</button>
+        <button className="hud-btn" onClick={resetLayout} title="Restore the default arrangement">↺ RESET</button>
       </div>
       {/* zoom — out only; 1× is native and crisp */}
       <div className="hud" style={{ right: 18, bottom: 18, display: "flex", flexDirection: "column", gap: 6 }}>

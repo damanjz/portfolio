@@ -162,15 +162,23 @@ body {
 }
 .board-box-item .board-box-label { left: 16px; top: 11px; font-size: 10px; letter-spacing: 0.12em; color: var(--dim); }
 
-/* marquee rubber-band + selected-node highlight */
+/* select-tool mode: crosshair cursor over the empty board */
+.board-stage.selecting { cursor: crosshair; }
+/* marquee rubber-band — highly visible while dragging */
 .board-marquee {
-  position: absolute; z-index: 5; pointer-events: none; border-radius: 4px;
-  border: 1.5px dashed var(--acc);
-  background: color-mix(in srgb, var(--acc) 10%, transparent);
+  position: absolute; z-index: 6; pointer-events: none; border-radius: 4px;
+  border: 2px solid var(--acc);
+  background: color-mix(in srgb, var(--acc) 16%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--acc) 30%, transparent), 0 0 24px color-mix(in srgb, var(--acc) 22%, transparent);
 }
+/* selected node — obvious accent ring + lift */
 .node[data-selected="true"] {
-  outline: 2px solid var(--acc); outline-offset: 2px;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--acc) 18%, transparent), 2px 2px 0 var(--shadow);
+  outline: 2.5px solid var(--acc); outline-offset: 3px;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--acc) 22%, transparent), 0 10px 30px var(--shadow);
+}
+.node[data-selected="true"]::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: color-mix(in srgb, var(--acc) 6%, transparent); pointer-events: none;
 }
 
 svg.board-wires { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 1; }
