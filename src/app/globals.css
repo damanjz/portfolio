@@ -244,6 +244,57 @@ svg.board-wires path.w-art  { stroke: color-mix(in oklab, var(--art) 45%, var(--
 .skip-link { position: fixed; left: -999px; top: 8px; z-index: 100; background: var(--acc); color: #fff; padding: 8px 14px; border-radius: 6px; }
 .skip-link:focus { left: 8px; }
 
+/* ===== project deep-dive pages (scrollable documents, both themes) ===== */
+.proj-page { min-height: 100%; background: var(--ground); color: var(--ink); }
+.proj-bar {
+  position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 16px;
+  padding: 12px clamp(18px, 4vw, 48px);
+  background: color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
+}
+.proj-back { font-family: var(--font-mono), ui-monospace, monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--dim); text-decoration: none; }
+.proj-back:hover { color: var(--acc); }
+.proj-bar-meta { margin-left: 0; font-size: 10.5px; letter-spacing: 0.12em; color: var(--faint); }
+.proj-bar .hud-btn { margin-left: auto; }
+
+.proj-main { max-width: 1180px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 48px) 120px; }
+.proj-hero { padding: clamp(48px, 8vh, 96px) 0 40px; }
+.proj-title { font-size: clamp(38px, 6vw, 68px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.02; margin-top: 14px; }
+.proj-summary { font-size: clamp(17px, 1.6vw, 21px); line-height: 1.5; color: var(--dim); max-width: 44ch; margin-top: 16px; }
+.proj-stack { font-size: 10.5px; letter-spacing: 0.12em; color: var(--faint); margin-top: 20px; }
+
+.proj-grid { display: grid; grid-template-columns: 1fr; gap: 40px; }
+@media (min-width: 940px) { .proj-grid { grid-template-columns: 1fr 280px; gap: 56px; } }
+.proj-reels { display: grid; gap: 24px; margin-bottom: 40px; }
+@media (min-width: 620px) { .proj-reels { grid-template-columns: 1fr 1fr; } }
+
+.proj-chapter { margin-top: 48px; }
+.proj-chapter-head { display: flex; align-items: baseline; gap: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.proj-chapter-num { font-size: 12px; font-weight: 500; color: var(--acc); }
+.proj-chapter-title { font-size: clamp(22px, 3vw, 30px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
+.proj-chapter-body { font-size: 16px; line-height: 1.75; color: var(--ink); max-width: 64ch; margin-top: 18px; }
+
+.proj-decisions { margin-top: 18px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; max-width: 64ch; }
+.proj-decision { display: grid; gap: 4px; padding: 13px 16px; border-bottom: 1px solid var(--line); font-size: 12px; line-height: 1.5; }
+@media (min-width: 560px) { .proj-decision { grid-template-columns: 230px 1fr; gap: 16px; } }
+.proj-decision:last-child { border-bottom: 0; }
+.proj-decision .pd-choice { color: var(--acc); font-weight: 600; letter-spacing: 0.03em; }
+.proj-decision .pd-reason { color: var(--dim); }
+
+.proj-next { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 64px; border-top: 1px solid var(--line); padding-top: 20px; text-decoration: none; }
+.proj-next-label { font-size: 11px; letter-spacing: 0.1em; color: var(--faint); }
+.proj-next-name { font-size: clamp(20px, 2.4vw, 26px); font-weight: 600; color: var(--ink); }
+.proj-next:hover .proj-next-name { color: var(--acc); }
+
+.proj-aside .proj-spec { position: sticky; top: 72px; }
+.proj-spec-label { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; color: var(--faint); margin-bottom: 10px; }
+.proj-spec-rows { border-top: 1px solid var(--ink); font-size: 10.5px; letter-spacing: 0.05em; }
+.proj-spec-row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); text-decoration: none; }
+.proj-spec-row .ps-label { color: var(--faint); }
+.proj-spec-row .ps-value { text-align: right; color: var(--ink); }
+.proj-spec-row .ps-acc { color: var(--acc); font-weight: 600; }
+a.proj-spec-row:hover .ps-value { text-decoration: underline; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
 }
