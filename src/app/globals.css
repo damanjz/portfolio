@@ -103,6 +103,9 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow: hidden;
+  /* text is not selectable anywhere on the site (Daman, 2026-08-07) */
+  user-select: none;
+  -webkit-user-select: none;
   transition: background 200ms ease, color 200ms ease;
 }
 ::selection { background: color-mix(in srgb, var(--acc) 22%, transparent); color: var(--ink); }
@@ -202,9 +205,6 @@ svg.board-wires path.w-art  { stroke: color-mix(in oklab, var(--art) 45%, var(--
 .node .n-kicker:active { cursor: grabbing; }
 .node .n-drag { cursor: grab; }
 .node .n-drag:active { cursor: grabbing; }
-/* body text: selectable */
-.node .n-title, .node .n-body, .node .n-lede, .node .n-met, .node .n-howlist,
-.node .n-decisions, .node .p-cap { user-select: text; -webkit-user-select: text; cursor: text; }
 .node .n-title-link, .node a, .node button { cursor: pointer; }
 .node .n-kicker .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .node .n-title { font-family: var(--font-mono), ui-monospace, monospace; font-size: 14px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; }
