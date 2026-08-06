@@ -4,8 +4,12 @@ import { useReveal } from "@/lib/useReveal";
 
 /**
  * THE LEDGER RULE — the signature element, used identically everywhere:
- * number — title — right-aligned mono readout, on a full-width 1px rule
- * that draws in once when scrolled into view (600ms).
+ * number — title — right-aligned mono readout, on a full-width 1px rule.
+ *
+ * Craft pass (2026-08-06): the ledger now PRINTS as a sequence, the way a
+ * plotter would lay it down — the rule draws (600ms), the number inks in
+ * (+60ms), the title prints left-to-right (+140ms), then the readout
+ * (+320ms). One gesture, three instruments, still one element.
  *
  * `tone` picks ink (paper sections) or plate (the umber Plates band).
  */
@@ -34,17 +38,24 @@ export default function Ledger({
       data-inview={inView}
       className={`ledger ledger-draw ${ruleCls}`}
     >
-      <span className={`mono text-xs font-medium ${numCls}`}>{num}</span>
       <span
-        className={`serif font-semibold tracking-[-0.01em] ${titleCls} ${
+        className={`fade mono text-xs font-medium ${numCls}`}
+        style={{ transitionDelay: "60ms" }}
+      >
+        {num}
+      </span>
+      <span
+        className={`printout serif font-semibold tracking-[-0.01em] ${titleCls} ${
           size === "lg" ? "text-[26px] leading-none sm:text-3xl" : "text-2xl leading-none"
         }`}
+        style={{ ["--set" as string]: "140ms" }}
       >
         {title}
       </span>
       {readout && (
         <span
-          className={`mono ml-auto text-right text-[10px] tracking-[0.1em] ${readoutCls}`}
+          className={`printout mono ml-auto text-right text-[10px] tracking-[0.1em] ${readoutCls}`}
+          style={{ ["--set" as string]: "320ms" }}
         >
           {readout}
         </span>

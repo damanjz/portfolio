@@ -33,7 +33,7 @@ function Row({ p }: { p: Project }) {
     <div ref={ref} data-inview={inView}>
       <Link
         href={`/projects/${p.slug}`}
-        className="group fade grid grid-cols-[44px_1fr_100px] items-center gap-4 border-b border-hairline py-6 sm:grid-cols-[52px_1fr_110px] sm:gap-6 lg:grid-cols-[52px_1fr_260px_200px_110px] lg:py-[30px]"
+        className="group fade grid grid-cols-[44px_1fr_100px] items-center gap-4 border-b border-hairline py-6 transition-colors duration-150 hover:border-ink sm:grid-cols-[52px_1fr_110px] sm:gap-6 lg:grid-cols-[52px_1fr_260px_200px_110px] lg:py-[30px]"
       >
         {/* index number — turns blue on hover (the only row hover motion) */}
         <span className="mono text-xs text-faint transition-colors duration-150 group-hover:text-acc">

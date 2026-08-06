@@ -31,7 +31,13 @@
   --glow: transparent;
   color-scheme: light;
 }
-:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="light"] {
+  --ground: #f4f2ec; --grid: #e7e4da; --ink: #1a1917; --dim: #77736a;
+  --faint: #a9a295; --line: #c3bdaf; --node: #fffdf8; --node-bd: #d8d3c6;
+  --node-hi: #fbf9f3; --acc: #d1442b; --art: #a06a1e; --ship: #2f8f5f;
+  --dev: #c98a2e; --shadow: rgba(26,25,23,0.08); --glow: transparent;
+  color-scheme: light;
+}
 
 :root[data-theme="dark"] {
   --ground: #0c0c0e;
