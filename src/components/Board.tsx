@@ -564,11 +564,19 @@ export default function Board() {
     <div ref={stageRef} className="board-stage" aria-label="Portfolio board — drag to pan, scroll to zoom">
       <div ref={worldRef} className="board-world">
         <svg ref={svgRef} className="board-wires" />
-        {model.zones.map((z) => (
-          <div key={z.label} className="zone-title" style={{ left: z.x, top: z.y }}>
-            {z.label}
-          </div>
-        ))}
+        {model.zones.map((z) => {
+          // the label tracks its section's lead node's CURRENT position, so it
+          // follows when that node is dragged
+          const anchor = model.nodes.find((n) => n.id === z.anchor);
+          const ap = anchor ? posOf(anchor) : null;
+          const left = ap ? ap.x + z.dx : z.x;
+          const top = ap ? ap.y + z.dy : z.y;
+          return (
+            <div key={z.label} className="zone-title" style={{ left, top }}>
+              {z.label}
+            </div>
+          );
+        })}
         {visibleNodes.map((n) => (
           <Node
             key={n.id}
