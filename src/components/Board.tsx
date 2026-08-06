@@ -12,17 +12,19 @@ function Node({
   n,
   pos,
   expanded,
+  selected,
   onToggle,
   onDragStart,
 }: {
   n: PlacedNode;
   pos: { x: number; y: number };
   expanded: boolean;
+  selected: boolean;
   onToggle: (slug: string) => void;
   onDragStart: (e: React.PointerEvent, id: string) => void;
 }) {
   const base: React.CSSProperties = { left: pos.x, top: pos.y, width: n.w };
-  const nid = { "data-node": n.id } as Record<string, string>;
+  const nid = { "data-node": n.id, ...(selected ? { "data-selected": "true" } : {}) } as Record<string, string>;
   // every node is a drag handle (the board pan ignores pointerdowns on nodes)
   const dragHandle = { onPointerDown: (e: React.PointerEvent) => onDragStart(e, n.id) };
 
@@ -59,7 +61,8 @@ function Node({
         <ul className="n-howlist mono">
           <li><b>Drag</b> the background to pan · <b>scroll</b> to zoom out</li>
           <li><b>Click a project</b> to trace its build, idea → shipped</li>
-          <li><b>Drag any card</b> to rearrange — it&apos;s your board too</li>
+          <li><b>Grab a card&apos;s top strip</b> to move it · body text selects</li>
+          <li><b>Shift-drag</b> a box to select many · then drag them together</li>
           <li><b>☰ Outline</b> up top = the whole thing as a plain list</li>
           <li><b>◑ / ◐</b> toggles light / dark</li>
         </ul>
@@ -237,6 +240,11 @@ export default function Board() {
 
   // per-node position overrides (drag) — persisted, resettable
   const [pos, setPos] = useState<Record<string, { x: number; y: number }>>({});
+  // marquee multi-select: the set of selected node ids + the live marquee rect
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [marquee, setMarquee] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+  const selectedRef = useRef(selected);
+  selectedRef.current = selected;
   useEffect(() => {
     try {
       const raw = localStorage.getItem(POS_KEY);
@@ -316,6 +324,11 @@ export default function Board() {
   useEffect(() => {
     drawWiresRef.current = drawWires;
   }, [drawWires]);
+  // refs so the once-bound pointer handlers always see current nodes/positions
+  const visibleNodesRef = useRef(visibleNodes);
+  visibleNodesRef.current = visibleNodes;
+  const posOfRef = useRef(posOf);
+  posOfRef.current = posOf;
 
   // fit a set of nodes into view
   const fitTo = useCallback(
@@ -357,7 +370,11 @@ export default function Board() {
   //      its DRAG STRIP (the kicker/handle row); the body allows text select. ─
   const DRAG_THRESHOLD = 5; // px before a press becomes a drag
   const dragState = useRef<
-    | { id: string; sx: number; sy: number; ox: number; oy: number; active: boolean; pointerId: number; captureEl: HTMLElement }
+    | {
+        id: string; sx: number; sy: number; ox: number; oy: number;
+        active: boolean; pointerId: number; captureEl: HTMLElement;
+        group: string[]; starts: Record<string, { x: number; y: number }>;
+      }
     | null
   >(null);
   const onNodeDragStart = useCallback(
@@ -370,9 +387,18 @@ export default function Board() {
       const node = model.nodes.find((n) => n.id === id);
       if (!node) return;
       const start = pos[id] ?? { x: node.x, y: node.y };
+      // if this node is part of a marquee selection, drag the WHOLE group
+      const sel = selectedRef.current;
+      const groupIds = sel.has(id) ? [...sel] : [id];
+      const starts: Record<string, { x: number; y: number }> = {};
+      for (const gid of groupIds) {
+        const gn = model.nodes.find((n) => n.id === gid);
+        if (gn) starts[gid] = pos[gid] ?? { x: gn.x, y: gn.y };
+      }
       dragState.current = {
         id, sx: e.clientX, sy: e.clientY, ox: start.x, oy: start.y,
         active: false, pointerId: e.pointerId, captureEl: e.currentTarget as HTMLElement,
+        group: groupIds, starts,
       };
       e.stopPropagation();
     },
@@ -395,10 +421,15 @@ export default function Board() {
           /* ignore */
         }
       }
-      const el = worldRef.current?.querySelector<HTMLElement>(`[data-node="${d.id}"]`);
-      if (el) {
-        el.style.left = `${d.ox + dx}px`;
-        el.style.top = `${d.oy + dy}px`;
+      // move every node in the drag group by the same delta
+      for (const gid of d.group) {
+        const st = d.starts[gid];
+        if (!st) continue;
+        const gel = worldRef.current?.querySelector<HTMLElement>(`[data-node="${gid}"]`);
+        if (gel) {
+          gel.style.left = `${st.x + dx}px`;
+          gel.style.top = `${st.y + dy}px`;
+        }
       }
       requestAnimationFrame(() => drawWiresRef.current?.());
     };
@@ -406,12 +437,12 @@ export default function Board() {
       const d = dragState.current;
       dragState.current = null;
       if (!d || !d.active) return;
-      const el = worldRef.current?.querySelector<HTMLElement>(`[data-node="${d.id}"]`);
-      if (!el) return;
-      const nx = parseFloat(el.style.left);
-      const ny = parseFloat(el.style.top);
       setPos((prev) => {
-        const next = { ...prev, [d.id]: { x: nx, y: ny } };
+        const next = { ...prev };
+        for (const gid of d.group) {
+          const gel = worldRef.current?.querySelector<HTMLElement>(`[data-node="${gid}"]`);
+          if (gel) next[gid] = { x: parseFloat(gel.style.left), y: parseFloat(gel.style.top) };
+        }
         try {
           localStorage.setItem(POS_KEY, JSON.stringify(next));
         } catch {
@@ -492,35 +523,69 @@ export default function Board() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // pan
+  // pan + marquee select
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
-    let down = false,
-      sx = 0,
-      sy = 0,
-      ox = 0,
-      oy = 0;
+    let mode: "none" | "pan" | "marquee" = "none";
+    let sx = 0, sy = 0, ox = 0, oy = 0;
+    // marquee start in WORLD coords
+    let mwx = 0, mwy = 0;
+    const toWorld = (clientX: number, clientY: number) => {
+      const r = stage.getBoundingClientRect();
+      return {
+        x: (clientX - r.left - view.current.tx) / view.current.s,
+        y: (clientY - r.top - view.current.ty) / view.current.s,
+      };
+    };
     const onDown = (e: PointerEvent) => {
-      // any node (and any control) handles its own pointer — the board only
-      // pans from the empty background, so dragging a card never moves the board
       if ((e.target as HTMLElement).closest(".node, a, button")) return;
-      down = true;
       sx = e.clientX;
       sy = e.clientY;
-      ox = view.current.tx;
-      oy = view.current.ty;
-      stage.classList.add("dragging");
+      if (e.shiftKey) {
+        // Shift + drag on empty = rubber-band marquee select
+        mode = "marquee";
+        const w = toWorld(e.clientX, e.clientY);
+        mwx = w.x;
+        mwy = w.y;
+        setMarquee({ x: mwx, y: mwy, w: 0, h: 0 });
+      } else {
+        // plain drag on empty = pan; a plain click also clears any selection
+        mode = "pan";
+        ox = view.current.tx;
+        oy = view.current.ty;
+        stage.classList.add("dragging");
+      }
       stage.setPointerCapture(e.pointerId);
     };
     const onMove = (e: PointerEvent) => {
-      if (!down) return;
-      view.current.tx = ox + (e.clientX - sx);
-      view.current.ty = oy + (e.clientY - sy);
-      applyView();
+      if (mode === "pan") {
+        view.current.tx = ox + (e.clientX - sx);
+        view.current.ty = oy + (e.clientY - sy);
+        applyView();
+      } else if (mode === "marquee") {
+        const w = toWorld(e.clientX, e.clientY);
+        const x = Math.min(mwx, w.x), y = Math.min(mwy, w.y);
+        const bw = Math.abs(w.x - mwx), bh = Math.abs(w.y - mwy);
+        setMarquee({ x, y, w: bw, h: bh });
+        // live-select nodes whose box intersects the marquee
+        const hit = new Set<string>();
+        for (const n of visibleNodesRef.current) {
+          const p = posOfRef.current(n);
+          const el = worldRef.current?.querySelector<HTMLElement>(`[data-node="${n.id}"]`);
+          const h = el?.offsetHeight ?? 120;
+          if (p.x < x + bw && p.x + n.w > x && p.y < y + bh && p.y + h > y) hit.add(n.id);
+        }
+        setSelected(hit);
+      }
     };
     const onUp = () => {
-      down = false;
+      if (mode === "pan") {
+        // a click that didn't drag clears the selection
+        if (Math.abs(view.current.tx - ox) + Math.abs(view.current.ty - oy) < 3) setSelected(new Set());
+      }
+      if (mode === "marquee") setMarquee(null);
+      mode = "none";
       stage.classList.remove("dragging");
     };
     const onWheel = (e: WheelEvent) => {
@@ -607,19 +672,27 @@ export default function Board() {
     <div ref={stageRef} className="board-stage" aria-label="Portfolio board — drag to pan, scroll to zoom">
       <div ref={worldRef} className="board-world">
         <svg ref={svgRef} className="board-wires" />
-        {/* container boxes render BEHIND nodes: group boxes first, then item boxes */}
-        {[...model.boxes].sort((a, b) => (a.kind === "group" ? -1 : 1) - (b.kind === "group" ? -1 : 1)).map((b) => {
+        {/* per-project / per-plate item boxes (group section boxes removed on
+            Daman's call — the item boxes group each project cleanly enough). */}
+        {model.boxes.filter((b) => b.kind === "item").map((b) => {
           const r = liveBox(b);
           return (
             <div
               key={b.id}
-              className={`board-box board-box-${b.kind}`}
+              className="board-box board-box-item"
               style={{ left: r.x, top: r.y, width: r.w, height: r.h }}
             >
               {b.label && <span className="board-box-label">{b.label}</span>}
             </div>
           );
         })}
+        {/* the marquee rectangle while selecting */}
+        {marquee && (
+          <div
+            className="board-marquee"
+            style={{ left: marquee.x, top: marquee.y, width: marquee.w, height: marquee.h }}
+          />
+        )}
         {model.zones.map((z) => {
           // the label tracks its section's lead node's CURRENT position, so it
           // follows when that node is dragged
@@ -639,6 +712,7 @@ export default function Board() {
             n={n}
             pos={posOf(n)}
             expanded={!!n.project && open.has(n.project.slug)}
+            selected={selected.has(n.id)}
             onToggle={toggle}
             onDragStart={onNodeDragStart}
           />

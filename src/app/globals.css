@@ -162,6 +162,17 @@ body {
 }
 .board-box-item .board-box-label { left: 16px; top: 11px; font-size: 10px; letter-spacing: 0.12em; color: var(--dim); }
 
+/* marquee rubber-band + selected-node highlight */
+.board-marquee {
+  position: absolute; z-index: 5; pointer-events: none; border-radius: 4px;
+  border: 1.5px dashed var(--acc);
+  background: color-mix(in srgb, var(--acc) 10%, transparent);
+}
+.node[data-selected="true"] {
+  outline: 2px solid var(--acc); outline-offset: 2px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--acc) 18%, transparent), 2px 2px 0 var(--shadow);
+}
+
 svg.board-wires { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 1; }
 svg.board-wires path { fill: none; stroke: var(--line); stroke-width: 1.5; }
 svg.board-wires path.w-ship { stroke: color-mix(in oklab, var(--ship) 60%, var(--line)); }
