@@ -14,7 +14,7 @@ export type PlacedNode = {
   x: number;
   y: number;
   w: number;
-  role: "origin" | "proj" | "stage" | "plate" | "art" | "contact";
+  role: "origin" | "proj" | "stage" | "plate" | "art" | "contact" | "about" | "howto";
   project?: Project;
   stage?: Stage;
   plate?: Project; // art project rendered as a plate
@@ -27,16 +27,20 @@ export type BoardModel = {
   bounds: { w: number; h: number };
 };
 
+/* Spread out (2026-08-07, Daman): more breathing room everywhere so the board
+   uses the space instead of feeling cramped. Origin + About + How-to form a
+   welcome column on the left; the work fans out to the right with wide gaps. */
 const COL = {
+  about: 40, // left welcome column: about / origin / how-to stack
   origin: 40,
-  root: 360,
-  stage0: 640, // first stage column; stages step right from here
+  root: 560, // project roots — pushed right to clear the welcome column
+  stage0: 900, // first DAG stage column
 };
-const ROOT_W = 210;
-const STAGE_W = 176;
-const STAGE_GAP_X = 200;
-const ROOT_GAP_Y = 132; // vertical gap between project roots
-const ROW0 = 96;
+const ROOT_W = 230;
+const STAGE_W = 200;
+const STAGE_GAP_X = 260; // wide DAG steps
+const ROOT_GAP_Y = 200; // generous vertical gap between project roots
+const ROW0 = 150;
 
 export function buildBoard(projects: Project[]): BoardModel {
   const systems = projects.filter((p) => p.discipline === "systems");
@@ -45,8 +49,13 @@ export function buildBoard(projects: Project[]): BoardModel {
   const nodes: PlacedNode[] = [];
   const edges: BoardModel["edges"] = [];
 
-  // ORIGIN
-  nodes.push({ id: "origin", role: "origin", x: COL.origin, y: ROW0, w: 262 });
+  // LEFT WELCOME COLUMN — how-to (top) → origin → about (below)
+  // The site opens focused here, so a first-time visitor is oriented.
+  nodes.push({ id: "howto", role: "howto", x: COL.about, y: ROW0 - 40, w: 300 });
+  nodes.push({ id: "origin", role: "origin", x: COL.origin, y: ROW0 + 190, w: 300 });
+  nodes.push({ id: "about", role: "about", x: COL.about, y: ROW0 + 470, w: 300 });
+  edges.push(["howto", "origin"]);
+  edges.push(["origin", "about"]);
 
   // PROJECT ROOTS + their derived DAG stages
   let maxRight = COL.stage0;
@@ -70,32 +79,33 @@ export function buildBoard(projects: Project[]): BoardModel {
     });
   });
 
-  const artBandY = ROW0 + systems.length * ROOT_GAP_Y + 40;
+  // art band sits below the work rows, spanning under the whole board
+  const artBandY = ROW0 + systems.length * ROOT_GAP_Y + 110;
 
-  // ART HUB + PLATES
-  nodes.push({ id: "art-hub", role: "art", x: COL.origin + 60, y: artBandY, w: 190 });
+  // ART HUB + PLATES — the plates get room to breathe, wider gaps
+  nodes.push({ id: "art-hub", role: "art", x: COL.root, y: artBandY, w: 220 });
   edges.push(["origin", "art-hub", "art"]);
   art.forEach((p, i) => {
-    const px = COL.root + i * 190;
-    const py = artBandY + (i % 2 === 0 ? 60 : 96);
+    const px = COL.stage0 + i * 240;
+    const py = artBandY + (i % 2 === 0 ? 20 : 150);
     const id = `plate-${p.slug}`;
-    nodes.push({ id, role: "plate", x: px, y: py, w: 158, plate: p });
+    nodes.push({ id, role: "plate", x: px, y: py, w: 190, plate: p });
     edges.push([i === 0 ? "art-hub" : `plate-${art[i - 1].slug}`, id, "art"]);
   });
 
-  // CONTACT — far right, on the origin row
-  const contactX = maxRight + 90;
-  nodes.push({ id: "contact", role: "contact", x: contactX, y: ROW0, w: 196 });
+  // CONTACT — far right, aligned with the origin row
+  const contactX = maxRight + 120;
+  nodes.push({ id: "contact", role: "contact", x: contactX, y: ROW0 + 190, w: 220 });
 
   const bounds = {
-    w: contactX + 240,
-    h: artBandY + 96 + 140 + 60,
+    w: contactX + 280,
+    h: artBandY + 300,
   };
 
   const zones = [
-    { label: "◆ ORIGIN", x: COL.origin, y: ROW0 - 40 },
+    { label: "◆ START HERE — who I am + how to read this board", x: COL.about, y: ROW0 - 84 },
     { label: "◆ THE WORK — how each system got built", x: COL.root, y: ROW0 - 40 },
-    { label: "◆ THE PLATES — 3D / technical art", x: COL.origin + 60, y: artBandY - 34 },
+    { label: "◆ THE PLATES — 3D / technical art", x: COL.root, y: artBandY - 40 },
   ];
 
   return { nodes, edges, zones, bounds };

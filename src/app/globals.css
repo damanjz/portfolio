@@ -128,7 +128,15 @@ body {
   touch-action: none;
 }
 .board-stage.dragging { cursor: grabbing; }
-.board-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+.board-world {
+  position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform;
+  /* text stays crisp: zoom is capped at 1× (never magnified past native), and
+     we avoid promoting text to a low-res GPU layer at rest */
+  backface-visibility: hidden;
+}
+.node { cursor: grab; }
+.node:active { cursor: grabbing; }
+.node.n-plate:active, .node.n-proj:active { cursor: grabbing; }
 
 svg.board-wires { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 1; }
 svg.board-wires path { fill: none; stroke: var(--line); stroke-width: 1.5; }
@@ -172,6 +180,16 @@ svg.board-wires path.w-art  { stroke: color-mix(in oklab, var(--art) 45%, var(--
 .node.n-origin .n-lede { font-size: 12.5px; color: var(--dim); margin-top: 8px; line-height: 1.5; }
 .node.n-origin .n-lede .em { color: var(--acc); }
 .node.n-art .n-kicker { color: var(--art); }
+
+/* welcome column: how-to + about read like real cards, a touch larger */
+.node.n-howto { border-color: color-mix(in srgb, var(--acc) 45%, var(--node-bd)); }
+.node.n-howto .n-title { font-family: var(--font-serif), serif; font-size: 17px; letter-spacing: -0.01em; }
+.node.n-howlist { list-style: none; margin: 9px 0 0; padding: 0; font-size: 11px; line-height: 1.9; color: var(--dim); }
+.node.n-howlist li { padding-left: 14px; position: relative; }
+.node.n-howlist li::before { content: "›"; position: absolute; left: 0; color: var(--acc); }
+.node.n-howlist b { color: var(--ink); font-weight: 600; }
+.node.n-about { border-color: color-mix(in srgb, var(--art) 40%, var(--node-bd)); }
+.node.n-about .n-title { font-family: var(--font-serif), serif; font-size: 18px; letter-spacing: -0.01em; }
 .node.n-plate { padding: 0; overflow: hidden; cursor: pointer; }
 .node.n-plate img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .node.n-plate .p-cap { position: absolute; left: 10px; bottom: 8px; font-family: var(--font-mono), ui-monospace, monospace; font-size: 9px; letter-spacing: 0.1em; color: #eee; text-shadow: 0 1px 3px rgba(0,0,0,.8); }
