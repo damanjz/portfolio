@@ -1,0 +1,195 @@
+<!-- @dsCard group="Flow-board skins" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flow-board — 3 style directions</title>
+<style>
+  /* STRUCTURE IS LOCKED (2D pannable DAG board). These are 3 SKINS — different
+     visual WORLDS applied to the same real nodes/wires/content. Judge the paint:
+     palette, type, node + wire treatment, mood. Not the layout. */
+  *{box-sizing:border-box;margin:0}
+  body{font-family:system-ui,sans-serif;background:#0a0a0c;color:#eee}
+  .tabs{position:sticky;top:0;z-index:50;display:flex;background:#141418;border-bottom:1px solid #2a2a30;padding:0 14px}
+  .tabs button{font:inherit;font-size:13px;border:0;background:none;color:#8a8a92;padding:13px 18px;cursor:pointer;border-bottom:2px solid transparent}
+  .tabs button[aria-selected="true"]{color:#fff;border-bottom-color:#fff;font-weight:600}
+  .tabs .m{margin-left:auto;align-self:center;font-family:ui-monospace,monospace;font-size:10px;color:#6a6a72;letter-spacing:.1em}
+  .frame{display:none;height:calc(100vh - 47px);position:relative;overflow:hidden}
+  .frame.on{display:block}
+  .cap{position:absolute;left:16px;top:14px;z-index:20;max-width:560px;font-size:12px;line-height:1.5;
+    background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);padding:10px 13px;border-radius:8px}
+  .cap b{display:block;margin-bottom:3px;font-size:13px}
+
+  /* shared board mechanics (each skin overrides the look via its own vars) */
+  .board{position:absolute;inset:0}
+  .world{position:absolute;left:0;top:0;transform-origin:0 0}
+  svg.wires{position:absolute;overflow:visible;pointer-events:none}
+  .node{position:absolute}
+
+  /* ============ SKIN 1 · BLUEPRINT ============
+     Technical drafting: deep ink-blue ground, cyan hairline grid, wires as
+     drafted schematic lines, nodes as spec cards. Reads "engineer". */
+  #s1{--bg:#0b1a2b;--grid:#12304d;--ink:#dce8f5;--dim:#6b8fb5;--line:#2f5a86;
+      --node:#0e2036;--nodebd:#274b71;--acc:#39b6ff;--art:#ffb454;--ship:#4bd6a0;
+      background:var(--bg);
+      background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+      background-size:26px 26px}
+  #s1 .wires path{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:1 0}
+  #s1 .wires path.art{stroke:#7a5a2a}
+  #s1 .node{background:var(--node);border:1px solid var(--nodebd);border-radius:3px;padding:11px 13px;color:var(--ink);
+    box-shadow:0 0 0 1px rgba(57,182,255,.06),0 6px 20px rgba(0,0,0,.4)}
+  #s1 .node .k{font-family:ui-monospace,monospace;font-size:8.5px;letter-spacing:.16em;color:var(--acc);text-transform:uppercase;margin-bottom:5px}
+  #s1 .node .t{font-size:14px;font-weight:600;letter-spacing:-.01em}
+  #s1 .node .d{font-size:11.5px;color:var(--dim);margin-top:3px;line-height:1.4}
+  #s1 .node .met{font-family:ui-monospace,monospace;font-size:10px;color:var(--dim);margin-top:7px}
+  #s1 .node .met em{font-style:normal;color:var(--acc)}
+  #s1 .node.origin{border-color:var(--acc);border-width:1.5px}
+  #s1 .node.origin .t{font-size:18px}
+  #s1 .node.ship{border-color:var(--ship)} #s1 .node.ship .k{color:var(--ship)}
+  #s1 .node.art{border-color:#7a5a2a} #s1 .node.art .k{color:var(--art)}
+  #s1 .node.dev{border-style:dashed;border-color:#c9a24a} #s1 .node.dev .k{color:#e0b45a}
+  #s1 .zt{position:absolute;font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.24em;color:#3d688f;text-transform:uppercase}
+
+  /* ============ SKIN 2 · TERMINAL ============
+     Warm-paper light mode, monospace-forward, wires as clean orthogonal
+     routes (like a git graph / circuit). Confident, editorial, "reads fast". */
+  #s2{--bg:#f4f2ec;--grid:#e7e4da;--ink:#1a1917;--dim:#77736a;--line:#c3bdaf;
+      --node:#fffdf8;--nodebd:#d8d3c6;--acc:#d1442b;--art:#a06a1e;--ship:#2f8f5f;
+      background:var(--bg);
+      background-image:radial-gradient(var(--grid) 1.1px,transparent 1.1px);background-size:22px 22px}
+  #s2 .wires path{fill:none;stroke:var(--line);stroke-width:1.5}
+  #s2 .wires path.ship{stroke:var(--ship)} #s2 .wires path.art{stroke:#d8c39a}
+  #s2 .node{background:var(--node);border:1px solid var(--nodebd);border-radius:2px;padding:12px 14px;color:var(--ink);
+    box-shadow:2px 2px 0 rgba(26,25,23,.06)}
+  #s2 .node .k{font-family:ui-monospace,monospace;font-size:9px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:5px}
+  #s2 .node .t{font-family:ui-monospace,monospace;font-size:14px;font-weight:600;letter-spacing:-.02em}
+  #s2 .node .d{font-size:12px;color:var(--dim);margin-top:4px;line-height:1.45}
+  #s2 .node .met{font-family:ui-monospace,monospace;font-size:10px;color:var(--dim);margin-top:8px}
+  #s2 .node .met em{font-style:normal;color:var(--acc);font-weight:600}
+  #s2 .node.origin{border-left:3px solid var(--acc)}
+  #s2 .node.origin .t{font-size:17px}
+  #s2 .node.ship{border-left:3px solid var(--ship)}
+  #s2 .node.art{border-left:3px solid var(--art)}
+  #s2 .node.dev{border-left:3px solid #c98a2e;border-top-style:dashed}
+  #s2 .zt{position:absolute;font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.22em;color:#a49c8a;text-transform:uppercase}
+
+  /* ============ SKIN 3 · NOCTURNE ============
+     Near-black gallery, one warm signal, soft depth + glow, generous space.
+     Nodes float; wires glow faintly. Reads "crafted / premium / memorable". */
+  #s3{--bg:#0c0c0e;--grid:#161618;--ink:#f0ede8;--dim:#8f8b85;--line:#2b2b30;
+      --node:#151517;--nodebd:#26262b;--acc:#ff7a3c;--art:#e0a24a;--ship:#57c98a;
+      background:radial-gradient(120% 90% at 30% 0%,#141416 0%,#0c0c0e 60%)}
+  #s3 .wires path{fill:none;stroke:var(--line);stroke-width:1.5;filter:drop-shadow(0 0 3px rgba(255,122,60,.15))}
+  #s3 .wires path.art{stroke:#4a3a26}
+  #s3 .node{background:var(--node);border:1px solid var(--nodebd);border-radius:12px;padding:14px 16px;color:var(--ink);
+    box-shadow:0 10px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.03)}
+  #s3 .node .k{font-family:ui-monospace,monospace;font-size:9px;letter-spacing:.18em;color:#6f6b65;text-transform:uppercase;margin-bottom:7px}
+  #s3 .node .t{font-size:15px;font-weight:600;letter-spacing:-.01em}
+  #s3 .node .d{font-size:12px;color:var(--dim);margin-top:4px;line-height:1.5}
+  #s3 .node .met{font-family:ui-monospace,monospace;font-size:10px;color:var(--dim);margin-top:9px}
+  #s3 .node .met em{font-style:normal;color:var(--acc)}
+  #s3 .node.origin{border-color:#3a3a40}
+  #s3 .node.origin::before{content:"";position:absolute;inset:-1px;border-radius:12px;padding:1px;
+    background:linear-gradient(135deg,var(--acc),transparent 60%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+  #s3 .node.origin{position:absolute}
+  #s3 .node.origin .t{font-size:19px}
+  #s3 .node.ship .k{color:var(--ship)}
+  #s3 .node.art .k{color:var(--art)}
+  #s3 .node.dev .k{color:#e0b45a}
+  #s3 .zt{position:absolute;font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.26em;color:#54504a;text-transform:uppercase}
+
+  .hud{position:absolute;right:16px;top:14px;z-index:20;font-family:ui-monospace,monospace;font-size:10px;
+    letter-spacing:.1em;padding:7px 11px;border-radius:6px;border:1px solid rgba(128,128,128,.3);background:rgba(0,0,0,.3)}
+</style>
+</head>
+<body>
+
+<div class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-t="s1">1 · Blueprint</button>
+  <button role="tab" aria-selected="false" data-t="s2">2 · Terminal</button>
+  <button role="tab" aria-selected="false" data-t="s3">3 · Nocturne</button>
+  <span class="m">SAME BOARD · 3 SKINS — JUDGE THE PAINT</span>
+</div>
+
+<div class="frame on" id="f-s1"><div class="cap"><b>1 · Blueprint</b>Technical drafting. Deep ink-blue, a cyan hairline grid, wires as drafted schematic lines, nodes as spec cards with mono labels. Reads unmistakably "engineer" — the board looks like a system diagram you'd find in real documentation.</div><div class="board" id="s1"><svg class="wires"></svg><div class="world"></div></div><div class="hud" id="h1"></div></div>
+<div class="frame" id="f-s2"><div class="cap"><b>2 · Terminal</b>Warm paper, light mode, monospace-forward. Wires route clean like a git graph or circuit. Confident and editorial — the opposite of dark-portfolio cliché, fastest to read, closest to a well-made technical document.</div><div class="board" id="s2"><svg class="wires"></svg><div class="world"></div></div><div class="hud" id="h2"></div></div>
+<div class="frame" id="f-s3"><div class="cap"><b>3 · Nocturne</b>Near-black gallery with one warm signal, soft depth, faint glow on the wires, generous space. Nodes float. Reads "crafted / premium / memorable" — the most showcase-y, best for the art, boldest of the three.</div><div class="board" id="s3"><svg class="wires"></svg><div class="world"></div></div><div class="hud" id="h3"></div></div>
+
+<script>
+  // real content (abbreviated for the skin comp; full copy lives in content-drafts.md)
+  var NODES=[
+    {id:'origin',cls:'origin',x:60,y:70,w:250,k:'Origin',t:'Daman',d:'Secure systems, engineered to run on your machine. Systems engineer · ex-3D artist · Hyderabad.'},
+    // protec + its DAG (the exemplar, expanded)
+    {id:'protec',cls:'',x:400,y:60,w:200,k:'Work 01 · Security',t:'protec',d:'Password manager that never phones home.',met:'NET CALLS = 0'},
+    {id:'p1',cls:'',x:660,y:20,w:160,k:'Idea',t:"A vault that can't leak",d:'nothing to phone home to.'},
+    {id:'p2',cls:'',x:660,y:120,w:160,k:'Decision',t:'Rust + native msg',d:'no port, no CORS.'},
+    {id:'p3',cls:'',x:850,y:70,w:170,k:'Hardening',t:'6-agent audit',d:'16 fixes shipped.'},
+    {id:'p4',cls:'ship',x:1060,y:70,w:150,k:'Shipped',t:'protec v1',met:'daily driver'},
+    // other project roots
+    {id:'n8n',cls:'',x:400,y:200,w:200,k:'Work 02 · Automation',t:'n8n-automation',d:'Self-hosted AI triage on local Ollama.',met:'ROUTING 88% (vs 70%)'},
+    {id:'volt',cls:'',x:400,y:330,w:200,k:'Work 03 · Commerce',t:'volt-techwear-store',d:'Techwear commerce, end to end.',met:'clearance-as-state'},
+    {id:'flux',cls:'',x:400,y:460,w:200,k:'Work 04 · Multimedia',t:'flux-player',d:'Native video player, instant start.',met:'Python · PySide6'},
+    {id:'noctra',cls:'dev',x:660,y:300,w:200,k:'Work 05 · Mobile',t:'NOCTRA',d:'Full-stack street-luxury app.',met:'under development'},
+    {id:'umbra',cls:'',x:660,y:430,w:200,k:'Work 06 · Front-end',t:'umbra',d:'Storefront built from scratch.',met:'vanilla JS · WebGL'},
+    // art
+    {id:'art',cls:'art',x:120,y:560,w:180,k:'The Plates · art',t:'3D / technical art',d:'Curated from ArtStation. Umbraxis · Guitar · Clouds · Cityscape.'},
+    {id:'pl1',cls:'art',x:340,y:600,w:150,k:'PL.01',t:'Umbraxis',d:'UE5 village · looks-dev'},
+    {id:'pl2',cls:'art',x:520,y:640,w:150,k:'PL.02',t:'Guitar looks-dev',d:'studio product render'},
+    {id:'pl3',cls:'art',x:700,y:600,w:150,k:'PL.03',t:'Painted clouds',d:'procedural / shader'},
+    // contact
+    {id:'contact',cls:'ship',x:1060,y:300,w:180,k:'Contact',t:'GitHub · form',d:'@damanjz — no email exposed. 0 external requests.'}
+  ];
+  var LINKS=[
+    ['origin','protec'],['origin','n8n'],['origin','volt'],['origin','flux'],['origin','noctra'],['origin','umbra'],
+    ['protec','p1'],['protec','p2'],['p1','p3'],['p2','p3'],['p3','p4','ship'],
+    ['origin','art','art'],['art','pl1','art'],['art','pl2','art'],['art','pl3','art'],
+    ['p4','contact','ship']
+  ];
+  var ZONES={s:['◆ ORIGIN',60,30],w:['◆ THE WORK — how each system got built',400,30],a:['◆ THE PLATES — art',120,530]};
+
+  function build(skin){
+    var root=document.getElementById(skin), world=root.querySelector('.world'), svg=root.querySelector('.wires');
+    // zone titles
+    Object.values(ZONES).forEach(function(z){ var el=document.createElement('div'); el.className='zt'; el.textContent=z[0]; el.style.left=z[1]+'px'; el.style.top=z[2]+'px'; world.appendChild(el); });
+    var pos={};
+    NODES.forEach(function(n){
+      var el=document.createElement('div'); el.className='node '+n.cls; el.style.left=n.x+'px'; el.style.top=n.y+'px'; el.style.width=n.w+'px';
+      el.innerHTML='<div class="k">'+n.k+'</div><div class="t">'+n.t+'</div>'+(n.d?'<div class="d">'+n.d+'</div>':'')+(n.met?'<div class="met"><em>'+n.met+'</em></div>':'');
+      world.appendChild(el); pos[n.id]={x:n.x,y:n.y,w:n.w,el:el};
+    });
+    // wires (measured after layout — offsetHeight forces sync layout, no rAF needed)
+    LINKS.forEach(function(l){
+      var a=pos[l[0]],b=pos[l[1]]; if(!a||!b)return;
+      var ah=a.el.offsetHeight, bh=b.el.offsetHeight;
+      var p1=[a.x+a.w,a.y+ah/2], p2=[b.x,b.y+bh/2], mx=(p1[0]+p2[0])/2;
+      var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d','M'+p1[0]+','+p1[1]+' C'+mx+','+p1[1]+' '+mx+','+p2[1]+' '+p2[0]+','+p2[1]);
+      if(l[2])path.setAttribute('class',l[2]);
+      svg.appendChild(path);
+    });
+    // center the board
+    var W=root.parentElement.clientWidth, H=root.parentElement.clientHeight;
+    var scale=Math.min(1, (W-80)/1260, (H-80)/720);
+    world.style.transform='translate('+((W-1260*scale)/2)+'px,'+((H-720*scale)/2+10)+'px) scale('+scale+')';
+    // pan
+    var tx=(W-1260*scale)/2, ty=(H-720*scale)/2+10, s=scale, down=false,sx,sy,ox,oy;
+    root.addEventListener('pointerdown',function(e){down=true;sx=e.clientX;sy=e.clientY;ox=tx;oy=ty;root.setPointerCapture(e.pointerId);root.style.cursor='grabbing';});
+    root.addEventListener('pointermove',function(e){if(!down)return;tx=ox+(e.clientX-sx);ty=oy+(e.clientY-sy);world.style.transform='translate('+tx+'px,'+ty+'px) scale('+s+')';});
+    root.addEventListener('pointerup',function(){down=false;root.style.cursor='grab';});
+    root.addEventListener('wheel',function(e){e.preventDefault();var r=root.getBoundingClientRect(),cx=e.clientX-r.left,cy=e.clientY-r.top,ns=Math.min(1.6,Math.max(.4,s*(e.deltaY<0?1.1:.9))),k=ns/s;tx=cx-(cx-tx)*k;ty=cy-(cy-ty)*k;s=ns;world.style.transform='translate('+tx+'px,'+ty+'px) scale('+s+')';},{passive:false});
+    root.style.cursor='grab';
+  }
+  ['s1','s2','s3'].forEach(build);
+  ['h1','h2','h3'].forEach(function(h){document.getElementById(h).textContent='DRAG · SCROLL TO ZOOM';});
+
+  document.querySelectorAll('.tabs button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.tabs button').forEach(function(x){x.setAttribute('aria-selected','false')});
+      b.setAttribute('aria-selected','true');
+      ['s1','s2','s3'].forEach(function(t){document.getElementById('f-'+t).classList.toggle('on',t===b.dataset.t)});
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,471 @@
+<!-- @dsCard group="Directions v4" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Direction — The Fader</title>
+</head>
+<body>
+<!--
+THESIS: One person, two crafts, one control. The page is a lighting console:
+a crossfader relights the entire site between the engineer's bench (SYSTEMS)
+and the stage (SCENES), inverting figure and ground. It refuses the category
+default — hero, project cards, footer — and the mood-swap refusal too: this
+is one mechanism, not a theme toggle.
+OWN-WORLD: console channel strips, cue numbers, level meters, tally red,
+tungsten amber on stage black vs graphite ink on bench paper; mono for
+measurement, serif only under stage light. Recognizable with all content
+removed: a fader between two lit worlds.
+STORY: visitor lands on the bench (engineering leads), reads 4 channels of
+work with provenance-only metrics, drags the fader, watches the same page
+become a stage where the art is the light. Understands: this person builds
+the renderer AND lights the scene. Acts: email / GitHub.
+FIRST VIEWPORT: full-height DECK — name+status line top; center: the state
+readout (relit by the fader) over the physical crossfader with channel
+labels SYSTEMS/SCENES; patch list of contents lower-right; nothing else.
+FORM: fader-console; user-pinned direction (Daman: "something new"), roll
+skipped per binding local override — no seed key.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the
+finish review, the verdict, and DESIGN.md.
+-->
+<style>
+  /* ============================================================
+     DIRECTION 04 — THE FADER · one page, two lights
+     --x is the fader position, 0 = SYSTEMS (bench) … 1 = SCENES
+     (stage). Color, canvas physics, meters and figure/ground all
+     read it live. Identity (type voice) snaps at the cue point
+     like a real desk taking a cue; light blends continuously.
+     ============================================================ */
+  :root{
+    --x:.18;                                  /* engineering leads by default */
+    /* bench (systems end) */
+    --bench:#f2f3f0; --ink:#16171a; --dim:#5f646c; --line:#dcdfda; --tally:#d0330f;
+    /* stage (scenes end) */
+    --stage:#100e0c; --cream:#f2e9dc; --ash:#96897a; --sline:#2a2420; --tung:#ffb054;
+    /* blended live values */
+    --ground:color-mix(in oklab, var(--bench) calc((1 - var(--x))*100%), var(--stage));
+    --line-x:color-mix(in oklab, var(--line) calc((1 - var(--x))*100%), var(--sline));
+    --mono:Consolas,ui-monospace,monospace;
+    --sans:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
+    --serif:Georgia,"Times New Roman",serif;
+  }
+  *{margin:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--ground);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    transition:background .12s linear;overflow-x:hidden}
+  /* dual-voice text: every meaningful element carries a bench face and a
+     stage face. Voice opacities are GAMMA'D — each voice holds ≥1 until deep
+     into the crossover, and the fader detents out of the 0.42–0.58 dead band
+     on release, so no resting state ever shows a half-lit page. */
+  .sys{color:var(--ink);opacity:clamp(0,(0.58 - var(--x))/0.14,1)}
+  .scn{color:var(--cream);opacity:clamp(0,(var(--x) - 0.44)/0.14,1)}
+  .duo{display:grid}
+  .duo>*{grid-area:1/1;transition:opacity .12s linear}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase}
+
+  #kv{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .page{position:relative;z-index:1}
+
+  /* ---- THE DECK — first viewport ---- */
+  .deck{min-height:100vh;display:flex;flex-direction:column;padding:22px clamp(20px,4vw,56px)}
+  .topline{display:flex;justify-content:space-between;align-items:baseline;gap:18px;
+    border-bottom:1px solid var(--line-x);padding-bottom:14px}
+  .topline .who{display:flex;align-items:baseline;gap:14px}
+  .topline .who b{font-size:16px;letter-spacing:-.01em}
+  .tally{display:inline-flex;align-items:center;gap:7px}
+  .tally i{width:7px;height:7px;border-radius:50%;background:var(--tally);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--tally) 16%, transparent)}
+  .deck-mid{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:40px;
+    padding:40px 0}
+  .state{text-align:center;max-width:19ch}
+  .state h1>span{display:block;font-size:clamp(34px,5.4vw,64px);line-height:1.06;letter-spacing:-.022em}
+  .state h1 .sys{font-weight:650}
+  .state h1 .scn{font-family:var(--serif);font-weight:500;font-style:italic;letter-spacing:-.008em}
+  .state .sub{margin-top:18px;font-size:15px;line-height:1.6;max-width:52ch}
+  .state .sub .sys{color:var(--dim)} .state .sub .scn{color:var(--ash)}
+
+  /* the crossfader — a real range input wearing the console's hardware */
+  .fader{width:min(520px,84vw)}
+  .fader .scale{display:flex;justify-content:space-between;margin-bottom:10px}
+  .fader .scale span{font-family:var(--mono);font-size:11px;letter-spacing:.18em}
+  .fader .scale .sside{color:color-mix(in oklab,var(--ink) calc((1 - var(--x))*100%),var(--ash))}
+  .fader .scale .lside{color:color-mix(in oklab,var(--dim) calc((1 - var(--x))*100%),var(--tung))}
+  .fader input{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;
+    cursor:grab;display:block}
+  .fader input:active{cursor:grabbing}
+  .fader input::-webkit-slider-runnable-track{height:2px;
+    background:linear-gradient(90deg,var(--ink),var(--tung));border-radius:0}
+  .fader input::-moz-range-track{height:2px;background:linear-gradient(90deg,var(--ink),var(--tung))}
+  .fader input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:38px;
+    margin-top:-18px;background:color-mix(in oklab,var(--ink) calc((1 - var(--x))*100%),var(--cream));
+    border:1px solid var(--line-x);
+    box-shadow:inset 0 0 0 2px var(--ground), 0 2px 10px rgba(0,0,0,.28)}
+  .fader input::-moz-range-thumb{width:22px;height:38px;border-radius:0;
+    background:color-mix(in oklab,var(--ink) calc((1 - var(--x))*100%),var(--cream));
+    border:1px solid var(--line-x)}
+  .fader input:focus-visible{outline:2px solid var(--tally);outline-offset:6px}
+  .fader .hint{margin-top:12px;text-align:center;font-family:var(--mono);font-size:10.5px;
+    letter-spacing:.12em;color:color-mix(in oklab,var(--dim) calc((1 - var(--x))*100%),var(--ash))}
+
+  .patchlist{align-self:flex-end;text-align:right;font-family:var(--mono);font-size:11px;
+    line-height:2.1;letter-spacing:.1em}
+  .patchlist a{text-decoration:none;color:color-mix(in oklab,var(--dim) calc((1 - var(--x))*100%),var(--ash))}
+  .patchlist a:hover,.patchlist a:focus-visible{color:color-mix(in oklab,var(--ink) calc((1 - var(--x))*100%),var(--tung))}
+
+  /* ---- THE PATCH — work as console channels ---- */
+  .patch{padding:calc(24px + 4vh) clamp(20px,4vw,56px) 30px}
+  .sect{display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:2px solid color-mix(in oklab,var(--ink) calc((1 - var(--x))*100%),var(--cream));
+    padding-bottom:10px;margin-bottom:4px}
+  .sect .duo>span{font-size:21px;letter-spacing:-.015em}
+  .sect .scn{font-family:var(--serif);font-style:italic}
+  .ch{width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line-x);
+    padding:0;cursor:pointer;font:inherit;display:block}
+  .ch:focus-visible{outline:2px solid var(--tally);outline-offset:-2px}
+  .ch .row{display:grid;grid-template-columns:56px 1fr minmax(120px,220px) 92px;gap:16px;
+    align-items:center;padding:19px 6px}
+  .ch .cue{font-family:var(--mono);font-size:11px;
+    color:color-mix(in oklab,var(--dim) calc((1 - var(--x))*100%),var(--ash))}
+  .ch .nm .duo>span{font-size:17.5px;font-weight:600;letter-spacing:-.01em}
+  .ch .nm .scn{font-family:var(--serif);font-weight:500;font-style:normal}
+  .ch .ds{font-size:13px;margin-top:3px;
+    color:color-mix(in oklab,var(--dim) calc((1 - var(--x))*100%),var(--ash))}
+  /* the level meter: at bench it reads as a data bar, on stage as warmth */
+  .meter{height:8px;position:relative;background:
+    repeating-linear-gradient(90deg,var(--line-x) 0 6px,transparent 6px 8px)}
+  .meter i{position:absolute;inset:0;transform-origin:left;transform:scaleX(var(--lv,.5));
+    background:repeating-linear-gradient(90deg,
+      color-mix(in oklab,var(--ink) calc((1 - var(--x))*100%),var(--tung)) 0 6px,transparent 6px 8px);
+    transition:transform .5s cubic-bezier(.25,1,.5,1)}
+  .ch .stat{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-align:right;
+    color:color-mix(in oklab,var(--dim) calc((1 - var(--x))*100%),var(--ash))}
+  .ch .stat.live{color:color-mix(in oklab,var(--tally) calc((1 - var(--x))*100%),var(--tung))}
+  .ch:hover .nm .sys{color:var(--tally)} .ch:hover .nm .scn{color:var(--tung)}
+  /* inline dossier — expands in place, no navigation. Grid-rows animation:
+     composits cleanly, no layout-thrash max-height hack. */
+  .doss{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.25,1,.5,1)}
+  .doss>.in{overflow:hidden;min-height:0}
+  .ch[aria-expanded="true"] .doss{grid-template-rows:1fr}
+  .doss .in{display:grid;grid-template-columns:56px 1fr;gap:16px;padding:0 6px}
+  .doss .in>span:last-child{display:block;padding:2px 0 22px}   /* vertical space lives INSIDE the clip so the 0fr collapse reaches true zero */
+  .doss .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+    color:color-mix(in oklab,var(--dim) calc((1 - var(--x))*100%),var(--ash));padding-top:3px}
+  .doss p{font-size:14px;line-height:1.65;max-width:62ch;
+    color:color-mix(in oklab,#33363c calc((1 - var(--x))*100%),#cfc4b3)}
+  .doss .facts{margin-top:10px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+    line-height:2;color:color-mix(in oklab,var(--dim) calc((1 - var(--x))*100%),var(--ash))}
+  .doss .facts em{font-style:normal;
+    color:color-mix(in oklab,var(--ink) calc((1 - var(--x))*100%),var(--tung))}
+  .doss .facts .src{font-size:9.5px;opacity:.75}
+
+  /* ---- THE STAGE — plates; figure and ground trade places ----
+     bench: a quiet specimen strip · stage: full-bleed lit frames.
+     Same DOM; the fader re-weights scale, light and caption voice. */
+  .stage{padding:calc(20px + 4vh) clamp(20px,4vw,56px) 30px}
+  .frames{display:grid;gap:16px;margin-top:14px;
+    grid-template-columns:repeat(4,1fr)}
+  .fr{position:relative;overflow:hidden;border:1px solid var(--line-x);
+    aspect-ratio:calc(4 - var(--x)) / 3;                   /* frames square up and grow as the stage takes over; at the cue they go 2-up 16:9 */
+    background:
+      radial-gradient(calc(90% + var(--x)*80%) 90% at 50% 0%,
+        color-mix(in oklab,#e7e4dc calc((1 - var(--x))*100%), #46331d) 0%,
+        color-mix(in oklab,#f0efe9 calc((1 - var(--x))*100%), #161210) 70%)}
+  .fr .cap{position:absolute;left:12px;bottom:10px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.13em;color:color-mix(in oklab,var(--dim) calc((1 - var(--x))*100%),var(--ash))}
+  .fr .kel{position:absolute;right:12px;top:10px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.13em;color:var(--tung);opacity:var(--x);transition:opacity .12s linear}
+  .fr:hover{border-color:color-mix(in oklab,var(--ink) calc((1 - var(--x))*60%),var(--tung))}
+
+  /* ---- COLOPHON STRIP ---- */
+  .colo{margin-top:6vh;border-top:1px solid var(--line-x);
+    padding:18px clamp(20px,4vw,56px) 26px;display:flex;flex-wrap:wrap;gap:14px 28px;
+    justify-content:space-between;align-items:center;font-family:var(--mono);font-size:10.5px;
+    letter-spacing:.11em;color:color-mix(in oklab,var(--dim) calc((1 - var(--x))*100%),var(--ash))}
+  .colo a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}
+  .colo a:hover,.colo a:focus-visible{color:color-mix(in oklab,var(--ink) calc((1 - var(--x))*100%),var(--tung));
+    border-bottom-color:currentColor}
+  .colo button{font:inherit;letter-spacing:inherit;background:none;border:0;padding:0;cursor:pointer;
+    color:inherit}
+  .colo button:hover{color:color-mix(in oklab,var(--tally) calc((1 - var(--x))*100%),var(--tung))}
+
+  /* blackout — the attention reward. Press B or the colophon control:
+     every light dies except the cursor's; any key restores. */
+  body.blackout{background:#000}
+  body.blackout .page{opacity:0;transition:opacity .3s}
+  .page{transition:opacity .3s}
+
+  /* ---- the cue takes: figure and ground TRADE PLACES structurally ----
+     bench (sys): patch full, stage a 4-across specimen strip.
+     stage (scn): frames go 2-up large and take the viewport; the patch
+     compresses to an annotation strip (descriptions retire, rows tighten). */
+  [data-world="scn"] .state .sub{font-family:var(--serif)}
+  [data-world="scn"] .frames{grid-template-columns:repeat(2,1fr);gap:22px}
+  [data-world="scn"] .fr{aspect-ratio:16/9}
+  [data-world="scn"] .stage{padding-top:calc(16px + 8vh)}
+  [data-world="scn"] .ch .row{padding:10px 6px}
+  [data-world="scn"] .ch .ds{display:none}
+  [data-world="scn"] .ch .nm .duo>span{font-size:15px}
+  [data-world="sys"] .fr .kel{opacity:0}
+
+  /* ---- responsive: the console narrows, nothing overflows ---- */
+  @media(max-width:760px){
+    .ch .row{grid-template-columns:44px 1fr 84px;gap:12px}
+    .ch .row .meter{display:none}
+    .frames{grid-template-columns:repeat(2,1fr)}
+    .patchlist{display:none}
+    .deck-mid{gap:32px}
+  }
+  @media(max-width:460px){
+    .topline .who span{display:none}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;animation:none !important}
+  }
+
+  .specsheet{margin:0 clamp(20px,4vw,56px) 50px;border:1px solid var(--line-x);
+    padding:22px 24px;font-family:var(--mono);font-size:11px;line-height:2;
+    color:color-mix(in oklab,var(--dim) calc((1 - var(--x))*100%),var(--ash));
+    background:color-mix(in srgb,var(--ground) 70%,transparent)}
+  .specsheet b{color:color-mix(in oklab,var(--ink) calc((1 - var(--x))*100%),var(--cream))}
+</style>
+
+<canvas id="kv" aria-hidden="true"></canvas>
+
+<div class="page" id="page">
+  <!-- DECK -->
+  <section class="deck" id="deck">
+    <div class="topline">
+      <div class="who duo">
+        <span class="sys"><b>Daman</b>&ensp;<span class="lbl" style="color:var(--dim)">Systems · Security · Local-first</span></span>
+        <span class="scn"><b style="font-family:var(--serif);font-style:italic">Daman</b>&ensp;<span class="lbl" style="color:var(--ash)">Scenes · Light · Looks-dev</span></span>
+      </div>
+      <span class="tally lbl"><i></i><span class="duo"><span class="sys">Open to work</span><span class="scn">On air</span></span></span>
+    </div>
+
+    <div class="deck-mid">
+      <div class="state">
+        <h1 class="duo" aria-label="Secure systems, engineered to run on your machine — private by design.">
+          <span class="sys" aria-hidden="true">Secure systems, engineered to run on your machine.</span>
+          <span class="scn" aria-hidden="true">The same hands used to light the scene.</span>
+        </h1>
+        <p class="sub duo">
+          <span class="sys">I'm Daman, a systems engineer in Hyderabad building software that runs entirely on your machine: hardened, measured, and yours.</span>
+          <span class="scn">Years of placing key lights and cutting everything that didn't serve the subject. The discipline carried straight into systems.</span>
+        </p>
+      </div>
+
+      <div class="fader">
+        <div class="scale"><span class="sside">SYSTEMS</span><span class="lside">SCENES</span></div>
+        <input id="x" type="range" min="0" max="1000" value="180" step="25"
+          aria-label="Crossfade the page between systems engineering and scene lighting">
+        <div class="hint">DRAG TO RELIGHT THE PAGE · B = BLACKOUT</div>
+      </div>
+    </div>
+
+    <nav class="patchlist" aria-label="Contents">
+      <a href="#patch">CH 01–04 · THE PATCH — WORK</a><br>
+      <a href="#stage">FR 01–04 · THE STAGE — PLATES</a><br>
+      <a href="mailto:hello@example.com">SEND · CONTACT</a><br>
+      <a href="https://github.com/damanjz" rel="noopener" target="_blank">GITHUB / DAMANJZ ↗</a>
+    </nav>
+  </section>
+
+  <!-- THE PATCH -->
+  <section class="patch" id="patch">
+    <div class="sect">
+      <div class="duo"><span class="sys" style="font-weight:650">The Patch — work</span><span class="scn">The patch — what the desk runs</span></div>
+      <span class="lbl duo"><span class="sys" style="color:var(--dim)">4 CHANNELS · 2 PUBLIC · 2 PRIVATE</span><span class="scn" style="color:var(--ash)">4 CHANNELS PATCHED</span></span>
+    </div>
+
+    <button class="ch" aria-expanded="false" data-lv=".92">
+      <span class="row">
+        <span class="cue">CH 01</span>
+        <span class="nm"><span class="duo"><span class="sys">protec</span><span class="scn">protec</span></span>
+          <span class="ds">A password manager that never phones home.</span></span>
+        <span class="meter" aria-hidden="true"><i></i></span>
+        <span class="stat">PRIVATE ⌑</span>
+      </span>
+      <span class="doss"><span class="in"><span class="k">DOSS</span><span>
+        <p>Desktop-native vault: Rust core, Tauri shell, Argon2id key derivation. The whole point is the absence: no server, no sync service, no account.</p>
+        <span class="facts">RUST · TAURI · ARGON2ID &ensp; <em>NET CALLS = 0</em> <span class="src">· DEVTOOLS-VERIFIABLE</span></span>
+      </span></span></span>
+    </button>
+
+    <button class="ch" aria-expanded="false" data-lv=".85">
+      <span class="row">
+        <span class="cue">CH 02</span>
+        <span class="nm"><span class="duo"><span class="sys">n8n-automation</span><span class="scn">n8n-automation</span></span>
+          <span class="ds">Self-hosted AI support triage on local Ollama.</span></span>
+        <span class="meter" aria-hidden="true"><i></i></span>
+        <span class="stat live">PUBLIC ↗</span>
+      </span>
+      <span class="doss"><span class="in"><span class="k">DOSS</span><span>
+        <p>Support tickets classified and routed by a local LLM; no tokens leave the machine. Routing shipped only after the eval said it should.</p>
+        <span class="facts">N8N · OLLAMA · LOCAL LLM &ensp; <em>ROUTE ACC = 85%</em> <span class="src">· N=40 EVAL, VS 70% RULE BASELINE</span></span>
+      </span></span></span>
+    </button>
+
+    <button class="ch" aria-expanded="false" data-lv=".7">
+      <span class="row">
+        <span class="cue">CH 03</span>
+        <span class="nm"><span class="duo"><span class="sys">volt-techwear-store</span><span class="scn">volt-techwear-store</span></span>
+          <span class="ds">Techwear commerce, end to end.</span></span>
+        <span class="meter" aria-hidden="true"><i></i></span>
+        <span class="stat live">PUBLIC ↗</span>
+      </span>
+      <span class="doss"><span class="in"><span class="k">DOSS</span><span>
+        <p>A complete storefront (catalogue, cart, checkout) built as a static export so the fast path is the only path.</p>
+        <span class="facts">NEXT · STRIPE-READY &ensp; <em>STATIC EXPORT</em></span>
+      </span></span></span>
+    </button>
+
+    <button class="ch" aria-expanded="false" data-lv=".64">
+      <span class="row">
+        <span class="cue">CH 04</span>
+        <span class="nm"><span class="duo"><span class="sys">flux-player</span><span class="scn">flux-player</span></span>
+          <span class="ds">A native video player that starts instantly.</span></span>
+        <span class="meter" aria-hidden="true"><i></i></span>
+        <span class="stat">PRIVATE ⌑</span>
+      </span>
+      <span class="doss"><span class="in"><span class="k">DOSS</span><span>
+        <p>No splash, no loading spinner as a lifestyle: a native shell around the decoder and nothing else.</p>
+        <span class="facts">NATIVE · ZERO SPLASH &ensp; <em>SINGLE BINARY</em></span>
+      </span></span></span>
+    </button>
+  </section>
+
+  <!-- THE STAGE -->
+  <section class="stage" id="stage">
+    <div class="sect">
+      <div class="duo"><span class="sys" style="font-weight:650">The Stage — plates</span><span class="scn">The stage — where the light goes</span></div>
+      <span class="lbl duo"><span class="sys" style="color:var(--dim)">ART ARCHIVE · SYNTHETIC LIGHT — REAL RENDERS AT BUILD</span><span class="scn" style="color:var(--ash)">FOUR FRAMES · SYNTHETIC LIGHT — REAL RENDERS AT BUILD</span></span>
+    </div>
+    <div class="frames">
+      <div class="fr"><span class="kel">5600K · f/2.8</span><span class="cap">PL.01 — UMBRAIXS</span></div>
+      <div class="fr"><span class="kel">3200K · f/4</span><span class="cap">PL.02 — CINEMATIC CAR</span></div>
+      <div class="fr"><span class="kel">4800K · f/2</span><span class="cap">PL.03 — STYLIZED STUDIES</span></div>
+      <div class="fr"><span class="kel">5200K · f/1.8</span><span class="cap">PL.04 — GUITAR LOOKS-DEV</span></div>
+    </div>
+  </section>
+
+  <div class="colo">
+    <span>© 2026 DAMAN · HYDERABAD, IN</span>
+    <span class="duo"><span class="sys">HOUSE LIGHTS ONLY · 0 EXTERNAL REQUESTS, NO ANALYTICS</span><span class="scn">SHOT ON PRACTICALS · 0 EXTERNAL REQUESTS, NO ANALYTICS</span></span>
+    <span>
+      <a href="mailto:hello@example.com" title="Placeholder address — real one at build">SEND</a> &ensp;
+      <a href="https://github.com/damanjz" rel="noopener" target="_blank">GITHUB ↗</a> &ensp;
+      <button id="bo" type="button" aria-pressed="false">BLACKOUT ●</button> &ensp; CTRL+K — THE BOOTH
+    </span>
+  </div>
+
+  <div class="specsheet">
+    <b>DIRECTION 04 — THE FADER.</b> One page, two lights. Not a theme toggle: a figure/ground inversion under one continuous control.<br>
+    <b>Mechanism:</b> --x (0…1) drives ground, hairlines, meters, frame aspect &amp; light via color-mix/oklab; text is dual-voice (bench grotesk / stage serif) crossfaded so contrast never dips mid-blend; identity snaps at the cue point like a desk taking a cue.<br>
+    <b>Structure (new, not the shared wireframe):</b> DECK (fader-first viewport, patch list as nav) → THE PATCH (work as channel strips with inline dossiers, no cards, no page navigation) → THE STAGE (plates widen and take the light as the fader rises) → colophon strip.<br>
+    <b>Honesty standard:</b> real numbers with provenance only (N=40 EVAL vs 70% baseline; DEVTOOLS-VERIFIABLE); unmeasured = qualitative. All four plates present — full archive, no gaps.<br>
+    <b>Signature experience:</b> THE FADER itself — native range input (keyboard arrows; touch drag; works on phones, unlike a hover ritual). Canvas ambient: one particle field, two physics — bench grid ticks melting into tungsten bokeh on stage, cursor as probe/key-light by position. Reward: B or BLACKOUT ● kills every light but the cursor's; any key restores.<br>
+    <b>Type (build):</b> self-hosted grotesk + mono for the bench, self-hosted text serif for the stage (mock uses system stacks; the named faces are chosen at build, not defaulted).<br>
+    <b>Keeps:</b> zero external requests · plates first-class · Ctrl+K ("the booth") · SetLines/printout/REPRINT engine drives cue transitions.
+  </div>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement, input=document.getElementById('x'), page=document.getElementById('page');
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, drawOnce=null;
+  var x=+input.value/1000, tx=x;
+  function setWorld(v){ root.style.setProperty('--x', v.toFixed(3));
+    document.body.dataset.world = v<0.45?'sys':(v>0.55?'scn':'mix');
+    input.setAttribute('aria-valuetext',
+      Math.round((1-v)*100)+'% systems / '+Math.round(v*100)+'% scenes');
+    if(reduce && typeof drawOnce==='function') drawOnce(); }   /* reduced motion still relights */
+  setWorld(x);
+  /* eased follow: the light lags the hand a touch, like real dimmers */
+  var raf=0;
+  function run(){ raf=0; x+=(tx-x)*(reduce?1:0.16); if(Math.abs(tx-x)>0.001){ setWorld(x); raf=requestAnimationFrame(run); } else { x=tx; setWorld(x); } }
+  input.addEventListener('input',function(){ tx=+input.value/1000; if(!raf) raf=requestAnimationFrame(run); });
+  /* the detent: a real crossfader never rests between cues — on release,
+     spring out of the half-lit band to the nearer side */
+  function detent(){ var v=+input.value/1000;
+    if(v>0.42&&v<0.58){ tx=v<0.5?0.38:0.62; input.value=Math.round(tx*1000);
+      if(!raf) raf=requestAnimationFrame(run); } }
+  input.addEventListener('change',detent); input.addEventListener('pointerup',detent);
+
+  /* screen readers hear ONE voice: each duo speaks its bench text once;
+     the painted crossfade stays visual-only */
+  document.querySelectorAll('.duo').forEach(function(d){
+    if(!d.hasAttribute('aria-label')){
+      var sys=d.querySelector('.sys');
+      if(sys) d.setAttribute('aria-label', sys.textContent.replace(/\s+/g,' ').trim());
+    }
+    d.querySelectorAll(':scope > .sys, :scope > .scn').forEach(function(v){ v.setAttribute('aria-hidden','true'); });
+  });
+
+  /* channels: expand in place */
+  document.querySelectorAll('.ch').forEach(function(ch){
+    ch.style.setProperty('--lv', ch.dataset.lv||'.5');
+    ch.addEventListener('click',function(){ var on=ch.getAttribute('aria-expanded')==='true';
+      ch.setAttribute('aria-expanded', on?'false':'true'); });
+  });
+
+  /* blackout — the reward. Button is primary (aria-pressed); the B key is a
+     mock convenience — the build ships it behind a remap/disable control per
+     WCAG 2.1.4. Any key restores; the fade is slow, no flash hazard. */
+  var bo=document.getElementById('bo'), dark=false;
+  function setDark(d){ dark=d; document.body.classList.toggle('blackout',d);
+    bo.setAttribute('aria-pressed', d?'true':'false'); }
+  bo.addEventListener('click',function(e){ e.stopPropagation(); setDark(!dark); });
+  addEventListener('keydown',function(e){
+    var typing=e.target.closest('input,textarea,select')||e.target.isContentEditable;
+    if((e.key==='b'||e.key==='B') && !typing){ setDark(!dark); }
+    else if(dark && !typing){ setDark(false); }
+  });
+
+  /* ---- ambient canvas: one field, two physics ----
+     bench: particles snap to a 16px grid as short ticks.
+     stage: the same particles float free as warm bokeh.
+     --x blends position, size, colour and glow per particle. */
+  var cv=document.getElementById('kv'), ctx=cv.getContext('2d');
+  var DPR=Math.min(devicePixelRatio||1,2), W=0,H=0, P=[], N=110, mx=-1,my=-1;
+  function size(){ W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0); }
+  size(); addEventListener('resize',size);
+  function rnd(s){ var n=Math.sin(s*12.9898)*43758.5453; return n-Math.floor(n); }
+  for(var i=0;i<N;i++){ P.push({u:rnd(i*1.7), v:rnd(i*3.1), d:rnd(i*5.3), p:rnd(i*7.9)*6.283}); }
+  addEventListener('pointermove',function(e){ mx=e.clientX; my=e.clientY; },{passive:true});
+  var TOUCH=!(matchMedia('(hover:hover) and (pointer:fine)').matches);
+  function frame(ts){
+    var t=ts*0.001, xx=x;
+    ctx.clearRect(0,0,W,H);
+    /* the cursor: probe crosshair on the bench, key light on stage */
+    if(!TOUCH && mx>=0){
+      if(xx<0.6){ ctx.globalAlpha=(1-xx)*0.12; ctx.strokeStyle=getComputedStyle(root).getPropertyValue('--ink');
+        ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,my+.5); ctx.lineTo(W,my+.5);
+        ctx.moveTo(mx+.5,0); ctx.lineTo(mx+.5,H); ctx.stroke(); }
+      if(xx>0.25){ var g=ctx.createRadialGradient(mx,my,0,mx,my,260);
+        g.addColorStop(0,'rgba(255,176,84,'+(xx*0.13)+')'); g.addColorStop(1,'rgba(255,176,84,0)');
+        ctx.fillStyle=g; ctx.fillRect(mx-260,my-260,520,520); }
+    }
+    for(var i=0;i<P.length;i++){ var p=P[i];
+      /* bench pose: grid tick */
+      var gx=Math.round(p.u*W/16)*16, gy=Math.round(((p.v*H)+ (reduce?0:t*4*p.d))%H/16)*16;
+      /* stage pose: drifting bokeh */
+      var sx2=p.u*W + Math.sin(t*0.3+p.p)*40*p.d, sy2=((p.v*H + (reduce?0:t*10*(0.3+p.d)))%H);
+      var px=gx+(sx2-gx)*xx, py=gy+(sy2-gy)*xx;
+      var a=(0.10+p.d*0.18);
+      if(xx<0.55){ ctx.globalAlpha=a*(1-xx); ctx.fillStyle='#5f646c';
+        ctx.fillRect(px-.5,py-3,1,6); }
+      if(xx>0.2){ var r=1.5+p.d*6*xx; ctx.globalAlpha=a*xx*0.9;
+        var g2=ctx.createRadialGradient(px,py,0,px,py,r*3);
+        g2.addColorStop(0,'rgba(255,176,84,.8)'); g2.addColorStop(1,'rgba(255,176,84,0)');
+        ctx.fillStyle=g2; ctx.beginPath(); ctx.arc(px,py,r*3,0,6.283); ctx.fill(); }
+    }
+    ctx.globalAlpha=1;
+    if(!reduce) requestAnimationFrame(frame); }
+  drawOnce=function(){ frame(performance.now()); };   /* reduced motion: one static relight per fader input */
+  if(reduce){ frame(0); } else { requestAnimationFrame(frame); }
+})();
+</script>
+</body>
+</html>
