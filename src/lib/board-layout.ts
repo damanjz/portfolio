@@ -201,15 +201,15 @@ export function buildBoard(projects: Project[]): BoardModel {
     const py = artTop + i * PLATE_PITCH;
     const id = `plate-${p.slug}`;
     nodes.push({ id, role: "plate", x: px, y: py, w: PLATE_W, plate: p });
-    edges.push([i === 0 ? "art-hub" : `plate-${art[i - 1].slug}`, id, "art"]);
-    artItemBoxes.push({
-      id: `box-${id}`, kind: "item", label: `${p.num} · ${p.name}`,
-      members: [id],
-      x: px - BOX_PAD, y: py - BOX_PAD - BOX_LABEL_H,
-      w: PLATE_W + BOX_PAD * 2, h: PLATE_H + BOX_PAD * 2 + BOX_LABEL_H,
-    });
+    // each plate links to the 3D/technical-art HUB directly — NOT chained to the
+    // next plate (Daman): the hub is the shared pipeline, every piece hangs off it.
+    edges.push(["art-hub", id, "art"]);
     // per-plate DAG: vision → implementation → problems → output, flowing RIGHT
-    // of the plate. Shown only when this plate is expanded (Board gates on open).
+    // of the plate — laid out like the systems projects (one clean row). Stages
+    // are box MEMBERS so the item box wraps the whole extended tree when open
+    // (Board's liveBox counts only VISIBLE members → collapsed box hugs the
+    // plate, open box grows to the full row). Shown only when the plate is open.
+    const members = [id];
     if (p.artDag) {
       const steps: [string, string, string][] = [
         ["vision", "Vision", p.artDag.vision],
@@ -217,7 +217,7 @@ export function buildBoard(projects: Project[]): BoardModel {
         ["problems", "Problems faced", p.artDag.problems],
         ["output", "Output", p.artDag.output],
       ];
-      const dagX0 = px + PLATE_W + 90;
+      const dagX0 = px + PLATE_W + PDAG_GAP; // first stage clears the plate
       let prevP = id;
       steps.forEach(([key, label, body], j) => {
         const sid = `${id}-${key}`;
@@ -227,8 +227,15 @@ export function buildBoard(projects: Project[]): BoardModel {
         });
         edges.push([prevP, sid, "art"]);
         prevP = sid;
+        members.push(sid);
       });
     }
+    artItemBoxes.push({
+      id: `box-${id}`, kind: "item", label: `${p.num} · ${p.name}`,
+      members,
+      x: px - BOX_PAD, y: py - BOX_PAD - BOX_LABEL_H,
+      w: PLATE_W + BOX_PAD * 2, h: PLATE_H + BOX_PAD * 2 + BOX_LABEL_H,
+    });
   });
   const artBottom = artTop + (art.length - 1) * PLATE_PITCH + PLATE_H;
 

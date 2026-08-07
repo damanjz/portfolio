@@ -477,6 +477,7 @@ export default function Board() {
         id: string; sx: number; sy: number; ox: number; oy: number;
         active: boolean; pointerId: number; captureEl: HTMLElement;
         group: string[]; starts: Record<string, { x: number; y: number }>;
+        last?: Record<string, { x: number; y: number }>;
       }
     | null
   >(null);
@@ -532,14 +533,20 @@ export default function Board() {
       }
       // pause flow-wire animation during the drag (same busy mechanism)
       markBusyRef.current?.();
-      // move every node in the drag group by the same delta
+      // move every node in the drag group by the same delta, and RECORD the
+      // final positions on dragState — onUp persists from here, NOT from the DOM
+      // (a mid-drag React re-render can reset el.style.left to the state value,
+      // which would make the node snap back on release).
+      d.last = {};
       for (const gid of d.group) {
         const st = d.starts[gid];
         if (!st) continue;
+        const nx = st.x + dx, ny = st.y + dy;
+        d.last[gid] = { x: nx, y: ny };
         const gel = worldRef.current?.querySelector<HTMLElement>(`[data-node="${gid}"]`);
         if (gel) {
-          gel.style.left = `${st.x + dx}px`;
-          gel.style.top = `${st.y + dy}px`;
+          gel.style.left = `${nx}px`;
+          gel.style.top = `${ny}px`;
         }
       }
       // coalesce wire redraws to ONE per animation frame — pointermove can fire
@@ -554,12 +561,12 @@ export default function Board() {
     const onUp = () => {
       const d = dragState.current;
       dragState.current = null;
-      if (!d || !d.active) return;
+      if (!d || !d.active || !d.last) return;
+      const last = d.last;
       setPos((prev) => {
         const next = { ...prev };
         for (const gid of d.group) {
-          const gel = worldRef.current?.querySelector<HTMLElement>(`[data-node="${gid}"]`);
-          if (gel) next[gid] = { x: parseFloat(gel.style.left), y: parseFloat(gel.style.top) };
+          if (last[gid]) next[gid] = last[gid]; // from tracked drag, not the DOM
         }
         try {
           localStorage.setItem(POS_KEY, JSON.stringify(next));
@@ -578,44 +585,31 @@ export default function Board() {
   }, []);
 
   const resetLayout = useCallback(() => {
+    // restore the baked default positions; redraw wires against them. No camera
+    // move (Daman: reset shouldn't jump the view), and no DOM-read snap-back —
+    // clearing pos re-renders nodes at their DEFAULT_POS defaults.
     setPos({});
     try {
       localStorage.removeItem(POS_KEY);
     } catch {
       /* ignore */
     }
-    setTimeout(() => fitTo(), 30);
-  }, [fitTo]);
+    setTimeout(() => drawWiresRef.current?.(), 40);
+  }, []);
 
   const toggle = useCallback(
     (slug: string) => {
+      // Expand/collapse IN PLACE — no camera move (Daman: the auto-fit-to-tree
+      // on TRACE was too jarring). The tree just appears where the card is; the
+      // wire-redraw effect handles the freshly-shown stages.
       setOpen((prev) => {
         const next = new Set(prev);
-        const opening = !next.has(slug);
-        if (opening) next.add(slug);
-        else next.delete(slug);
-        // when opening, frame the project + its freshly-shown DAG stages
-        if (opening) {
-          setTimeout(() => {
-            const isPlate = slug.startsWith("plate-");
-            const ids = new Set(
-              model.nodes
-                .filter((n) =>
-                  slug === "art"
-                    ? n.id === "art-hub" || (n.role === "artstage" && !n.id.startsWith("plate-"))
-                    : isPlate
-                    ? n.id === slug || n.id.startsWith(`${slug}-`) // the plate + its DAG stages
-                    : n.id === `root-${slug}` || (n.project?.slug === slug && n.role === "stage"),
-                )
-                .map((n) => n.id),
-            );
-            fitTo(ids, 80);
-          }, 60);
-        }
+        if (next.has(slug)) next.delete(slug);
+        else next.add(slug);
         return next;
       });
     },
-    [model.nodes, fitTo],
+    [],
   );
 
   // redraw wires + re-measure boxes when the visible set changes — after a
