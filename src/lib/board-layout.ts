@@ -87,15 +87,17 @@ export type BoardModel = {
    the label sits in the header band above the cards, never on top of them. */
 const ROOT_W = 240;
 const STAGE_W = 220;
-const STAGE_GAP_X = 320; // wide horizontal DAG steps
+const STAGE_GAP_X = 268; // horizontal DAG step — tightened so the chain reads as
+                         //  a connected flow, not far-flung islands (Daman)
 const ROW0 = 160;
 const WELCOME_X = 60;
 const WELCOME_W = 320;
 
 const SECTION_LABEL_H = 56; // header band the ◆ label lives in (clear of cards)
-const SECTION_PITCH = 420; // vertical distance between systems sections — big
-                           //  enough for an open DAG row + the next label band
-const COL_GAP = 300; // clear gap between the systems block and the art column
+const SECTION_PITCH = 300; // vertical distance between systems sections — closer,
+                           //  more natural stack (still clears an open DAG row +
+                           //  the next label band; collapsed cards are ~150px)
+const COL_GAP = 260; // gap between columns
 
 export function buildBoard(projects: Project[]): BoardModel {
   const systems = projects.filter((p) => p.discipline === "systems");
@@ -111,11 +113,11 @@ export function buildBoard(projects: Project[]): BoardModel {
   // ══ ART COLUMN — LEFTMOST (left of origin, Daman's call). ═════════════════
   //    Hub card at top, its PIPELINE DAG flowing to the RIGHT of the hub (only
   //    shown when the hub is expanded), then the plates stacked down the column.
-  const PLATE_W = 260;
-  const PLATE_H = 168;
-  const PLATE_PITCH = 250;
+  const PLATE_W = 360; // bigger artwork cards (Daman) — was 260
+  const PLATE_H = 234;  // keep ~3:2, scaled up from 168
+  const PLATE_PITCH = 330; // room for the taller cards + their label band
   const ART_X = 60;
-  const ART_W = 260;
+  const ART_W = 300;
   nodes.push({ id: "art-hub", role: "art", x: ART_X, y: ROW0, w: ART_W });
 
   // the art pipeline — a vertical DAG flowing DOWN from the hub (the art column

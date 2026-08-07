@@ -571,6 +571,161 @@ export const projects: Project[] = [
     ],
     specAccent: "FORMAT",
   },
+  // ── PL.05–PL.09 · new ArtStation plates (self-hosted; copy drafted from the
+  //    image, no invented claims — Daman to approve/edit) ──────────────────────
+  {
+    slug: "procedural-clouds",
+    name: "Procedural Clouds",
+    num: "PL.05",
+    tagline: "Golden-hour volumetric clouds, generated not painted.",
+    discipline: "craft",
+    category: "environment",
+    description:
+      "A pair of soft cumulus clouds at golden hour, built as volumetrics against a graded dusk sky — warm rim light on the tops, cool shadow underneath.",
+    stack: ["Blender", "Volumetrics"],
+    status: "live",
+    href: "https://www.artstation.com/damanpsd",
+    hrefLabel: "view on ArtStation",
+    metric: { label: "approach", value: "procedural" },
+    year: "2025",
+    summary:
+      "A volumetric cloud study at golden hour — two soft cumulus forms lit warm on top and cool below, sitting in a smoothly graded dusk sky. Generated as volume rather than painted, so the light reads through the whole form.",
+    gallery: [
+      { src: "/art/proc-clouds.webp", alt: "two golden-hour volumetric clouds against a dusk sky", caption: "Two cumulus forms at golden hour — warm light catching the tops, cooler shadow beneath, in a graded dusk sky." },
+    ],
+    sections: [
+      { heading: "The study", body: "A focused lighting-and-volume study: two soft cumulus clouds at golden hour. The goal was believable scattering — warm light raking the tops, the underside falling to cool shadow — with the forms reading as volume, not flat cards." },
+      { heading: "Why procedural", body: "Built as volumetrics rather than painted so the light genuinely travels through the cloud. It's the same instinct as the rest of the craft work: describe the thing with rules and let the render resolve it." },
+    ],
+    facts: [
+      { label: "TYPE", value: "LIGHTING STUDY" },
+      { label: "TOOL", value: "BLENDER · VOLUMES" },
+      { label: "SUBJECT", value: "CUMULUS · GOLDEN HOUR" },
+    ],
+  },
+  {
+    slug: "cityscape",
+    name: "Cityscape",
+    num: "PL.06",
+    tagline: "A dense procedural city, rendered in clay.",
+    discipline: "craft",
+    category: "environment",
+    description:
+      "An aerial view over a dense downtown of towers and rooftops — antennas, HVAC, setbacks and all — rendered in untextured greyscale clay so the scale and geometry read.",
+    stack: ["Blender", "Procedural"],
+    status: "live",
+    href: "https://www.artstation.com/damanpsd",
+    hrefLabel: "view on ArtStation",
+    metric: { label: "approach", value: "procedural" },
+    year: "2024",
+    summary:
+      "A dense city block seen from above — skyscrapers, setbacks, rooftop clutter of HVAC units and antennas — rendered as untextured clay so the scale, massing and geometry carry the frame on their own.",
+    gallery: [
+      { src: "/art/cityscape.webp", alt: "aerial greyscale clay render of a dense city", caption: "An aerial clay render of a dense downtown — rooftop detail, setbacks and towers, left untextured so massing reads first." },
+    ],
+    sections: [
+      { heading: "Scale from geometry", body: "A downtown seen from above, rendered in greyscale clay. Stripping colour and texture puts all the weight on geometry — the massing of towers, the rhythm of setbacks, the clutter of rooftop mechanicals — to see whether the scene holds on scale alone." },
+      { heading: "Built by rules", body: "The density is the point: enough buildings, each with believable rooftop detail, that placing them by hand isn't the move. It's an environment/scale exercise in the same procedural vein as the generators." },
+    ],
+    facts: [
+      { label: "TYPE", value: "ENVIRONMENT · SCALE" },
+      { label: "TOOL", value: "BLENDER" },
+      { label: "RENDER", value: "GREYSCALE CLAY" },
+      { label: "SUBJECT", value: "DENSE CITY" },
+    ],
+  },
+  {
+    slug: "npr-cabinet",
+    name: "NPR / Grease-Pencil",
+    num: "PL.07",
+    tagline: "A toon-shaded asset with hand-drawn outlines.",
+    discipline: "craft",
+    category: "stylized",
+    description:
+      "A cel-shaded cabinet on a cracked stone dais — flat mint-and-yellow fills, bold black outlines and hatched contact shadow: a non-photorealistic / grease-pencil look-dev asset.",
+    stack: ["Blender", "Grease Pencil", "NPR"],
+    status: "live",
+    href: "https://www.artstation.com/damanpsd",
+    hrefLabel: "view on ArtStation",
+    metric: { label: "look", value: "non-photoreal" },
+    year: "2025",
+    summary:
+      "A single cel-shaded object — a tall cabinet on a cracked stone dais — rendered fully non-photoreal: flat colour fills, inked outlines, and hatched shadow drawn in the render. A grease-pencil / NPR look-dev asset.",
+    gallery: [
+      { src: "/art/npr-cabinet.webp", alt: "toon-shaded cabinet with black outlines on a stone dais", caption: "A cel-shaded cabinet — flat fills, inked contours and hatched contact shadow: a deliberately illustrative, non-photoreal look." },
+    ],
+    sections: [
+      { heading: "Against photoreal", body: "Where most of the 3D work chases realism, this one goes the other way: flat toon fills, bold outlines, and a hatched shadow, so the whole thing reads as drawn. It's a test of a non-photorealistic pipeline rather than a finished scene." },
+      { heading: "Grease pencil + shading", body: "The outlines and hatching come from a grease-pencil / NPR setup layered on the 3D object — proving out a stylised look that could dress a whole scene, not just one prop." },
+    ],
+    facts: [
+      { label: "TYPE", value: "NPR LOOK-DEV" },
+      { label: "TOOL", value: "BLENDER · GREASE PENCIL" },
+      { label: "LOOK", value: "CEL / TOON · INKED" },
+    ],
+  },
+  {
+    slug: "highway-stop",
+    name: "Highway Night Stop",
+    num: "PL.08",
+    tagline: "A nocturnal roadside scene, lit by sodium and neon.",
+    discipline: "craft",
+    category: "environment",
+    description:
+      "A roadside stop at night — crash barriers curving into fog, a receding line of streetlights, and a neon-trimmed fuel canopy glowing red and blue at the edge of frame.",
+    stack: ["Blender", "Lighting"],
+    status: "live",
+    href: "https://www.artstation.com/damanpsd",
+    hrefLabel: "view on ArtStation",
+    metric: { label: "study", value: "night lighting" },
+    year: "2024",
+    summary:
+      "A nocturnal environment study: a highway-side stop where fog, a receding run of streetlights, and a neon-edged fuel canopy do all the work. Almost monochrome until the red-and-blue neon pulls the eye to the corner.",
+    gallery: [
+      { src: "/art/highway-stop.webp", alt: "foggy roadside gas stop at night with neon canopy", caption: "A roadside stop at night — barriers curving into fog, streetlights receding, a neon-trimmed canopy glowing at the edge." },
+    ],
+    sections: [
+      { heading: "Atmosphere first", body: "This is a mood piece: an empty roadside at night, carried by fog, falloff, and a few warm pools of streetlight. The near-monochrome palette makes the single hit of red-and-blue neon land hard." },
+      { heading: "Leading the eye", body: "The crash barrier and the line of lamps act as leading lines pulling into depth; the lit canopy is the anchor. It's a composition-and-lighting study more than a modelling one." },
+    ],
+    facts: [
+      { label: "TYPE", value: "ENVIRONMENT · MOOD" },
+      { label: "TOOL", value: "BLENDER" },
+      { label: "STUDY", value: "NIGHT LIGHTING · FOG" },
+      { label: "SUBJECT", value: "ROADSIDE STOP" },
+    ],
+  },
+  {
+    slug: "interior-study",
+    name: "Interior Study",
+    num: "PL.09",
+    tagline: "A warm evening living room, lit by nested frames.",
+    discipline: "craft",
+    category: "environment",
+    description:
+      "A modern living room at night — a sectional and coffee table on patterned flooring, warmed by a stack of nested square light fixtures and a single standing lamp.",
+    stack: ["Blender", "Interior Lighting"],
+    status: "live",
+    href: "https://www.artstation.com/damanpsd",
+    hrefLabel: "view on ArtStation",
+    metric: { label: "study", value: "interior lighting" },
+    year: "2024",
+    summary:
+      "An interior lighting study — a modern living room after dark, its mood set by nested square ceiling frames, a warm standing lamp, and the glow they throw across a sectional, marble table and patterned floor.",
+    gallery: [
+      { src: "/art/interior-study.webp", alt: "warm modern living room at night with nested light fixtures", caption: "A living room after dark — nested light-frame fixtures and a single lamp carry a warm, low-key evening mood." },
+    ],
+    sections: [
+      { heading: "Light as the subject", body: "The room is furnished plainly on purpose; the piece is really about the light. Nested square fixtures and one warm lamp set a low-key evening key, with the fill falling off into the corners of the space." },
+      { heading: "Materials in low light", body: "It's also a materials test — how the sofa fabric, marble top, and patterned floor hold up when they're described almost entirely by warm, indirect light rather than a bright key." },
+    ],
+    facts: [
+      { label: "TYPE", value: "INTERIOR · LIGHTING" },
+      { label: "TOOL", value: "BLENDER" },
+      { label: "STUDY", value: "EVENING · LOW-KEY" },
+      { label: "SUBJECT", value: "LIVING ROOM" },
+    ],
+  },
 ];
 
 /** Lookup helper for the detail route. */

@@ -240,10 +240,26 @@ body {
 }
 
 svg.board-wires { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 1; }
+/* base wire: a faint static track */
 svg.board-wires path { fill: none; stroke: var(--line); stroke-width: 1.5; }
 svg.board-wires path.w-ship { stroke: color-mix(in oklab, var(--ship) 60%, var(--line)); }
 svg.board-wires path.w-art  { stroke: color-mix(in oklab, var(--art) 45%, var(--line)); }
 :root[data-theme="dark"] svg.board-wires path { filter: drop-shadow(0 0 3px var(--glow)); }
+/* flowing pulse: a second overlaid path (.w-flow) with a dashed accent stroke
+   whose dashoffset animates, so a little light appears to travel along the wire */
+svg.board-wires path.w-flow {
+  stroke: color-mix(in srgb, var(--acc) 70%, transparent);
+  stroke-width: 2; stroke-linecap: round;
+  stroke-dasharray: 3 26; /* short dash, long gap = a moving glint */
+  animation: wire-flow 1.4s linear infinite;
+}
+svg.board-wires path.w-flow.f-ship { stroke: color-mix(in srgb, var(--ship) 85%, transparent); }
+svg.board-wires path.w-flow.f-art  { stroke: color-mix(in srgb, var(--art) 85%, transparent); }
+:root[data-theme="dark"] svg.board-wires path.w-flow { filter: drop-shadow(0 0 4px color-mix(in srgb, var(--acc) 60%, transparent)); }
+@keyframes wire-flow { from { stroke-dashoffset: 29; } to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  svg.board-wires path.w-flow { animation: none; stroke-dasharray: none; opacity: 0.5; }
+}
 
 /* ===== nodes ===== */
 .node {
@@ -354,6 +370,7 @@ svg.board-wires path.w-art  { stroke: color-mix(in oklab, var(--art) 45%, var(--
   transform-origin: bottom left;
 }
 .tools-stack .hud-btn { width: 100%; text-align: left; white-space: nowrap; }
+.tools-hint { font-size: 9.5px; letter-spacing: 0.08em; color: var(--faint); padding: 2px 4px; text-transform: uppercase; }
 /* closed: collapsed, faded, lifted down + non-interactive */
 .tools-menu[data-open="false"] .tools-stack {
   opacity: 0; transform: translateY(10px) scale(0.96);
