@@ -1,20 +1,20 @@
+import Link from "next/link";
 import { site } from "@/content";
 import Board from "@/components/Board";
-import Outline from "@/components/Outline";
 import ThemeToggle from "@/components/ThemeToggle";
 import OutlineButton from "@/components/OutlineButton";
 
 /**
  * v4 — the board IS the site. A pannable 2D flow-board where every project is
- * drawn as its production DAG. Fixed identity strip up top; the outline is the
- * a11y / 30-second read. Terminal (light) ⇄ Nocturne (dark) via the toggle.
+ * drawn as its production DAG. Fixed identity strip up top; the linear reading
+ * view lives at /read (The Monograph). Terminal (light) ⇄ Nocturne (dark).
  */
 export default function Home() {
   return (
     <>
-      <a className="skip-link" href="#outline">
-        Skip the board — read as a linear outline
-      </a>
+      <Link className="skip-link" href="/read">
+        Skip the board — read the linear version
+      </Link>
 
       {/* fixed identity strip */}
       <header
@@ -68,7 +68,6 @@ export default function Home() {
       </header>
 
       <Board />
-      <Outline />
     </>
   );
 }
