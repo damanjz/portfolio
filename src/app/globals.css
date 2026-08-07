@@ -453,7 +453,29 @@ svg.board-wires path.w-flow.f-art  { stroke: color-mix(in srgb, var(--art) 90%, 
   .hud-secondary { display: none !important; }
   .hud-btn { font-size: 11px; padding: 8px 10px; } /* larger tap target */
   .zone-title { font-size: 10px; }
+  /* desktop chrome hidden on mobile — the bottom bar replaces it */
+  .tools-menu, .hud-desktop-zoom { display: none !important; }
 }
+
+/* ===== mobile bottom toolbar (thumb zone) ===== */
+.mobile-bar {
+  display: none; /* shown only ≤640px */
+  left: 50%; transform: translateX(-50%); bottom: max(14px, env(safe-area-inset-bottom));
+  gap: 8px; padding: 7px; border-radius: 16px;
+  background: color-mix(in srgb, var(--ground) 88%, transparent);
+  border: 1px solid var(--line); backdrop-filter: blur(10px);
+  box-shadow: 0 6px 24px var(--shadow);
+}
+.mbar-btn {
+  min-width: 46px; height: 46px; padding: 0 12px; /* 44px+ touch targets */
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono), ui-monospace, monospace; font-size: 17px;
+  color: var(--dim); background: transparent; border: 0; border-radius: 11px;
+  cursor: pointer; text-decoration: none; -webkit-tap-highlight-color: transparent;
+}
+.mbar-btn:active { background: var(--chip, color-mix(in srgb, var(--acc) 14%, transparent)); color: var(--ink); }
+.mbar-read { font-size: 11px; letter-spacing: 0.12em; font-weight: 600; color: var(--acc); }
+@media (max-width: 640px) { .mobile-bar { display: flex; align-items: center; } }
 
 /* ===== a11y / linear outline fallback ===== */
 .outline-view { position: fixed; inset: 0; z-index: 60; background: var(--ground); overflow: auto; padding: 44px clamp(20px, 6vw, 80px); display: none; }
