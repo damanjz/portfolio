@@ -70,7 +70,7 @@ export function deriveStages(p: Project): Stage[] {
       id: `${p.slug}-decision`,
       kind: "decision",
       label: "Decisions",
-      title: `${p.decisions.length} calls made`,
+      title: `${p.decisions.length} call${p.decisions.length === 1 ? "" : "s"} made`,
       decisions: p.decisions,
     });
   }

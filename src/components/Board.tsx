@@ -61,7 +61,7 @@ function Node({
         <ul className="n-howlist mono">
           <li><b>Drag</b> the background to pan · <b>scroll</b> to zoom out</li>
           <li><b>Click a project</b> to trace its build, idea → shipped</li>
-          <li><b>Grab a card&apos;s top strip</b> to move it · body text selects</li>
+          <li><b>Grab a card&apos;s top strip</b> to move it around the board</li>
           <li><b>⿴ Select tool</b> (bottom-left) → box several cards, move together</li>
           <li><b>☰ Outline</b> up top = the whole thing as a plain list</li>
           <li><b>◑ / ◐</b> toggles light / dark</li>
@@ -511,18 +511,39 @@ export default function Board() {
 
   // initial view: open focused on the welcome column (how-to + origin + about)
   // at native scale, so a first-time visitor lands oriented and reading crisp text.
+  // The fit must run only once nodes have real measured heights — a single rAF
+  // loses a race on cold loads (fonts not yet laid out → placeholder heights →
+  // fit no-ops, board lands untransformed). Settle it deterministically: retry
+  // across a rAF, a timed fallback, fonts.ready, and window.load until the
+  // welcome nodes measure taller than the 90px placeholder, then stop.
   useEffect(() => {
-    const id = requestAnimationFrame(() => {
+    const WELCOME = new Set(["howto", "origin", "about"]);
+    let settled = false;
+    const measured = () => {
+      const el = worldRef.current?.querySelector<HTMLElement>('[data-node="howto"]');
+      return !!el && el.offsetHeight > 100; // real card, not the placeholder
+    };
+    const settle = () => {
+      if (settled) return;
       drawWires();
-      fitTo(new Set(["howto", "origin", "about"]), 70);
-    });
+      fitTo(WELCOME, 70);
+      if (measured()) settled = true; // stop once framed against real heights
+    };
+    const r1 = requestAnimationFrame(settle);
+    const t1 = setTimeout(settle, 140);
+    const t2 = setTimeout(settle, 380);
+    if (document.fonts?.ready) document.fonts.ready.then(settle);
+    window.addEventListener("load", settle);
     const onResize = () => {
       drawWires();
       fitTo();
     };
     window.addEventListener("resize", onResize);
     return () => {
-      cancelAnimationFrame(id);
+      cancelAnimationFrame(r1);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      window.removeEventListener("load", settle);
       window.removeEventListener("resize", onResize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -675,8 +696,35 @@ export default function Board() {
     return { x: x0 - padX, y: y0 - padTop, w: x1 - x0 + padX * 2, h: y1 - y0 + padTop + padBottom };
   };
 
+  // keyboard operation of the board itself (Sam / keyboard-only users): arrows
+  // pan, +/− zoom, 0 fits everything. The board is focusable so these are
+  // reachable without a pointer; the Outline remains the full linear fallback.
+  const onStageKeyDown = (e: React.KeyboardEvent) => {
+    // don't hijack keys while focus is on a node's link/button
+    if ((e.target as HTMLElement).closest("a, button")) return;
+    const PAN = 80;
+    switch (e.key) {
+      case "ArrowLeft": view.current.tx += PAN; applyView(); break;
+      case "ArrowRight": view.current.tx -= PAN; applyView(); break;
+      case "ArrowUp": view.current.ty += PAN; applyView(); break;
+      case "ArrowDown": view.current.ty -= PAN; applyView(); break;
+      case "+": case "=": zoomBy(1 / 0.82); break;
+      case "-": case "_": zoomBy(0.82); break;
+      case "0": fitZone("all"); break;
+      default: return;
+    }
+    e.preventDefault();
+  };
+
   return (
-    <div ref={stageRef} className={`board-stage ${tool === "select" ? "selecting" : ""}`} aria-label="Portfolio board — drag to pan, scroll to zoom">
+    <div
+      ref={stageRef}
+      className={`board-stage ${tool === "select" ? "selecting" : ""}`}
+      tabIndex={0}
+      role="application"
+      aria-label="Portfolio board — drag or arrow keys to pan, scroll or +/− to zoom, 0 to fit. Prefer a linear list? Use the Outline button, top right."
+      onKeyDown={onStageKeyDown}
+    >
       <div ref={worldRef} className="board-world">
         <svg ref={svgRef} className="board-wires" />
         {/* per-project / per-plate item boxes (group section boxes removed on
@@ -729,22 +777,22 @@ export default function Board() {
       {/* tool rail (bottom-left): pan vs select, fits, reset */}
       <div className="hud" style={{ left: 18, bottom: 18, display: "flex", gap: 7, flexWrap: "wrap", maxWidth: "62vw" }}>
         <button
-          className="hud-btn"
+          className="hud-btn hud-secondary"
           aria-current={tool === "pan"}
           onClick={() => { setTool("pan"); setSelected(new Set()); }}
           title="Pan / move tool"
         >✋ MOVE</button>
         <button
-          className="hud-btn"
+          className="hud-btn hud-secondary"
           aria-current={tool === "select"}
           onClick={() => setTool("select")}
           title="Drag a box to select multiple cards, then drag them together"
         >⿴ SELECT{selected.size ? ` (${selected.size})` : ""}</button>
-        <span style={{ width: 1, alignSelf: "stretch", background: "var(--line)", margin: "2px 2px" }} />
+        <span className="hud-secondary" style={{ width: 1, alignSelf: "stretch", background: "var(--line)", margin: "2px 2px" }} />
         <button className="hud-btn" onClick={() => fitZone("all")}>◱ WHOLE BOARD</button>
-        <button className="hud-btn" onClick={() => fitZone("work")}>◧ THE WORK</button>
-        <button className="hud-btn" onClick={() => fitZone("art")}>◨ THE PLATES</button>
-        <button className="hud-btn" onClick={resetLayout} title="Restore the default arrangement">↺ RESET</button>
+        <button className="hud-btn hud-secondary" onClick={() => fitZone("work")}>◧ THE WORK</button>
+        <button className="hud-btn hud-secondary" onClick={() => fitZone("art")}>◨ THE PLATES</button>
+        <button className="hud-btn hud-secondary" onClick={resetLayout} title="Restore the default arrangement">↺ RESET</button>
       </div>
       {/* zoom — out only; 1× is native and crisp */}
       <div className="hud" style={{ right: 18, bottom: 18, display: "flex", flexDirection: "column", gap: 6 }}>

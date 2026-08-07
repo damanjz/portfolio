@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { projects, site } from "@/content";
 import { deriveStages } from "@/lib/graph";
 
@@ -14,9 +14,15 @@ export default function Outline() {
   const [on, setOn] = useState(false);
   const systems = projects.filter((p) => p.discipline === "systems");
   const art = projects.filter((p) => p.discipline === "craft");
+  const closeRef = useRef<HTMLButtonElement>(null);
+  // remember what had focus before opening, so we can restore it on close
+  const returnFocus = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const openIt = () => setOn(true);
+    const openIt = () => {
+      returnFocus.current = document.activeElement as HTMLElement;
+      setOn(true);
+    };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOn(false);
     };
@@ -28,9 +34,26 @@ export default function Outline() {
     };
   }, []);
 
+  // move focus into the overlay when it opens; restore it to the trigger on close
+  useEffect(() => {
+    if (on) {
+      closeRef.current?.focus();
+    } else if (returnFocus.current) {
+      returnFocus.current.focus();
+      returnFocus.current = null;
+    }
+  }, [on]);
+
   return (
-    <section className={`outline-view ${on ? "on" : ""}`} id="outline" aria-label="Portfolio as a linear outline">
+    <section
+      className={`outline-view ${on ? "on" : ""}`}
+      id="outline"
+      role="dialog"
+      aria-modal={on}
+      aria-label="Portfolio as a linear outline"
+    >
       <button
+        ref={closeRef}
         className="hud-btn"
         style={{ position: "fixed", right: 24, top: 20 }}
         onClick={() => setOn(false)}

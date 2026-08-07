@@ -17,24 +17,25 @@
   --ground: #f4f2ec;
   --grid: #e7e4da;
   --ink: #1a1917;
-  --dim: #77736a;
-  --faint: #a9a295;
+  /* light-theme small-text tokens meet WCAG AA (>=4.5:1) at 9-11px label sizes */
+  --dim: #6b6760;
+  --faint: #6f6a5e;
   --line: #c3bdaf;
   --node: #fffdf8;
   --node-bd: #d8d3c6;
   --node-hi: #fbf9f3;
   --acc: #d1442b;
   --art: #a06a1e;
-  --ship: #2f8f5f;
+  --ship: #237a4e;
   --dev: #c98a2e;
   --shadow: rgba(26, 25, 23, 0.08);
   --glow: transparent;
   color-scheme: light;
 }
 :root[data-theme="light"] {
-  --ground: #f4f2ec; --grid: #e7e4da; --ink: #1a1917; --dim: #77736a;
-  --faint: #a9a295; --line: #c3bdaf; --node: #fffdf8; --node-bd: #d8d3c6;
-  --node-hi: #fbf9f3; --acc: #d1442b; --art: #a06a1e; --ship: #2f8f5f;
+  --ground: #f4f2ec; --grid: #e7e4da; --ink: #1a1917; --dim: #6b6760;
+  --faint: #6f6a5e; --line: #c3bdaf; --node: #fffdf8; --node-bd: #d8d3c6;
+  --node-hi: #fbf9f3; --acc: #d1442b; --art: #a06a1e; --ship: #237a4e;
   --dev: #c98a2e; --shadow: rgba(26,25,23,0.08); --glow: transparent;
   color-scheme: light;
 }
@@ -44,7 +45,7 @@
   --grid: #17171a;
   --ink: #f0ede8;
   --dim: #8f8b85;
-  --faint: #6f6b65;
+  --faint: #8b877f;
   --line: #2b2b30;
   --node: #151517;
   --node-bd: #26262b;
@@ -61,7 +62,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     --ground: #0c0c0e; --grid: #17171a; --ink: #f0ede8; --dim: #8f8b85;
-    --faint: #6f6b65; --line: #2b2b30; --node: #151517; --node-bd: #26262b;
+    --faint: #8b877f; --line: #2b2b30; --node: #151517; --node-bd: #26262b;
     --node-hi: #1b1b1e; --acc: #ff7a3c; --art: #e0a24a; --ship: #57c98a;
     --dev: #e0b45a; --shadow: rgba(0,0,0,0.5); --glow: rgba(255,122,60,0.18);
     color-scheme: dark;
@@ -119,7 +120,7 @@ body {
 .serif { font-family: var(--font-serif), Georgia, serif; }
 .kicker {
   font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 9px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+  font-size: 10.5px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
 }
 
 /* ===== the board ===== */
@@ -287,6 +288,17 @@ svg.board-wires path.w-art  { stroke: color-mix(in oklab, var(--art) 45%, var(--
 }
 .hud-btn:hover { color: var(--ink); border-color: color-mix(in srgb, var(--acc) 45%, var(--line)); }
 .hud-btn[aria-current="true"] { color: var(--ink); border-color: var(--ink); }
+
+/* mobile: the board's chrome collapses to the essentials so it doesn't bury the
+   cards on a 375px screen. Secondary tools (MOVE/SELECT/THE WORK/THE PLATES/
+   RESET, the header role + status word) hide; WHOLE BOARD + zoom + OUTLINE +
+   theme remain. Touch users read via the Outline; multi-select isn't a touch
+   affordance anyway. */
+@media (max-width: 640px) {
+  .hud-secondary { display: none !important; }
+  .hud-btn { font-size: 11px; padding: 8px 10px; } /* larger tap target */
+  .zone-title { font-size: 10px; }
+}
 
 /* ===== a11y / linear outline fallback ===== */
 .outline-view { position: fixed; inset: 0; z-index: 60; background: var(--ground); overflow: auto; padding: 44px clamp(20px, 6vw, 80px); display: none; }

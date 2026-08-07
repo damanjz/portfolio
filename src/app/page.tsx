@@ -35,7 +35,7 @@ export default function Home() {
             {site.name}
           </span>
           <span
-            className="kicker"
+            className="kicker hud-secondary"
             style={{ color: "var(--dim)", marginLeft: 10 }}
           >
             {site.role}
@@ -61,7 +61,7 @@ export default function Home() {
               boxShadow: "0 0 0 3px color-mix(in srgb, var(--ship) 16%, transparent)",
             }}
           />
-          <span>{site.status.toUpperCase()}</span>
+          <span className="hud-secondary">{site.status.toUpperCase()}</span>
           <OutlineButton />
           <ThemeToggle />
         </div>

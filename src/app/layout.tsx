@@ -3,7 +3,6 @@ import { Source_Serif_4, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { site, seo } from "@/content";
 import { StructuredData } from "./structured-data";
-import CommandPalette from "@/components/CommandPalette";
 
 // Two self-hosted families (via next/font — no runtime request to Google):
 // serif for names/titles, mono for the board's structural voice.
@@ -64,7 +63,6 @@ export default function RootLayout({
       <body className="min-h-full">
         <StructuredData />
         {children}
-        <CommandPalette />
       </body>
     </html>
   );
