@@ -261,7 +261,14 @@ const ZOOM_MIN = 0.28;
 
 export default function Board() {
   const model = useMemo(() => buildBoard([...projects]), []);
-  const [open, setOpen] = useState<Set<string>>(new Set(["protec"])); // protec pre-opened
+  // open with everything expanded — Daman's baked-in arrangement was designed
+  // with every project + the art pipeline open, so the board matches it on load.
+  const [open, setOpen] = useState<Set<string>>(
+    () => new Set<string>([
+      ...projects.filter((p) => p.discipline === "systems").map((p) => p.slug),
+      "art",
+    ]),
+  );
   const worldRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
