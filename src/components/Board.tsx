@@ -169,6 +169,19 @@ function Node({
         <Link href={`/projects/${p.slug}`} prefetch={false} className="p-cap p-cap-link" draggable={false}>
           {p.num} · {p.name} <span className="n-go">↗</span>
         </Link>
+        {p.artDag && (
+          <button
+            type="button"
+            className="n-expand p-expand"
+            aria-expanded={expanded}
+            aria-label={expanded ? `Collapse ${p.name} process` : `Expand ${p.name} process`}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => { e.stopPropagation(); onToggle(`plate-${p.slug}`); }}
+          >
+            <span className="n-expand-ico">{expanded ? "−" : "+"}</span>
+            {expanded ? "COLLAPSE" : "TRACE"}
+          </button>
+        )}
       </div>
     );
   }
@@ -356,7 +369,15 @@ export default function Board() {
     () =>
       model.nodes.filter((n) => {
         if (n.role === "stage") return !!n.project && open.has(n.project.slug);
-        if (n.role === "artstage") return open.has("art");
+        if (n.role === "artstage") {
+          // per-plate DAG stage id = "plate-<slug>-<key>" → gate on its plate;
+          // shared art-hub stage (e.g. "art-concept") → gate on the hub.
+          if (n.id.startsWith("plate-")) {
+            const plateId = n.id.replace(/-(vision|impl|problems|output)$/, "");
+            return open.has(plateId);
+          }
+          return open.has("art");
+        }
         return true;
       }),
     [model.nodes, open],
@@ -576,11 +597,14 @@ export default function Board() {
         // when opening, frame the project + its freshly-shown DAG stages
         if (opening) {
           setTimeout(() => {
+            const isPlate = slug.startsWith("plate-");
             const ids = new Set(
               model.nodes
                 .filter((n) =>
                   slug === "art"
-                    ? n.id === "art-hub" || n.role === "artstage"
+                    ? n.id === "art-hub" || (n.role === "artstage" && !n.id.startsWith("plate-"))
+                    : isPlate
+                    ? n.id === slug || n.id.startsWith(`${slug}-`) // the plate + its DAG stages
                     : n.id === `root-${slug}` || (n.project?.slug === slug && n.role === "stage"),
                 )
                 .map((n) => n.id),
@@ -953,7 +977,13 @@ export default function Board() {
             key={n.id}
             n={n}
             pos={posOf(n)}
-            expanded={!!n.project && open.has(n.project.slug)}
+            expanded={
+              n.role === "plate" && n.plate
+                ? open.has(`plate-${n.plate.slug}`)
+                : n.role === "art"
+                ? open.has("art")
+                : !!n.project && open.has(n.project.slug)
+            }
             selected={selected.has(n.id)}
             onToggle={toggle}
             onDragStart={onNodeDragStart}

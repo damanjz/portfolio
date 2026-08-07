@@ -96,6 +96,9 @@ export type Project = {
   decisions?: { choice: string; reason: string }[]; // the decisions ledger table
   facts: { label: string; value: string }[]; // spec sheet sidebar
   specAccent?: string; // which spec label gets the accent (e.g. "NETWORK")
+  /** art pieces: their own 4-stage board DAG (vision → implementation →
+   *  problems faced → output). Drafted from the image; Daman to edit. */
+  artDag?: { vision: string; implementation: string; problems: string; output: string };
 };
 
 export const projects: Project[] = [
@@ -446,6 +449,12 @@ export const projects: Project[] = [
       { label: "PERFORMANCE", value: "~100 FPS (TARGET 60)" },
       { label: "RUNTIME", value: "~10 MIN PIECE" },
     ],
+    artDag: {
+      vision: "A medieval village that tells its own story with no characters — round stone towers, red-tiled roofs, lanterns on wooden beams, under a soft pink-and-blue sky. Genshin's Mondstadt, BOTW, and Ghibli as the north star; a semi-stylized look for more grip on lighting and mood.",
+      implementation: "Built in Unreal 5.6 — Lumen for lighting, Nanite for foliage. Blueprint actors for the buildings, splines driving the castle walls and the flowing river. Assets sourced then reworked through material/shader edits so they read as one authored world. A plug-and-play day-night cycle + a randomized weather system, tuned so emissive stylized materials respond together.",
+      problems: "Water reflectivity broke on every pan (overlapping materials, one with emission) until tracked down. A GPU driver update broke DX12 and crashed Unreal at random. Blueprint pivot drift scrambled whole classes — fixed by resetting pivots and re-adding actors at their original transform.",
+      output: "A ~10-minute real-time technical showcase running ~100fps against a 60fps target (profiled with stat fps / stat gpu; LODs, culling, Nanite overrides). Rendered to a shot bank, cut in After Effects + Premiere. My MA Animation final piece.",
+    },
   },
   {
     slug: "cinematic-car",
@@ -484,6 +493,12 @@ export const projects: Project[] = [
       { label: "FOCUS", value: "STUDIO LIGHTING" },
       { label: "LOOK", value: "CINEMATIC · LOW-KEY" },
     ],
+    artDag: {
+      vision: "Make a sports car read through light alone — a dark studio, deep blacks, and a car described almost entirely by its silhouette. A restraint exercise: value and form first, detail last.",
+      implementation: "Blender + Cycles. Near-black environment, a warm rim to draw the silhouette, and red/blue gels to shape the panels. A handful of carefully placed lights do all the describing; compositing balances the passes.",
+      problems: "The tension is always readability vs. mood — pushed too dark and the form disappears, too bright and it's a plain product shot. Dialing the rim intensity and gel placement so the car stays legible while most of the body sits in shadow was the whole battle.",
+      output: "A pair of cinematic studio renders where the form reads purely through light — the same composition-and-value instinct as the environment work, turned inward on a single hero object.",
+    },
   },
   {
     slug: "stylized-studies",
@@ -521,6 +536,12 @@ export const projects: Project[] = [
       { label: "RANGE", value: "TOON / NPR · PROCEDURAL" },
       { label: "GENERATORS", value: "CASTLE · CITY · FLOCK" },
     ],
+    artDag: {
+      vision: "Two experiments under one roof: a clean cel-shaded illustrative look (toon/NPR), and procedural scenes generated from rules rather than placed by hand. The through-line is the artist-engineer overlap — art you can parameterize.",
+      implementation: "Blender throughout. NPR side: flat toon fills + inked outlines for a deliberately drawn read. Procedural side: Geometry Nodes generators — a castle generator, a medieval building/city generator, a flock system — so a whole layout falls out of parameters.",
+      problems: "Procedural generators fight you on variation vs. control — too random and it's noise, too rigid and every output looks the same. Tuning the node graphs so the generators produce believable variety without hand-fixing each result was the real work.",
+      output: "A set of reusable generators + cel-shaded pieces — proof the same systems instinct behind the software work applies to art: build the tool, then let the tool make the output.",
+    },
   },
   {
     slug: "product-placement-dev",
@@ -570,6 +591,12 @@ export const projects: Project[] = [
       { label: "SHIPPED", value: "INSTAGRAM" },
     ],
     specAccent: "FORMAT",
+    artDag: {
+      vision: "Treat a set of signature-graphic electric guitars as a product-placement piece, not a modeling one — sell the object the way an ad would, with the final vertical social cut in mind from the first frame.",
+      implementation: "Blender + Cycles. Low-key near-black studio, guitars on wall mounts, described by rim light so silhouette + finish artwork read first. Texturing carries the graphic body wraps and hardware (EMG pickups, tune-o-matic bridges, logo decals); compositing ties the passes; framed 9:16.",
+      problems: "Graphic wraps have to survive dramatic lighting — push the rim too hard and the artwork blows out, too soft and the finish goes flat. Balancing readable finish detail against the moody low-key look, per finish, was the recurring fight.",
+      output: "A rim-lit lineup + hardware/body/headstock passes, cut into short 9:16 reels and posted to Instagram — built for the deliverable end-to-end.",
+    },
   },
   // ── PL.05–PL.09 · new ArtStation plates (self-hosted; copy drafted from the
   //    image, no invented claims — Daman to approve/edit) ──────────────────────
@@ -602,6 +629,12 @@ export const projects: Project[] = [
       { label: "TOOL", value: "BLENDER · VOLUMES" },
       { label: "SUBJECT", value: "CUMULUS · GOLDEN HOUR" },
     ],
+    artDag: {
+      vision: "Believable golden-hour clouds that read as real volume, not painted cards — warm light raking the tops, cool shadow underneath, floating in a smoothly graded dusk sky.",
+      implementation: "Built as volumetrics in Blender so light genuinely travels through the cloud. A graded sky behind, warm key from the low sun, and density shaped so the two cumulus forms feel soft but solid.",
+      problems: "Volumetric scattering is a fight between look and render cost — enough density and step detail to be believable without the render time exploding, and keeping the warm/cool split from muddying into flat grey.",
+      output: "A calm two-cloud golden-hour study — a small, focused proof of volumetric lighting that carries the same describe-it-with-rules instinct as the rest of the craft work.",
+    },
   },
   {
     slug: "cityscape",
@@ -633,6 +666,12 @@ export const projects: Project[] = [
       { label: "RENDER", value: "GREYSCALE CLAY" },
       { label: "SUBJECT", value: "DENSE CITY" },
     ],
+    artDag: {
+      vision: "Test whether a dense downtown holds on scale and geometry alone — no colour, no texture, just massing. An aerial view where the rhythm of towers, setbacks and rooftop clutter has to carry the frame.",
+      implementation: "A procedural approach in Blender — enough buildings, each with believable rooftop detail (HVAC, antennas, setbacks), that hand-placement isn't viable. Rendered as untextured greyscale clay to put all the weight on form.",
+      problems: "Density without repetition is the hard part — a procedural city reads as fake the moment the eye catches the same building twice. Getting believable variety across the block while keeping it performant to render was the challenge.",
+      output: "An aerial clay render of a convincing dense city — an environment/scale exercise proving the massing works before any texturing pass.",
+    },
   },
   {
     slug: "highway-stop",
@@ -664,6 +703,12 @@ export const projects: Project[] = [
       { label: "STUDY", value: "NIGHT LIGHTING · FOG" },
       { label: "SUBJECT", value: "ROADSIDE STOP" },
     ],
+    artDag: {
+      vision: "A lonely roadside stop at night that runs entirely on atmosphere — fog, falloff, and a few warm pools of streetlight, with one hit of red-and-blue neon to pull the eye.",
+      implementation: "Blender. Near-monochrome palette; crash barrier and a receding line of lamps as leading lines into depth; the neon-trimmed fuel canopy as the lit anchor. Volumetric fog carries the mood and the light falloff.",
+      problems: "Fog + many light sources is a noise/performance trap — enough atmospheric depth without the render going grainy or the scene flattening. Keeping the near-monochrome from going muddy so the single neon accent still lands was the balance.",
+      output: "A moody nocturnal environment — a composition-and-lighting study where mood does all the work and one accent carries the frame.",
+    },
   },
   {
     slug: "interior-study",
@@ -695,6 +740,12 @@ export const projects: Project[] = [
       { label: "STUDY", value: "EVENING · LOW-KEY" },
       { label: "SUBJECT", value: "LIVING ROOM" },
     ],
+    artDag: {
+      vision: "A modern living room after dark where the light is the subject, not the furniture — a warm, low-key evening mood set by nested square ceiling fixtures and a single standing lamp.",
+      implementation: "Blender interior lighting. Nested light-frame fixtures + one warm lamp as the key; fill deliberately falls off into the corners. Plainly furnished on purpose so materials — sofa fabric, marble table, patterned floor — carry the realism under indirect light.",
+      problems: "Interior lighting lives or dies on the fill — too much and the mood flattens, too little and it reads underexposed and noisy. Getting materials to hold up under almost entirely warm, indirect light (no bright key to hide behind) was the test.",
+      output: "A warm evening interior — a lighting-and-materials study proving a room can be carried by mood and indirect light alone.",
+    },
   },
 ];
 

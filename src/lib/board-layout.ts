@@ -194,6 +194,8 @@ export function buildBoard(projects: Project[]): BoardModel {
   // plates stack below the pipeline space so an expanded pipeline never overlaps
   const artTop = pipelineBottom + 40;
   const artItemBoxes: Box[] = [];
+  const PDAG_W = 250;   // per-plate DAG stage width
+  const PDAG_GAP = 274; // horizontal step
   art.forEach((p, i) => {
     const px = ART_X;
     const py = artTop + i * PLATE_PITCH;
@@ -206,6 +208,27 @@ export function buildBoard(projects: Project[]): BoardModel {
       x: px - BOX_PAD, y: py - BOX_PAD - BOX_LABEL_H,
       w: PLATE_W + BOX_PAD * 2, h: PLATE_H + BOX_PAD * 2 + BOX_LABEL_H,
     });
+    // per-plate DAG: vision → implementation → problems → output, flowing RIGHT
+    // of the plate. Shown only when this plate is expanded (Board gates on open).
+    if (p.artDag) {
+      const steps: [string, string, string][] = [
+        ["vision", "Vision", p.artDag.vision],
+        ["impl", "Implementation", p.artDag.implementation],
+        ["problems", "Problems faced", p.artDag.problems],
+        ["output", "Output", p.artDag.output],
+      ];
+      const dagX0 = px + PLATE_W + 90;
+      let prevP = id;
+      steps.forEach(([key, label, body], j) => {
+        const sid = `${id}-${key}`;
+        nodes.push({
+          id: sid, role: "artstage", x: dagX0 + j * PDAG_GAP, y: py, w: PDAG_W,
+          artStage: { id: sid, label, title: label, body },
+        });
+        edges.push([prevP, sid, "art"]);
+        prevP = sid;
+      });
+    }
   });
   const artBottom = artTop + (art.length - 1) * PLATE_PITCH + PLATE_H;
 
