@@ -267,9 +267,12 @@ svg.board-wires path.w-flow.f-ship { stroke: color-mix(in srgb, var(--ship) 90%,
 svg.board-wires path.w-flow.f-art  { stroke: color-mix(in srgb, var(--art) 90%, transparent); }
 :root[data-theme="dark"] svg.board-wires path.w-flow { stroke-width: 2.4; }
 @keyframes wire-flow { from { stroke-dashoffset: 29; } to { stroke-dashoffset: 0; } }
-/* pause the continuous repaint when the board has been idle a moment, and when
-   the tab is hidden — the animation restarts on any interaction. */
-.board-stage.calm svg.board-wires path.w-flow { animation-play-state: paused; }
+/* pause the continuous flow repaint when the tab is hidden (.calm) OR during
+   active pan/zoom/drag (.busy) — the board is already repainting then, and the
+   49 animating dashes are what tip zoom into jank. Resumes when interaction
+   settles (~220ms). */
+.board-stage.calm svg.board-wires path.w-flow,
+.board-stage.busy svg.board-wires path.w-flow { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
   svg.board-wires path.w-flow { animation: none; stroke-dasharray: none; opacity: 0.55; }
 }
