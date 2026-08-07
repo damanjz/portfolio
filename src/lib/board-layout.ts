@@ -77,6 +77,62 @@ export type BoardModel = {
   bounds: { w: number; h: number };
 };
 
+/** Daman's hand-arranged board layout, exported from the live board's
+ *  localStorage on 2026-08-07 and baked in as the default so it persists for
+ *  everyone (not just the browser it was dragged in). Nodes here override their
+ *  generated positions; RESET returns to this. Coordinates are board-space. */
+const DEFAULT_POS: Record<string, { x: number; y: number }> = {
+  "art-texture": { x: -340, y: 574 },
+  "root-n8n-automation": { x: 1740, y: -113 },
+  "plate-umbraixs": { x: -901, y: 110 },
+  "plate-cinematic-car": { x: -882, y: 429 },
+  "plate-stylized-studies": { x: -916, y: 755 },
+  "plate-product-placement-dev": { x: -901, y: 1100 },
+  "plate-procedural-clouds": { x: -901, y: 1430 },
+  "plate-cityscape": { x: -1407, y: 110 },
+  "plate-npr-cabinet": { x: -1407, y: 440 },
+  "plate-highway-stop": { x: -1407, y: 770 },
+  "plate-interior-study": { x: -1407, y: 1100 },
+  "art-render": { x: -16, y: 950 },
+  "art-light": { x: -352, y: 825 },
+  "art-assemble": { x: -17, y: 692 },
+  "art-concept": { x: -343, y: 347 },
+  "art-blockout": { x: -25, y: 422 },
+  "howto": { x: 438, y: 371 },
+  "about": { x: 788, y: 375 },
+  "contact": { x: 792, y: 695 },
+  "root-protec": { x: 1468, y: -710 },
+  "protec-idea": { x: 1769, y: -694 },
+  "protec-decision": { x: 1492, y: -485 },
+  "protec-prod-0": { x: 1768, y: -428 },
+  "protec-end": { x: 2063, y: -600 },
+  "root-volt-techwear-store": { x: 1771, y: 411 },
+  "root-flux-player": { x: 1783, y: 1097 },
+  "root-noctra": { x: 1572, y: 2224 },
+  "root-umbra": { x: 1684, y: 1643 },
+  "n8n-automation-idea": { x: 2031, y: -115 },
+  "n8n-automation-decision": { x: 1745, y: 108 },
+  "n8n-automation-prod-0": { x: 2032, y: 128 },
+  "n8n-automation-end": { x: 2297, y: 35 },
+  "volt-techwear-store-idea": { x: 2125, y: 466 },
+  "volt-techwear-store-decision": { x: 1851, y: 705 },
+  "volt-techwear-store-prod-0": { x: 2132, y: 746 },
+  "volt-techwear-store-end": { x: 2382, y: 648 },
+  "flux-player-idea": { x: 2062, y: 1087 },
+  "flux-player-decision": { x: 1791, y: 1312 },
+  "flux-player-prod-0": { x: 2060, y: 1325 },
+  "flux-player-end": { x: 2339, y: 1180 },
+  "noctra-idea": { x: 1865, y: 2224 },
+  "noctra-decision": { x: 1587, y: 2473 },
+  "noctra-prod-0": { x: 1866, y: 2483 },
+  "noctra-end": { x: 2124, y: 2395 },
+  "umbra-idea": { x: 1960, y: 1643 },
+  "umbra-decision": { x: 1701, y: 1913 },
+  "umbra-prod-0": { x: 1975, y: 1916 },
+  "umbra-end": { x: 2235, y: 1824 },
+  "art-hub": { x: -277, y: 100 },
+};
+
 /* Layout (2026-08-07, Daman: "give each node its own section, no overlap;
    the section name must be horizontal and not cover the nodes").
 
@@ -204,10 +260,26 @@ export function buildBoard(projects: Project[]): BoardModel {
   const sysBottom = sysTop + (systems.length - 1) * SECTION_PITCH + 150;
   boxes.push(...artItemBoxes, ...sysItemBoxes);
 
-  const rightEdge = maxRight + 220;
+  // ── Daman's hand-arranged layout (exported from the live board 2026-08-07) ──
+  //    baked in as the DEFAULT positions so the arrangement persists for every
+  //    visitor / device, not just this browser's localStorage. Any node not
+  //    listed keeps its computed position; RESET returns to this arrangement.
+  for (const n of nodes) {
+    const p = DEFAULT_POS[n.id];
+    if (p) { n.x = p.x; n.y = p.y; }
+  }
+
+  // recompute bounds from the ACTUAL positions (the arrangement spreads wider /
+  // higher than the generated columns, incl. negative coords to the left of 0)
+  let bx0 = Infinity, by0 = Infinity, bx1 = -Infinity, by1 = -Infinity;
+  for (const n of nodes) {
+    bx0 = Math.min(bx0, n.x); by0 = Math.min(by0, n.y);
+    bx1 = Math.max(bx1, n.x + n.w); by1 = Math.max(by1, n.y + 300); // +300 ≈ tall open card
+  }
+  void maxRight; void sysBottom; void artBottom; // superseded by measured bounds
   const bounds = {
-    w: rightEdge,
-    h: Math.max(sysBottom, artBottom, wContact + 300) + 160,
+    w: bx1 - Math.min(0, bx0) + 220,
+    h: by1 - Math.min(0, by0) + 220,
   };
 
   // three column headers, each anchored to its column's lead node (horizontal)

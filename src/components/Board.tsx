@@ -166,7 +166,7 @@ function Node({
         ) : (
           <span style={{ position: "absolute", inset: 0, background: "var(--node-hi)" }} />
         )}
-        <Link href={`/projects/${p.slug}`} className="p-cap p-cap-link" draggable={false}>
+        <Link href={`/projects/${p.slug}`} prefetch={false} className="p-cap p-cap-link" draggable={false}>
           {p.num} · {p.name} <span className="n-go">↗</span>
         </Link>
       </div>
@@ -182,7 +182,7 @@ function Node({
           {p.num} · {p.category}
         </div>
         {/* title navigates into the project's deep-dive page */}
-        <Link href={`/projects/${p.slug}`} className="n-title n-title-link" draggable={false}>
+        <Link href={`/projects/${p.slug}`} prefetch={false} className="n-title n-title-link" draggable={false}>
           {p.name} <span className="n-go">↗</span>
         </Link>
         <div className="n-body">{p.description}</div>
@@ -261,7 +261,14 @@ const ZOOM_MIN = 0.28;
 
 export default function Board() {
   const model = useMemo(() => buildBoard([...projects]), []);
-  const [open, setOpen] = useState<Set<string>>(new Set(["protec"])); // protec pre-opened
+  // open with everything expanded — Daman's baked-in arrangement was designed
+  // with every project + the art pipeline open, so the board matches it on load.
+  const [open, setOpen] = useState<Set<string>>(
+    () => new Set<string>([
+      ...projects.filter((p) => p.discipline === "systems").map((p) => p.slug),
+      "art",
+    ]),
+  );
   const worldRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -426,6 +433,7 @@ export default function Board() {
       }
     | null
   >(null);
+  const redrawPending = useRef<number | null>(null); // coalesce wire redraws to 1/frame
   const onNodeDragStart = useCallback(
     (e: React.PointerEvent, id: string) => {
       // the WHOLE card is a drag surface now (Daman) — grab it anywhere. Only
@@ -481,7 +489,14 @@ export default function Board() {
           gel.style.top = `${st.y + dy}px`;
         }
       }
-      requestAnimationFrame(() => drawWiresRef.current?.());
+      // coalesce wire redraws to ONE per animation frame — pointermove can fire
+      // 120+×/s; without this we'd queue a full 46-path rebuild per event.
+      if (redrawPending.current == null) {
+        redrawPending.current = requestAnimationFrame(() => {
+          redrawPending.current = null;
+          drawWiresRef.current?.();
+        });
+      }
     };
     const onUp = () => {
       const d = dragState.current;
@@ -557,6 +572,17 @@ export default function Board() {
       clearTimeout(t);
     };
   }, [drawWires]);
+
+  // pause the wire animation while the tab is hidden — pure perf win, no visible
+  // change (the flow keeps running whenever the board is actually on screen).
+  useEffect(() => {
+    const onVis = () => {
+      const st = stageRef.current;
+      if (st) st.classList.toggle("calm", document.hidden);
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
 
   // initial view: open focused on the welcome column (how-to + origin + about)
   // at native scale, so a first-time visitor lands oriented and reading crisp text.

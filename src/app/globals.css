@@ -181,14 +181,21 @@ body {
 }
 .board-stage.dragging { cursor: grabbing; }
 .board-world {
-  position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform;
+  position: absolute; left: 0; top: 0; transform-origin: 0 0;
+  /* pan is transform:translate (GPU-composited) → hint translate, NOT the whole
+     transform. zoom uses the CSS `zoom` property, handled separately. */
+  will-change: transform;
   backface-visibility: hidden;
 }
-/* dot-grid texture — a child of the world so it scales 1:1 with pan/zoom.
-   Stronger contrast than before so the board reads as a real surface in both
-   themes. z:0 keeps it behind wires (z:1) and nodes (z:2). */
+/* dot-grid texture — a child of the world so it scales with pan/zoom. It's a
+   huge element (thousands of px) with a repeating gradient, so isolate its
+   painting: `contain: strict` + its own layer means it rasterizes once and is
+   composited, instead of repainting the whole gradient every zoom/pan frame
+   (the main cause of jank on weaker GPUs). */
 .board-grid {
   position: absolute; z-index: 0; pointer-events: none;
+  contain: strict;
+  transform: translateZ(0); /* own compositor layer */
   background:
     radial-gradient(circle, var(--grid-dot) 1.5px, transparent 1.7px) 0 0 / 26px 26px;
 }
@@ -246,19 +253,25 @@ svg.board-wires path.w-ship { stroke: color-mix(in oklab, var(--ship) 60%, var(-
 svg.board-wires path.w-art  { stroke: color-mix(in oklab, var(--art) 45%, var(--line)); }
 :root[data-theme="dark"] svg.board-wires path { filter: drop-shadow(0 0 3px var(--glow)); }
 /* flowing pulse: a second overlaid path (.w-flow) with a dashed accent stroke
-   whose dashoffset animates, so a little light appears to travel along the wire */
+   whose dashoffset animates, so a little light appears to travel along the wire.
+   PERF: no per-frame filter (drop-shadow re-blurs every frame = expensive on
+   weak GPUs) — the glow is baked into a brighter static stroke instead. The
+   whole board can pause these via .board-stage.calm (set when idle). */
 svg.board-wires path.w-flow {
-  stroke: color-mix(in srgb, var(--acc) 70%, transparent);
+  stroke: color-mix(in srgb, var(--acc) 78%, transparent);
   stroke-width: 2; stroke-linecap: round;
   stroke-dasharray: 3 26; /* short dash, long gap = a moving glint */
   animation: wire-flow 1.4s linear infinite;
 }
-svg.board-wires path.w-flow.f-ship { stroke: color-mix(in srgb, var(--ship) 85%, transparent); }
-svg.board-wires path.w-flow.f-art  { stroke: color-mix(in srgb, var(--art) 85%, transparent); }
-:root[data-theme="dark"] svg.board-wires path.w-flow { filter: drop-shadow(0 0 4px color-mix(in srgb, var(--acc) 60%, transparent)); }
+svg.board-wires path.w-flow.f-ship { stroke: color-mix(in srgb, var(--ship) 90%, transparent); }
+svg.board-wires path.w-flow.f-art  { stroke: color-mix(in srgb, var(--art) 90%, transparent); }
+:root[data-theme="dark"] svg.board-wires path.w-flow { stroke-width: 2.4; }
 @keyframes wire-flow { from { stroke-dashoffset: 29; } to { stroke-dashoffset: 0; } }
+/* pause the continuous repaint when the board has been idle a moment, and when
+   the tab is hidden — the animation restarts on any interaction. */
+.board-stage.calm svg.board-wires path.w-flow { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
-  svg.board-wires path.w-flow { animation: none; stroke-dasharray: none; opacity: 0.5; }
+  svg.board-wires path.w-flow { animation: none; stroke-dasharray: none; opacity: 0.55; }
 }
 
 /* ===== nodes ===== */
