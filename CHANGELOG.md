@@ -12,6 +12,10 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
+### v4.6 — Perf + art cleanup — 2026-08-08
+- Pause the flowing-wire animation during active pan/zoom/drag (`.busy`) — ~27% faster zoom (measured 485ms → 354ms for 20 ops). The flow keeps running when idle.
+- Removed the **NPR / Grease-Pencil** art plate (PL.07) — it duplicated PL.03 Stylized Studies. Remaining art plates renumbered to stay sequential (PL.01–PL.08). Art plates: 8 → 7; project pages: 14 → 13.
+
 ### v4.5 — Performance + baked layout — 2026-08-08
 - **Baked in the hand-arranged layout** as the default — node positions the
   owner set by dragging (previously only in browser localStorage) now persist

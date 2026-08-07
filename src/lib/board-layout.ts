@@ -90,7 +90,6 @@ const DEFAULT_POS: Record<string, { x: number; y: number }> = {
   "plate-product-placement-dev": { x: -901, y: 1100 },
   "plate-procedural-clouds": { x: -901, y: 1430 },
   "plate-cityscape": { x: -1407, y: 110 },
-  "plate-npr-cabinet": { x: -1407, y: 440 },
   "plate-highway-stop": { x: -1407, y: 770 },
   "plate-interior-study": { x: -1407, y: 1100 },
   "art-render": { x: -16, y: 950 },
