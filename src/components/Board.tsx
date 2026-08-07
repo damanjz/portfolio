@@ -169,6 +169,19 @@ function Node({
         <Link href={`/projects/${p.slug}`} prefetch={false} className="p-cap p-cap-link" draggable={false}>
           {p.num} · {p.name} <span className="n-go">↗</span>
         </Link>
+        {p.artDag && (
+          <button
+            type="button"
+            className="n-expand p-expand"
+            aria-expanded={expanded}
+            aria-label={expanded ? `Collapse ${p.name} process` : `Expand ${p.name} process`}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => { e.stopPropagation(); onToggle(`plate-${p.slug}`); }}
+          >
+            <span className="n-expand-ico">{expanded ? "−" : "+"}</span>
+            {expanded ? "COLLAPSE" : "TRACE"}
+          </button>
+        )}
       </div>
     );
   }
@@ -258,16 +271,23 @@ function Node({
 const POS_KEY = "board-positions-v1";
 const ZOOM_MAX = 1.5; // allow zooming in to 150% (Daman)
 const ZOOM_MIN = 0.28;
+const ZOOM_MIN_TOUCH = 0.12; // wider zoom-out on phones so the whole board reaches one screen
+const isCoarse = () =>
+  typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
 export default function Board() {
   const model = useMemo(() => buildBoard([...projects]), []);
-  // open with everything expanded — Daman's baked-in arrangement was designed
-  // with every project + the art pipeline open, so the board matches it on load.
+  // DESKTOP opens with everything expanded (the baked arrangement was designed
+  // that way). MOBILE opens COLLAPSED (roots only) + fits to all roots, so a
+  // phone lands on a clean, readable map instead of a lost-in-space wall of DAGs.
   const [open, setOpen] = useState<Set<string>>(
-    () => new Set<string>([
-      ...projects.filter((p) => p.discipline === "systems").map((p) => p.slug),
-      "art",
-    ]),
+    () =>
+      isCoarse()
+        ? new Set<string>()
+        : new Set<string>([
+            ...projects.filter((p) => p.discipline === "systems").map((p) => p.slug),
+            "art",
+          ]),
   );
   const worldRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -349,7 +369,15 @@ export default function Board() {
     () =>
       model.nodes.filter((n) => {
         if (n.role === "stage") return !!n.project && open.has(n.project.slug);
-        if (n.role === "artstage") return open.has("art");
+        if (n.role === "artstage") {
+          // per-plate DAG stage id = "plate-<slug>-<key>" → gate on its plate;
+          // shared art-hub stage (e.g. "art-concept") → gate on the hub.
+          if (n.id.startsWith("plate-")) {
+            const plateId = n.id.replace(/-(vision|impl|problems|output)$/, "");
+            return open.has(plateId);
+          }
+          return open.has("art");
+        }
         return true;
       }),
     [model.nodes, open],
@@ -455,6 +483,10 @@ export default function Board() {
   const redrawPending = useRef<number | null>(null); // coalesce wire redraws to 1/frame
   const onNodeDragStart = useCallback(
     (e: React.PointerEvent, id: string) => {
+      // MOBILE: card-drag is disabled (the layout is baked; on touch it only
+      // fights pan/pinch). A finger on a node just lets the pinch/pan handler or
+      // the node's own link/expand button do its thing.
+      if (isCoarse()) return;
       // the WHOLE card is a drag surface now (Daman) — grab it anywhere. Only
       // real controls opt out: links and buttons handle their own pointer so
       // clicking a title/expand still works. (Text is non-selectable site-wide,
@@ -565,11 +597,14 @@ export default function Board() {
         // when opening, frame the project + its freshly-shown DAG stages
         if (opening) {
           setTimeout(() => {
+            const isPlate = slug.startsWith("plate-");
             const ids = new Set(
               model.nodes
                 .filter((n) =>
                   slug === "art"
-                    ? n.id === "art-hub" || n.role === "artstage"
+                    ? n.id === "art-hub" || (n.role === "artstage" && !n.id.startsWith("plate-"))
+                    : isPlate
+                    ? n.id === slug || n.id.startsWith(`${slug}-`) // the plate + its DAG stages
                     : n.id === `root-${slug}` || (n.project?.slug === slug && n.role === "stage"),
                 )
                 .map((n) => n.id),
@@ -614,16 +649,23 @@ export default function Board() {
   // across a rAF, a timed fallback, fonts.ready, and window.load until the
   // welcome nodes measure taller than the 90px placeholder, then stop.
   useEffect(() => {
-    const WELCOME = new Set(["howto", "origin", "about"]);
+    // MOBILE: fit to ALL roots (the whole map, since it opens collapsed).
+    // DESKTOP: focus the welcome column at native scale.
+    const mobile = isCoarse();
+    const rootIds = new Set(
+      model.nodes.filter((n) => n.role === "proj" || n.id === "art-hub").map((n) => n.id),
+    );
+    const TARGET = mobile ? rootIds : new Set(["howto", "origin", "about"]);
+    const probeId = mobile ? [...rootIds][0] : "howto";
     let settled = false;
     const measured = () => {
-      const el = worldRef.current?.querySelector<HTMLElement>('[data-node="howto"]');
+      const el = worldRef.current?.querySelector<HTMLElement>(`[data-node="${probeId}"]`);
       return !!el && el.offsetHeight > 100; // real card, not the placeholder
     };
     const settle = () => {
       if (settled) return;
       drawWires();
-      fitTo(WELCOME, 70);
+      fitTo(TARGET, mobile ? 40 : 70);
       if (measured()) settled = true; // stop once framed against real heights
     };
     const r1 = requestAnimationFrame(settle);
@@ -661,38 +703,82 @@ export default function Board() {
         y: (clientY - r.top - view.current.ty) / view.current.s,
       };
     };
+    const minZoom = () => (isCoarse() ? ZOOM_MIN_TOUCH : ZOOM_MIN);
+    // active touch/pen/mouse pointers for multi-touch pinch
+    const pts = new Map<number, { x: number; y: number }>();
+    // pinch state
+    let pinch: { d0: number; s0: number; cx: number; cy: number } | null = null;
+    // inertial pan state
+    let vx = 0, vy = 0, lastT = 0, momentum = 0;
+    const stopMomentum = () => { if (momentum) { cancelAnimationFrame(momentum); momentum = 0; } };
+
+    const dist = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      Math.hypot(a.x - b.x, a.y - b.y);
+
     const onDown = (e: PointerEvent) => {
+      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      // second finger down → enter pinch (works even if the first landed on a node)
+      if (pts.size === 2) {
+        stopMomentum();
+        const [a, b] = [...pts.values()];
+        const r = stage.getBoundingClientRect();
+        pinch = {
+          d0: dist(a, b),
+          s0: view.current.s,
+          cx: (a.x + b.x) / 2 - r.left,
+          cy: (a.y + b.y) / 2 - r.top,
+        };
+        mode = "none";
+        stage.classList.remove("dragging");
+        return;
+      }
       if ((e.target as HTMLElement).closest(".node, a, button")) return;
-      sx = e.clientX;
-      sy = e.clientY;
+      stopMomentum();
+      sx = e.clientX; sy = e.clientY;
       if (e.shiftKey) {
-        // SHIFT + drag on empty = rubber-band marquee select (Daman: rolled back
-        // from the SELECT tool to the shift modifier)
         mode = "marquee";
         const w = toWorld(e.clientX, e.clientY);
-        mwx = w.x;
-        mwy = w.y;
+        mwx = w.x; mwy = w.y;
         setMarquee({ x: mwx, y: mwy, w: 0, h: 0 });
       } else {
-        // plain drag on empty = pan; a plain click also clears any selection
         mode = "pan";
-        ox = view.current.tx;
-        oy = view.current.ty;
+        ox = view.current.tx; oy = view.current.ty;
+        vx = 0; vy = 0; lastT = e.timeStamp;
         stage.classList.add("dragging");
       }
       stage.setPointerCapture(e.pointerId);
     };
+
     const onMove = (e: PointerEvent) => {
+      if (pts.has(e.pointerId)) pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      // ── PINCH: two pointers → zoom about their midpoint ──
+      if (pinch && pts.size >= 2) {
+        markBusyRef.current?.();
+        const [a, b] = [...pts.values()];
+        const d = dist(a, b);
+        if (pinch.d0 > 0) {
+          const ns = Math.min(ZOOM_MAX, Math.max(minZoom(), pinch.s0 * (d / pinch.d0)));
+          const k = ns / view.current.s;
+          view.current.tx = pinch.cx - (pinch.cx - view.current.tx) * k;
+          view.current.ty = pinch.cy - (pinch.cy - view.current.ty) * k;
+          view.current.s = ns;
+          applyView();
+        }
+        return;
+      }
       if (mode === "pan") {
-        view.current.tx = ox + (e.clientX - sx);
-        view.current.ty = oy + (e.clientY - sy);
+        const nx = ox + (e.clientX - sx);
+        const ny = oy + (e.clientY - sy);
+        const dt = e.timeStamp - lastT || 16;
+        vx = (nx - view.current.tx) / dt; vy = (ny - view.current.ty) / dt;
+        lastT = e.timeStamp;
+        view.current.tx = nx; view.current.ty = ny;
         applyView();
       } else if (mode === "marquee") {
         const w = toWorld(e.clientX, e.clientY);
         const x = Math.min(mwx, w.x), y = Math.min(mwy, w.y);
         const bw = Math.abs(w.x - mwx), bh = Math.abs(w.y - mwy);
         setMarquee({ x, y, w: bw, h: bh });
-        // live-select nodes whose box intersects the marquee
         const hit = new Set<string>();
         for (const n of visibleNodesRef.current) {
           const p = posOfRef.current(n);
@@ -703,34 +789,47 @@ export default function Board() {
         setSelected(hit);
       }
     };
-    const onUp = () => {
+
+    const onUp = (e: PointerEvent) => {
+      pts.delete(e.pointerId);
+      if (pinch && pts.size < 2) pinch = null; // last finger of a pinch lifted
       if (mode === "pan") {
-        // a click that didn't drag clears the selection
         if (Math.abs(view.current.tx - ox) + Math.abs(view.current.ty - oy) < 3) setSelected(new Set());
+        // ── INERTIAL PAN: fling with the release velocity, decaying ──
+        else if (Math.hypot(vx, vy) > 0.05) {
+          const step = () => {
+            view.current.tx += vx * 16; view.current.ty += vy * 16;
+            vx *= 0.92; vy *= 0.92;
+            applyView();
+            momentum = Math.hypot(vx, vy) > 0.02 ? requestAnimationFrame(step) : 0;
+          };
+          momentum = requestAnimationFrame(step);
+        }
       }
       if (mode === "marquee") setMarquee(null);
       mode = "none";
       stage.classList.remove("dragging");
     };
+
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       const r = stage.getBoundingClientRect();
-      const cx = e.clientX - r.left,
-        cy = e.clientY - r.top;
-      // zoom range 0.28×–1.5× (Daman: allow zooming in to 150%)
-      const ns = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, view.current.s * (e.deltaY < 0 ? 1.1 : 0.9)));
+      const cx = e.clientX - r.left, cy = e.clientY - r.top;
+      const ns = Math.min(ZOOM_MAX, Math.max(minZoom(), view.current.s * (e.deltaY < 0 ? 1.1 : 0.9)));
       const k = ns / view.current.s;
       view.current.tx = cx - (cx - view.current.tx) * k;
       view.current.ty = cy - (cy - view.current.ty) * k;
       view.current.s = ns;
       applyView();
     };
+
     stage.addEventListener("pointerdown", onDown);
     stage.addEventListener("pointermove", onMove);
     stage.addEventListener("pointerup", onUp);
     stage.addEventListener("pointercancel", onUp);
     stage.addEventListener("wheel", onWheel, { passive: false });
     return () => {
+      stopMomentum();
       stage.removeEventListener("pointerdown", onDown);
       stage.removeEventListener("pointermove", onMove);
       stage.removeEventListener("pointerup", onUp);
@@ -745,7 +844,8 @@ export default function Board() {
     const r = stage.getBoundingClientRect();
     const cx = r.width / 2,
       cy = r.height / 2;
-    const ns = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, view.current.s * k));
+    const lo = isCoarse() ? ZOOM_MIN_TOUCH : ZOOM_MIN;
+    const ns = Math.min(ZOOM_MAX, Math.max(lo, view.current.s * k));
     const m = ns / view.current.s;
     view.current.tx = cx - (cx - view.current.tx) * m;
     view.current.ty = cy - (cy - view.current.ty) * m;
@@ -877,7 +977,13 @@ export default function Board() {
             key={n.id}
             n={n}
             pos={posOf(n)}
-            expanded={!!n.project && open.has(n.project.slug)}
+            expanded={
+              n.role === "plate" && n.plate
+                ? open.has(`plate-${n.plate.slug}`)
+                : n.role === "art"
+                ? open.has("art")
+                : !!n.project && open.has(n.project.slug)
+            }
             selected={selected.has(n.id)}
             onToggle={toggle}
             onDragStart={onNodeDragStart}
@@ -914,10 +1020,32 @@ export default function Board() {
           {selected.size ? ` · ${selected.size} selected` : ""}
         </button>
       </div>
-      {/* zoom — out only; 1× is native and crisp */}
-      <div className="hud" style={{ right: 18, bottom: 18, display: "flex", flexDirection: "column", gap: 6 }}>
+      {/* zoom — out only; 1× is native and crisp. DESKTOP only (mobile uses the
+          bottom bar below). */}
+      <div className="hud hud-desktop-zoom" style={{ right: 18, bottom: 18, display: "flex", flexDirection: "column", gap: 6 }}>
         <button className="hud-btn" style={{ width: 34, height: 34, fontSize: 16 }} onClick={() => zoomBy(1 / 0.82)} aria-label="Zoom in">+</button>
         <button className="hud-btn" style={{ width: 34, height: 34, fontSize: 16 }} onClick={() => zoomBy(0.82)} aria-label="Zoom out">−</button>
+      </div>
+
+      {/* MOBILE bottom toolbar — thumb-zone: fit · zoom · theme · read. Hidden on
+          desktop; the desktop tools-menu + zoom column are hidden on mobile. */}
+      <div className="hud mobile-bar" role="toolbar" aria-label="Board controls">
+        <button className="mbar-btn" onClick={() => fitZone("all")} aria-label="Fit whole board">◱</button>
+        <button className="mbar-btn" onClick={() => zoomBy(0.82)} aria-label="Zoom out">−</button>
+        <button className="mbar-btn" onClick={() => zoomBy(1 / 0.82)} aria-label="Zoom in">+</button>
+        <button
+          className="mbar-btn"
+          aria-label="Toggle light / dark theme"
+          onClick={() => {
+            const el = document.documentElement;
+            const cur = el.getAttribute("data-theme")
+              ?? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            const next = cur === "dark" ? "light" : "dark";
+            el.setAttribute("data-theme", next);
+            try { localStorage.setItem("theme", next); } catch {}
+          }}
+        >◐</button>
+        <a className="mbar-btn mbar-read" href="/read">READ</a>
       </div>
     </div>
   );
