@@ -3,6 +3,7 @@ import { site } from "@/content";
 import Board from "@/components/Board";
 import ThemeToggle from "@/components/ThemeToggle";
 import OutlineButton from "@/components/OutlineButton";
+import CustomCursor from "@/components/CustomCursor";
 
 /**
  * v4 — the board IS the site. A pannable 2D flow-board where every project is
@@ -68,6 +69,7 @@ export default function Home() {
       </header>
 
       <Board />
+      <CustomCursor />
     </>
   );
 }
