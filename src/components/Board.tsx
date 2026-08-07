@@ -277,17 +277,15 @@ const isCoarse = () =>
 
 export default function Board() {
   const model = useMemo(() => buildBoard([...projects]), []);
-  // DESKTOP opens with everything expanded (the baked arrangement was designed
-  // that way). MOBILE opens COLLAPSED (roots only) + fits to all roots, so a
-  // phone lands on a clean, readable map instead of a lost-in-space wall of DAGs.
+  // EVERYTHING opens expanded by default, on BOTH desktop and mobile (Daman):
+  // every systems project, the art hub pipeline, AND every art plate's own DAG.
   const [open, setOpen] = useState<Set<string>>(
     () =>
-      isCoarse()
-        ? new Set<string>()
-        : new Set<string>([
-            ...projects.filter((p) => p.discipline === "systems").map((p) => p.slug),
-            "art",
-          ]),
+      new Set<string>([
+        ...projects.filter((p) => p.discipline === "systems").map((p) => p.slug),
+        "art",
+        ...projects.filter((p) => p.discipline === "craft").map((p) => `plate-${p.slug}`),
+      ]),
   );
   const worldRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
