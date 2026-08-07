@@ -62,7 +62,7 @@ function Node({
           <li><b>Drag</b> the background to pan · <b>scroll</b> to zoom out</li>
           <li><b>Click a project</b> to trace its build, idea → shipped</li>
           <li><b>Grab a card&apos;s top strip</b> to move it around the board</li>
-          <li><b>⿴ Select tool</b> (bottom-left) → box several cards, move together</li>
+          <li><b>⇧ Shift-drag</b> the background → box several cards, move together</li>
           <li><b>☰ Outline</b> up top = the whole thing as a plain list</li>
           <li><b>◑ / ◐</b> toggles light / dark</li>
         </ul>
@@ -157,7 +157,7 @@ function Node({
     return (
       <div
         className="node n-plate"
-        style={{ ...base, height: 150 }}
+        style={{ ...base, height: 234 }}
         {...nid} {...dragHandle}
         aria-label={`${p.name} — ${p.tagline}`}
       >
@@ -268,15 +268,12 @@ export default function Board() {
 
   // per-node position overrides (drag) — persisted, resettable
   const [pos, setPos] = useState<Record<string, { x: number; y: number }>>({});
-  // marquee multi-select: a SELECT TOOL toggles marquee mode (no modifier key)
-  const [tool, setTool] = useState<"pan" | "select">("pan");
+  // marquee multi-select is shift+drag (no tool mode)
   const [toolsOpen, setToolsOpen] = useState(false); // bottom-left drop-up menu
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [marquee, setMarquee] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
-  const toolRef = useRef(tool);
-  toolRef.current = tool;
   // bumped after DAG stages mount/unmount so item boxes re-measure their bounds
   const [, setBoxTick] = useState(0);
   useEffect(() => {
@@ -312,7 +309,12 @@ export default function Board() {
     const w = worldRef.current;
     if (!w) return;
     const { tx, ty, s } = view.current;
-    w.style.transform = `translate(${tx}px,${ty}px) scale(${s})`;
+    // Crisp zoom: use the CSS `zoom` property (re-rasterizes text at the true
+    // size) instead of transform:scale (which stretches a bitmap → blur at
+    // >1×). `zoom` also scales the translate, so divide tx/ty by s to keep the
+    // visual pan correct. transform:translate stays GPU-cheap for panning.
+    w.style.zoom = String(s);
+    w.style.transform = `translate(${tx / s}px, ${ty / s}px)`;
   }, []);
 
   // which stage nodes are shown: project stages only when that project is open;
@@ -347,14 +349,20 @@ export default function Board() {
       const p1 = [ra.x + ra.w, ra.y + ra.h / 2];
       const p2 = [rb.x, rb.y + rb.h / 2];
       const mx = (p1[0] + p2[0]) / 2;
+      const d = `M${p1[0]},${p1[1]} C${mx},${p1[1]} ${mx},${p2[1]} ${p2[0]},${p2[1]}`;
+      // base (static track)
       const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute(
-        "d",
-        `M${p1[0]},${p1[1]} C${mx},${p1[1]} ${mx},${p2[1]} ${p2[0]},${p2[1]}`,
-      );
+      path.setAttribute("d", d);
       if (kind === "ship") path.setAttribute("class", "w-ship");
       else if (kind === "art") path.setAttribute("class", "w-art");
       svg.appendChild(path);
+      // flowing pulse overlaid on the same curve — a glint travels the wire
+      const flow = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      flow.setAttribute("d", d);
+      flow.setAttribute("class", `w-flow${kind === "ship" ? " f-ship" : kind === "art" ? " f-art" : ""}`);
+      // desync each wire's pulse so they don't all blink in lockstep
+      flow.style.animationDelay = `${((p1[1] + p2[0]) % 1400) / 1000}s`;
+      svg.appendChild(flow);
     }
   }, [model.edges, visibleIds]);
 
@@ -609,8 +617,9 @@ export default function Board() {
       if ((e.target as HTMLElement).closest(".node, a, button")) return;
       sx = e.clientX;
       sy = e.clientY;
-      if (toolRef.current === "select") {
-        // SELECT tool active: drag on empty = rubber-band marquee select
+      if (e.shiftKey) {
+        // SHIFT + drag on empty = rubber-band marquee select (Daman: rolled back
+        // from the SELECT tool to the shift modifier)
         mode = "marquee";
         const w = toWorld(e.clientX, e.clientY);
         mwx = w.x;
@@ -760,7 +769,7 @@ export default function Board() {
   return (
     <div
       ref={stageRef}
-      className={`board-stage ${tool === "select" ? "selecting" : ""}`}
+      className="board-stage"
       tabIndex={0}
       role="application"
       aria-label="Portfolio board — drag or arrow keys to pan, scroll or +/− to zoom, 0 to fit. Prefer a linear list? Use the Outline button, top right."
@@ -829,17 +838,10 @@ export default function Board() {
       </div>
 
       {/* tool menu (bottom-left): a single TOOLS button that opens a vertical
-          stack ABOVE it with a drop-up animation */}
+          stack ABOVE it with a drop-up animation. Selection is shift+drag now,
+          so the menu is just fit-zones + reset (+ a hint). */}
       <div className="hud tools-menu" style={{ left: 18, bottom: 18 }} data-open={toolsOpen}>
         <div className="tools-stack" role="menu" aria-hidden={!toolsOpen}>
-          <button className="hud-btn" role="menuitem" tabIndex={toolsOpen ? 0 : -1}
-            aria-current={tool === "pan"}
-            onClick={() => { setTool("pan"); setSelected(new Set()); }}
-          >✋ MOVE</button>
-          <button className="hud-btn" role="menuitem" tabIndex={toolsOpen ? 0 : -1}
-            aria-current={tool === "select"}
-            onClick={() => setTool("select")}
-          >⿴ SELECT{selected.size ? ` (${selected.size})` : ""}</button>
           <button className="hud-btn" role="menuitem" tabIndex={toolsOpen ? 0 : -1}
             onClick={() => fitZone("all")}
           >◱ WHOLE BOARD</button>
@@ -851,7 +853,8 @@ export default function Board() {
           >◨ THE CRAFT</button>
           <button className="hud-btn" role="menuitem" tabIndex={toolsOpen ? 0 : -1}
             onClick={resetLayout}
-          >↺ RESET</button>
+          >↺ RESET LAYOUT</button>
+          <span className="tools-hint mono" aria-hidden="true">⇧ shift-drag to select</span>
         </div>
         <button
           className="hud-btn tools-toggle"
@@ -860,7 +863,7 @@ export default function Board() {
           onClick={() => setToolsOpen((v) => !v)}
         >
           <span className="tools-caret">{toolsOpen ? "▾" : "▴"}</span> TOOLS
-          {tool === "select" ? " · ⿴" : ""}{selected.size ? ` (${selected.size})` : ""}
+          {selected.size ? ` · ${selected.size} selected` : ""}
         </button>
       </div>
       {/* zoom — out only; 1× is native and crisp */}
