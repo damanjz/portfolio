@@ -12,6 +12,10 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
+### v4.7 — Mobile board + per-art DAGs — 2026-08-08
+- **Mobile: touch-tuned board** (direction C) — real pinch-to-zoom (about the midpoint, wider zoom-out on touch), inertial pan, opens collapsed + fits all roots, card-drag disabled on touch, and a thumb-zone bottom toolbar (fit / zoom / theme / read). Desktop board unchanged.
+- **Per-art-project DAGs** — every art plate now expands into its own Vision → Implementation → Problems faced → Output DAG (drafted from the images); the shared art-hub pipeline is kept too.
+
 ### v4.6 — Perf + art cleanup — 2026-08-08
 - Pause the flowing-wire animation during active pan/zoom/drag (`.busy`) — ~27% faster zoom (measured 485ms → 354ms for 20 ops). The flow keeps running when idle.
 - Removed the **NPR / Grease-Pencil** art plate (PL.07) — it duplicated PL.03 Stylized Studies. Remaining art plates renumbered to stay sequential (PL.01–PL.08). Art plates: 8 → 7; project pages: 14 → 13.
