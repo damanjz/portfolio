@@ -118,21 +118,33 @@ function Node({
 
   if (n.role === "art") {
     return (
-      <div className="node n-art" style={base} {...nid} {...dragHandle}>
-        <div className="n-kicker kicker n-drag">
+      <div className="node n-art" style={base} {...nid} {...dragHandle} aria-expanded={expanded}>
+        <div className="n-kicker kicker">
           <span className="dot" />
-          The Plates · art
+          The Craft · 3D / technical art
         </div>
         <div className="n-title">3D / technical art</div>
         <div className="n-body">
           A curated archive from my MA Animation work — environments, looks-dev,
-          procedural studies.
+          procedural studies. Trace how a piece gets built, below.
         </div>
         <div className="n-met mono">
           <a href="https://www.artstation.com/damanpsd" target="_blank" rel="noopener noreferrer">
             full gallery on artstation ↗
           </a>
         </div>
+        {/* expand the art PIPELINE (same affordance as project DAGs) */}
+        <button
+          type="button"
+          className="n-expand"
+          aria-expanded={expanded}
+          aria-label={expanded ? "Collapse the art pipeline" : "Expand the art pipeline"}
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => { e.stopPropagation(); onToggle("art"); }}
+        >
+          <span className="n-expand-ico">{expanded ? "−" : "+"}</span>
+          {expanded ? "COLLAPSE PIPELINE" : "TRACE THE PIPELINE"}
+        </button>
       </div>
     );
   }
@@ -140,23 +152,24 @@ function Node({
   if (n.role === "plate" && n.plate) {
     const p = n.plate;
     const cover = p.gallery?.[0]?.src;
+    // a proper draggable NODE (not a Link) so it moves anywhere on the board;
+    // the caption carries the title-link into the project's deep-dive page.
     return (
-      <Link
-        href={`/projects/${p.slug}`}
+      <div
         className="node n-plate"
         style={{ ...base, height: 150 }}
         {...nid} {...dragHandle}
         aria-label={`${p.name} — ${p.tagline}`}
       >
         {cover ? (
-          <img src={asset(cover.replace(".webp", "-thumb.webp"))} alt={p.description} loading="lazy" />
+          <img src={asset(cover.replace(".webp", "-thumb.webp"))} alt={p.description} loading="lazy" draggable={false} />
         ) : (
           <span style={{ position: "absolute", inset: 0, background: "var(--node-hi)" }} />
         )}
-        <span className="p-cap">
-          {p.num} · {p.name}
-        </span>
-      </Link>
+        <Link href={`/projects/${p.slug}`} className="p-cap p-cap-link" draggable={false}>
+          {p.num} · {p.name} <span className="n-go">↗</span>
+        </Link>
+      </div>
     );
   }
 
@@ -224,11 +237,26 @@ function Node({
     );
   }
 
+  // art-pipeline stage (shown when the art hub is expanded)
+  if (n.role === "artstage" && n.artStage) {
+    const s = n.artStage;
+    return (
+      <div className="node k-production n-artstage" style={base} {...nid} {...dragHandle}>
+        <div className="n-kicker kicker n-drag" style={{ color: "var(--art)" }}>
+          <span className="dot" />
+          {s.label}
+        </div>
+        <div className="n-title">{s.title}</div>
+        <div className="n-body">{s.body}</div>
+      </div>
+    );
+  }
+
   return null;
 }
 
 const POS_KEY = "board-positions-v1";
-const ZOOM_MAX = 1; // never scale past 1× → text stays crisp (zoom OUT only)
+const ZOOM_MAX = 1.5; // allow zooming in to 150% (Daman)
 const ZOOM_MIN = 0.28;
 
 export default function Board() {
@@ -242,6 +270,7 @@ export default function Board() {
   const [pos, setPos] = useState<Record<string, { x: number; y: number }>>({});
   // marquee multi-select: a SELECT TOOL toggles marquee mode (no modifier key)
   const [tool, setTool] = useState<"pan" | "select">("pan");
+  const [toolsOpen, setToolsOpen] = useState(false); // bottom-left drop-up menu
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [marquee, setMarquee] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
   const selectedRef = useRef(selected);
@@ -286,10 +315,15 @@ export default function Board() {
     w.style.transform = `translate(${tx}px,${ty}px) scale(${s})`;
   }, []);
 
-  // which stage nodes are shown (only for opened projects)
+  // which stage nodes are shown: project stages only when that project is open;
+  // art-pipeline stages only when the art hub is open.
   const visibleNodes = useMemo(
     () =>
-      model.nodes.filter((n) => n.role !== "stage" || (n.project && open.has(n.project.slug))),
+      model.nodes.filter((n) => {
+        if (n.role === "stage") return !!n.project && open.has(n.project.slug);
+        if (n.role === "artstage") return open.has("art");
+        return true;
+      }),
     [model.nodes, open],
   );
   const visibleIds = useMemo(() => new Set(visibleNodes.map((n) => n.id)), [visibleNodes]);
@@ -337,7 +371,9 @@ export default function Board() {
 
   // fit a set of nodes into view
   const fitTo = useCallback(
-    (ids?: Set<string>, pad = 90) => {
+    // maxScale caps a fit at native 1× by default (framing shouldn't blow content
+    // up past native even though free zoom now goes to 1.5×).
+    (ids?: Set<string>, pad = 90, maxScale = 1) => {
       const stage = stageRef.current;
       const world = worldRef.current;
       if (!stage || !world) return;
@@ -359,7 +395,7 @@ export default function Board() {
       const bw = x1 - x0 + pad * 2;
       const bh = y1 - y0 + pad * 2;
       const r = stage.getBoundingClientRect();
-      const s = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.min(r.width / bw, r.height / bh)));
+      const s = Math.min(maxScale, Math.max(ZOOM_MIN, Math.min(r.width / bw, r.height / bh)));
       view.current = {
         s,
         tx: (r.width - (x0 + x1) * s) / 2,
@@ -384,11 +420,12 @@ export default function Board() {
   >(null);
   const onNodeDragStart = useCallback(
     (e: React.PointerEvent, id: string) => {
-      // links, buttons, and selectable body text handle their own pointer;
-      // dragging is initiated only from the card's handle strip (.n-drag)
+      // the WHOLE card is a drag surface now (Daman) — grab it anywhere. Only
+      // real controls opt out: links and buttons handle their own pointer so
+      // clicking a title/expand still works. (Text is non-selectable site-wide,
+      // so there's no selection to protect — no need for a handle strip.)
       const t = e.target as HTMLElement;
       if (t.closest("a, button")) return;
-      if (!t.closest(".n-drag")) return; // body/text is NOT a drag zone → selectable
       const node = model.nodes.find((n) => n.id === id);
       if (!node) return;
       const start = pos[id] ?? { x: node.x, y: node.y };
@@ -486,7 +523,11 @@ export default function Board() {
           setTimeout(() => {
             const ids = new Set(
               model.nodes
-                .filter((n) => n.id === `root-${slug}` || (n.project?.slug === slug && n.role === "stage"))
+                .filter((n) =>
+                  slug === "art"
+                    ? n.id === "art-hub" || n.role === "artstage"
+                    : n.id === `root-${slug}` || (n.project?.slug === slug && n.role === "stage"),
+                )
                 .map((n) => n.id),
             );
             fitTo(ids, 80);
@@ -619,7 +660,7 @@ export default function Board() {
       const r = stage.getBoundingClientRect();
       const cx = e.clientX - r.left,
         cy = e.clientY - r.top;
-      // capped at 1× — you zoom OUT for overview, never past native (text stays crisp)
+      // zoom range 0.28×–1.5× (Daman: allow zooming in to 150%)
       const ns = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, view.current.s * (e.deltaY < 0 ? 1.1 : 0.9)));
       const k = ns / view.current.s;
       view.current.tx = cx - (cx - view.current.tx) * k;
@@ -726,6 +767,19 @@ export default function Board() {
       onKeyDown={onStageKeyDown}
     >
       <div ref={worldRef} className="board-world">
+        {/* dot-grid texture layer — a big absolutely-positioned child so it
+            scales with the world (zoom) yet never shifts node coordinates.
+            Extends well past content in every direction so it fills the view
+            when panned/zoomed. */}
+        <div
+          className="board-grid"
+          aria-hidden="true"
+          style={{
+            left: -3000, top: -3000,
+            width: model.bounds.w + 6000,
+            height: model.bounds.h + 6000,
+          }}
+        />
         <svg ref={svgRef} className="board-wires" />
         {/* per-project / per-plate item boxes (group section boxes removed on
             Daman's call — the item boxes group each project cleanly enough). */}
@@ -774,25 +828,40 @@ export default function Board() {
         ))}
       </div>
 
-      {/* tool rail (bottom-left): pan vs select, fits, reset */}
-      <div className="hud" style={{ left: 18, bottom: 18, display: "flex", gap: 7, flexWrap: "wrap", maxWidth: "62vw" }}>
+      {/* tool menu (bottom-left): a single TOOLS button that opens a vertical
+          stack ABOVE it with a drop-up animation */}
+      <div className="hud tools-menu" style={{ left: 18, bottom: 18 }} data-open={toolsOpen}>
+        <div className="tools-stack" role="menu" aria-hidden={!toolsOpen}>
+          <button className="hud-btn" role="menuitem" tabIndex={toolsOpen ? 0 : -1}
+            aria-current={tool === "pan"}
+            onClick={() => { setTool("pan"); setSelected(new Set()); }}
+          >✋ MOVE</button>
+          <button className="hud-btn" role="menuitem" tabIndex={toolsOpen ? 0 : -1}
+            aria-current={tool === "select"}
+            onClick={() => setTool("select")}
+          >⿴ SELECT{selected.size ? ` (${selected.size})` : ""}</button>
+          <button className="hud-btn" role="menuitem" tabIndex={toolsOpen ? 0 : -1}
+            onClick={() => fitZone("all")}
+          >◱ WHOLE BOARD</button>
+          <button className="hud-btn" role="menuitem" tabIndex={toolsOpen ? 0 : -1}
+            onClick={() => fitZone("work")}
+          >◧ THE WORK</button>
+          <button className="hud-btn" role="menuitem" tabIndex={toolsOpen ? 0 : -1}
+            onClick={() => fitZone("art")}
+          >◨ THE CRAFT</button>
+          <button className="hud-btn" role="menuitem" tabIndex={toolsOpen ? 0 : -1}
+            onClick={resetLayout}
+          >↺ RESET</button>
+        </div>
         <button
-          className="hud-btn hud-secondary"
-          aria-current={tool === "pan"}
-          onClick={() => { setTool("pan"); setSelected(new Set()); }}
-          title="Pan / move tool"
-        >✋ MOVE</button>
-        <button
-          className="hud-btn hud-secondary"
-          aria-current={tool === "select"}
-          onClick={() => setTool("select")}
-          title="Drag a box to select multiple cards, then drag them together"
-        >⿴ SELECT{selected.size ? ` (${selected.size})` : ""}</button>
-        <span className="hud-secondary" style={{ width: 1, alignSelf: "stretch", background: "var(--line)", margin: "2px 2px" }} />
-        <button className="hud-btn" onClick={() => fitZone("all")}>◱ WHOLE BOARD</button>
-        <button className="hud-btn hud-secondary" onClick={() => fitZone("work")}>◧ THE WORK</button>
-        <button className="hud-btn hud-secondary" onClick={() => fitZone("art")}>◨ THE PLATES</button>
-        <button className="hud-btn hud-secondary" onClick={resetLayout} title="Restore the default arrangement">↺ RESET</button>
+          className="hud-btn tools-toggle"
+          aria-expanded={toolsOpen}
+          aria-haspopup="menu"
+          onClick={() => setToolsOpen((v) => !v)}
+        >
+          <span className="tools-caret">{toolsOpen ? "▾" : "▴"}</span> TOOLS
+          {tool === "select" ? " · ⿴" : ""}{selected.size ? ` (${selected.size})` : ""}
+        </button>
       </div>
       {/* zoom — out only; 1× is native and crisp */}
       <div className="hud" style={{ right: 18, bottom: 18, display: "flex", flexDirection: "column", gap: 6 }}>

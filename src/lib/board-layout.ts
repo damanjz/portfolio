@@ -14,11 +14,35 @@ export type PlacedNode = {
   x: number;
   y: number;
   w: number;
-  role: "origin" | "proj" | "stage" | "plate" | "art" | "contact" | "about" | "howto";
+  role: "origin" | "proj" | "stage" | "plate" | "art" | "artstage" | "contact" | "about" | "howto";
   project?: Project;
   stage?: Stage;
+  artStage?: ArtStage; // a step in the art pipeline (art-hub DAG)
   plate?: Project; // art project rendered as a plate
 };
+
+/** The art pipeline — Daman's real 3D/technical-art process, reconstructed from
+ *  the evidence in G:\ProJect Hub (Blender + ProGen generators, Substance .spp,
+ *  UE5 project + Lumen/Nanite, FBX interchange, render shot sequences, AE/
+ *  Premiere comp) and the Umbraixs project overview (UE 5.6, splines for walls +
+ *  river, blueprint actors, dynamic day-night + weather, stat fps/gpu profiling).
+ *  Shown as the art-hub's DAG, mirroring how each systems project has one. */
+export type ArtStage = { id: string; label: string; title: string; body: string };
+const ART_PIPELINE: ArtStage[] = [
+  { id: "art-concept", label: "Idea", title: "Concept + references",
+    body: "A landscape that tells its own story — Mondstadt, BOTW, Ghibli as the north star. Refs, mood, and the shot list before any geometry." },
+  { id: "art-blockout", label: "Blockout", title: "Blockout in Blender",
+    body: "Grey-box the space in Blender to nail scale, composition, and leading lines. Procedural generators (castle / medieval-city / flock) author repeatable structure." },
+  { id: "art-texture", label: "Look-dev", title: "Texturing — Substance",
+    body: "Substance Painter + Designer for materials; sourced assets reworked through blends and masks so they read as one authored world, not a kit-bash." },
+  { id: "art-assemble", label: "Assembly", title: "UE5 scene — Lumen + Nanite",
+    body: "Assemble in Unreal 5.6: Lumen lighting, Nanite foliage, blueprint actors for buildings, splines driving the castle walls and the flowing river." },
+  { id: "art-light", label: "Atmosphere", title: "Lighting + dynamic sky",
+    body: "Fully dynamic lighting, emissive stylized materials, and a randomized weather system in cahoots with a day-night cycle for an atmosphere that feels alive." },
+  { id: "art-render", label: "Ship", title: "Optimize → render → cut",
+    body: "Profile with stat fps / stat gpu, tune LODs / culling / Nanite overrides (100fps on target), render the shot bank, then comp + cut in After Effects and Premiere." },
+];
+export function artStages(): ArtStage[] { return ART_PIPELINE; }
 
 export type Zone = {
   label: string;
@@ -85,17 +109,37 @@ export function buildBoard(projects: Project[]): BoardModel {
   const BOX_LABEL_H = 22;
 
   // ══ ART COLUMN — LEFTMOST (left of origin, Daman's call). ═════════════════
-  //    Each plate is its own item box, stacked down the far-left column.
+  //    Hub card at top, its PIPELINE DAG flowing to the RIGHT of the hub (only
+  //    shown when the hub is expanded), then the plates stacked down the column.
   const PLATE_W = 260;
   const PLATE_H = 168;
   const PLATE_PITCH = 250;
   const ART_X = 60;
-  const artTop = ROW0 + 60;
-  nodes.push({ id: "art-hub", role: "art", x: ART_X, y: ROW0, w: 260 });
+  const ART_W = 260;
+  nodes.push({ id: "art-hub", role: "art", x: ART_X, y: ROW0, w: ART_W });
+
+  // the art pipeline — a vertical DAG flowing DOWN from the hub (the art column
+  // is vertical; a rightward DAG would collide with the welcome/systems columns).
+  // Hidden until the hub is expanded; the plates sit below it.
+  const AST_W = 260;
+  const AST_PITCH = 150; // vertical step per pipeline stage
+  const AST_Y0 = ROW0 + 220;
+  const stagesArt = artStages();
+  let prevArt = "art-hub";
+  stagesArt.forEach((s, j) => {
+    const sy = AST_Y0 + j * AST_PITCH;
+    nodes.push({ id: s.id, role: "artstage", x: ART_X, y: sy, w: AST_W, artStage: s });
+    edges.push([prevArt, s.id, "art"]);
+    prevArt = s.id;
+  });
+  const pipelineBottom = AST_Y0 + stagesArt.length * AST_PITCH;
+
+  // plates stack below the pipeline space so an expanded pipeline never overlaps
+  const artTop = pipelineBottom + 40;
   const artItemBoxes: Box[] = [];
   art.forEach((p, i) => {
     const px = ART_X;
-    const py = artTop + 200 + i * PLATE_PITCH;
+    const py = artTop + i * PLATE_PITCH;
     const id = `plate-${p.slug}`;
     nodes.push({ id, role: "plate", x: px, y: py, w: PLATE_W, plate: p });
     edges.push([i === 0 ? "art-hub" : `plate-${art[i - 1].slug}`, id, "art"]);
@@ -106,7 +150,7 @@ export function buildBoard(projects: Project[]): BoardModel {
       w: PLATE_W + BOX_PAD * 2, h: PLATE_H + BOX_PAD * 2 + BOX_LABEL_H,
     });
   });
-  const artBottom = artTop + 200 + (art.length - 1) * PLATE_PITCH + PLATE_H;
+  const artBottom = artTop + (art.length - 1) * PLATE_PITCH + PLATE_H;
 
   // ══ WELCOME COLUMN — right of the art column. ═════════════════════════════
   const WELCOME_X2 = ART_X + PLATE_W + COL_GAP;
