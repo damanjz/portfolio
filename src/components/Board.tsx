@@ -633,6 +633,35 @@ export default function Board() {
     return () => document.removeEventListener("visibilitychange", onVis);
   }, []);
 
+  // IDLE-PAUSE: 80 flowing-wire animations repainting forever is a sustained
+  // compositor load that makes a long-open session feel progressively laggy.
+  // After ~4s of no interaction, pause them (add .calm); any pointer/scroll/key
+  // activity wakes them instantly. Not a leak (verified nothing accumulates) —
+  // this just stops paying for animation nobody's watching.
+  useEffect(() => {
+    let idle: number | null = null;
+    const sleep = () => stageRef.current?.classList.add("calm");
+    const wake = () => {
+      const st = stageRef.current;
+      if (st && !document.hidden) st.classList.remove("calm");
+      if (idle != null) clearTimeout(idle);
+      idle = window.setTimeout(sleep, 4000);
+    };
+    const opts = { passive: true } as AddEventListenerOptions;
+    window.addEventListener("pointermove", wake, opts);
+    window.addEventListener("pointerdown", wake, opts);
+    window.addEventListener("wheel", wake, opts);
+    window.addEventListener("keydown", wake);
+    idle = window.setTimeout(sleep, 4000); // sleep if untouched from the start
+    return () => {
+      if (idle != null) clearTimeout(idle);
+      window.removeEventListener("pointermove", wake);
+      window.removeEventListener("pointerdown", wake);
+      window.removeEventListener("wheel", wake);
+      window.removeEventListener("keydown", wake);
+    };
+  }, []);
+
   // initial view: open focused on the welcome column (how-to + origin + about)
   // at native scale, so a first-time visitor lands oriented and reading crisp text.
   // The fit must run only once nodes have real measured heights — a single rAF
