@@ -312,6 +312,21 @@ export default function Board() {
   // view transform
   const view = useRef({ tx: 0, ty: 0, s: 1 });
 
+  // Mark the board "busy" during active pan/zoom/drag so the 49 flowing-wire
+  // animations pause (they compound the repaint cost that makes zoom jank).
+  // Auto-clears ~220ms after the last movement. Stable (ref-based, no deps).
+  const busyTimer = useRef<number | null>(null);
+  const markBusy = useCallback(() => {
+    const st = stageRef.current;
+    if (!st) return;
+    if (!st.classList.contains("busy")) st.classList.add("busy");
+    if (busyTimer.current != null) clearTimeout(busyTimer.current);
+    busyTimer.current = window.setTimeout(() => {
+      stageRef.current?.classList.remove("busy");
+      busyTimer.current = null;
+    }, 220);
+  }, []);
+
   const applyView = useCallback(() => {
     const w = worldRef.current;
     if (!w) return;
@@ -322,7 +337,11 @@ export default function Board() {
     // visual pan correct. transform:translate stays GPU-cheap for panning.
     w.style.zoom = String(s);
     w.style.transform = `translate(${tx / s}px, ${ty / s}px)`;
-  }, []);
+    markBusy(); // pause flow-wire animation during the interaction
+  }, [markBusy]);
+  // ref so the once-bound ([]-deps) drag handler can call the latest markBusy
+  const markBusyRef = useRef(markBusy);
+  markBusyRef.current = markBusy;
 
   // which stage nodes are shown: project stages only when that project is open;
   // art-pipeline stages only when the art hub is open.
@@ -479,6 +498,8 @@ export default function Board() {
           /* ignore */
         }
       }
+      // pause flow-wire animation during the drag (same busy mechanism)
+      markBusyRef.current?.();
       // move every node in the drag group by the same delta
       for (const gid of d.group) {
         const st = d.starts[gid];
@@ -581,6 +602,7 @@ export default function Board() {
       if (st) st.classList.toggle("calm", document.hidden);
     };
     document.addEventListener("visibilitychange", onVis);
+    if (document.hidden) onVis();
     return () => document.removeEventListener("visibilitychange", onVis);
   }, []);
 
