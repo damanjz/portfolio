@@ -635,39 +635,9 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "npr-cabinet",
-    name: "NPR / Grease-Pencil",
-    num: "PL.07",
-    tagline: "A toon-shaded asset with hand-drawn outlines.",
-    discipline: "craft",
-    category: "stylized",
-    description:
-      "A cel-shaded cabinet on a cracked stone dais — flat mint-and-yellow fills, bold black outlines and hatched contact shadow: a non-photorealistic / grease-pencil look-dev asset.",
-    stack: ["Blender", "Grease Pencil", "NPR"],
-    status: "live",
-    href: "https://www.artstation.com/damanpsd",
-    hrefLabel: "view on ArtStation",
-    metric: { label: "look", value: "non-photoreal" },
-    year: "2025",
-    summary:
-      "A single cel-shaded object — a tall cabinet on a cracked stone dais — rendered fully non-photoreal: flat colour fills, inked outlines, and hatched shadow drawn in the render. A grease-pencil / NPR look-dev asset.",
-    gallery: [
-      { src: "/art/npr-cabinet.webp", alt: "toon-shaded cabinet with black outlines on a stone dais", caption: "A cel-shaded cabinet — flat fills, inked contours and hatched contact shadow: a deliberately illustrative, non-photoreal look." },
-    ],
-    sections: [
-      { heading: "Against photoreal", body: "Where most of the 3D work chases realism, this one goes the other way: flat toon fills, bold outlines, and a hatched shadow, so the whole thing reads as drawn. It's a test of a non-photorealistic pipeline rather than a finished scene." },
-      { heading: "Grease pencil + shading", body: "The outlines and hatching come from a grease-pencil / NPR setup layered on the 3D object — proving out a stylised look that could dress a whole scene, not just one prop." },
-    ],
-    facts: [
-      { label: "TYPE", value: "NPR LOOK-DEV" },
-      { label: "TOOL", value: "BLENDER · GREASE PENCIL" },
-      { label: "LOOK", value: "CEL / TOON · INKED" },
-    ],
-  },
-  {
     slug: "highway-stop",
     name: "Highway Night Stop",
-    num: "PL.08",
+    num: "PL.07",
     tagline: "A nocturnal roadside scene, lit by sodium and neon.",
     discipline: "craft",
     category: "environment",
@@ -698,7 +668,7 @@ export const projects: Project[] = [
   {
     slug: "interior-study",
     name: "Interior Study",
-    num: "PL.09",
+    num: "PL.08",
     tagline: "A warm evening living room, lit by nested frames.",
     discipline: "craft",
     category: "environment",
