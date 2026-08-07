@@ -39,22 +39,33 @@ export default function CustomCursor() {
     const leave = () => { dot.style.opacity = "0"; ring.style.opacity = "0"; };
     const enter = () => { dot.style.opacity = "1"; ring.style.opacity = "1"; };
 
+    // The ring eases toward the pointer — but the rAF loop only runs WHILE it's
+    // still catching up (or the pointer is moving). Once it settles, we stop the
+    // loop entirely instead of burning a frame every 1/120s forever. `move`
+    // restarts it. This is the difference between idle CPU/GPU at 0% vs. pinned.
+    let running = false;
     const loop = () => {
       rx += (dx - rx) * 0.2;
       ry += (dy - ry) * 0.2;
       ring.style.transform = `translate(${rx}px, ${ry}px)`;
-      raf = requestAnimationFrame(loop);
+      if (Math.abs(dx - rx) > 0.5 || Math.abs(dy - ry) > 0.5) {
+        raf = requestAnimationFrame(loop);
+      } else {
+        ring.style.transform = `translate(${dx}px, ${dy}px)`; // snap to final
+        running = false;
+      }
     };
-    raf = requestAnimationFrame(loop);
+    const kick = () => { if (!running) { running = true; raf = requestAnimationFrame(loop); } };
 
-    window.addEventListener("pointermove", move, { passive: true });
+    const moveWithKick = (e: PointerEvent) => { move(e); kick(); };
+    window.addEventListener("pointermove", moveWithKick, { passive: true });
     window.addEventListener("pointerdown", down);
     window.addEventListener("pointerup", up);
     document.addEventListener("pointerleave", leave);
     document.addEventListener("pointerenter", enter);
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointermove", moveWithKick);
       window.removeEventListener("pointerdown", down);
       window.removeEventListener("pointerup", up);
       document.removeEventListener("pointerleave", leave);
