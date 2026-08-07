@@ -1,188 +1,448 @@
 @import "tailwindcss";
 
 /* ===========================================================================
-   DESIGN TOKENS — "The Monograph" (Direction v3, from Claude Design).
-   A printed engineering volume: warm paper, ink typography, drafting-blue
-   annotation — with the art bound in as glossy plates on umber stock.
-   Replaces: Cinematic Atelier (v1) · Phosphor Terminal (v2).
+   DESIGN TOKENS — v4 "Flow-board" (from Claude Design).
+   The whole site is one pannable 2D board; each project is its production DAG.
+   TWO THEMES, one toggle:
+     · TERMINAL  (light)  — warm paper, monospace-forward, git-graph wires
+     · NOCTURNE  (dark)   — near-black gallery, one warm signal, glowing wires
+   Themed via [data-theme] on <html>; system preference is the default,
+   the toggle persists to localStorage. Replaces "The Monograph" (v3).
    =========================================================================== */
 :root {
-  --paper: #f7f5f0; /* page canvas */
-  --raised: #fdfcfa; /* raised surface (folio bar, index panel) */
-  --ink: #1c1b18; /* primary text */
-  --graphite: #6b675e; /* secondary text */
-  --faint: #98938a; /* captions, mono meta */
-  --hairline: #e3dfd6; /* rules between rows */
-  --acc: #2a41c8; /* drafting ink — accent, <5% of any viewport */
-  --wash: #e9ebf8; /* accent wash (selection) */
-
-  /* the plate insert — the site's single inversion */
-  --plate: #23201a; /* plate ground */
-  --plate-text: #ede8de; /* plate primary text */
-  --plate-faint: #a89f8f; /* plate captions */
-  --plate-acc: #b8c2f2; /* accent on plate ground */
-
-  /* fonts wired from next/font in layout.tsx */
   --font-serif: var(--font-source-serif);
   --font-mono: var(--font-plex-mono);
+
+  /* semantic roles — the two themes only re-point these */
+  --ground: #f4f2ec;
+  --grid: #e7e4da;
+  --ink: #1a1917;
+  /* light-theme small-text tokens meet WCAG AA (>=4.5:1) at 9-11px label sizes */
+  --dim: #6b6760;
+  --faint: #6f6a5e;
+  --line: #c3bdaf;
+  --node: #fffdf8;
+  --node-bd: #d8d3c6;
+  --node-hi: #fbf9f3;
+  --acc: #d1442b;
+  --art: #a06a1e;
+  --ship: #237a4e;
+  --dev: #c98a2e;
+  --shadow: rgba(26, 25, 23, 0.08);
+  --glow: transparent;
+  color-scheme: light;
+}
+:root[data-theme="light"] {
+  --ground: #f4f2ec; --grid: #e7e4da; --ink: #1a1917; --dim: #6b6760;
+  --faint: #6f6a5e; --line: #c3bdaf; --node: #fffdf8; --node-bd: #d8d3c6;
+  --node-hi: #fbf9f3; --acc: #d1442b; --art: #a06a1e; --ship: #237a4e;
+  --dev: #c98a2e; --shadow: rgba(26,25,23,0.08); --glow: transparent;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --ground: #0c0c0e;
+  --grid: #17171a;
+  --ink: #f0ede8;
+  --dim: #8f8b85;
+  --faint: #8b877f;
+  --line: #2b2b30;
+  --node: #151517;
+  --node-bd: #26262b;
+  --node-hi: #1b1b1e;
+  --acc: #ff7a3c;
+  --art: #e0a24a;
+  --ship: #57c98a;
+  --dev: #e0b45a;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --glow: rgba(255, 122, 60, 0.18);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --ground: #0c0c0e; --grid: #17171a; --ink: #f0ede8; --dim: #8f8b85;
+    --faint: #8b877f; --line: #2b2b30; --node: #151517; --node-bd: #26262b;
+    --node-hi: #1b1b1e; --acc: #ff7a3c; --art: #e0a24a; --ship: #57c98a;
+    --dev: #e0b45a; --shadow: rgba(0,0,0,0.5); --glow: rgba(255,122,60,0.18);
+    color-scheme: dark;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   MONOGRAPH READ-VIEW tokens — the /read page reuses the v3 Monograph
+   components, re-skinned into the v4 dual theme (Daman-approved 2026-08-07).
+   These map the Monograph's token vocabulary (paper/graphite/wash/plate…) onto
+   v4's Terminal/Nocturne values so the components render in-theme with no edits.
+   Theme-aware: light = Terminal, dark = Nocturne (the new variant).
+   --------------------------------------------------------------------------- */
+:root {
+  --paper: var(--ground);
+  --raised: var(--node);
+  --graphite: #5f5b53;   /* light: darker secondary text (AA at label sizes) */
+  --hairline: var(--line);
+  --wash: #f3ddd6;       /* light: red-orange selection wash */
+  --plate: var(--node);
+  --plate-bd: var(--node-bd);
+  --plate-text: var(--ink);
+  --plate-faint: var(--faint);
+  --plate-acc: var(--acc);
+  --hatch-a: #eae6dc;
+}
+:root[data-theme="dark"] {
+  --graphite: #b4afa7;
+  --wash: #3a2417;
+  --plate: var(--node-hi);
+  --plate-bd: #33322f;
+  --hatch-a: #1a1a1d;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --graphite: #b4afa7;
+    --wash: #3a2417;
+    --plate: var(--node-hi);
+    --plate-bd: #33322f;
+    --hatch-a: #1a1a1d;
+  }
 }
 
 @theme inline {
+  --color-ground: var(--ground);
+  --color-grid: var(--grid);
+  --color-ink: var(--ink);
+  --color-dim: var(--dim);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-node: var(--node);
+  --color-node-bd: var(--node-bd);
+  --color-acc: var(--acc);
+  --color-art: var(--art);
+  --color-ship: var(--ship);
+  --color-dev: var(--dev);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+  /* Monograph read-view aliases (so bg-paper / text-graphite / bg-plate resolve) */
   --color-paper: var(--paper);
   --color-raised: var(--raised);
-  --color-ink: var(--ink);
   --color-graphite: var(--graphite);
-  --color-faint: var(--faint);
   --color-hairline: var(--hairline);
-  --color-acc: var(--acc);
   --color-wash: var(--wash);
   --color-plate: var(--plate);
+  --color-plate-bd: var(--plate-bd);
   --color-plate-text: var(--plate-text);
   --color-plate-faint: var(--plate-faint);
   --color-plate-acc: var(--plate-acc);
-
-  --font-serif: var(--font-serif);
-  --font-mono: var(--font-mono);
 }
 
-/* Default border color — layered so utilities like border-transparent
-   still win (unlayered rules would outrank every @layer utility). */
 @layer base {
-  * {
-    border-color: var(--hairline);
-  }
+  * { border-color: var(--line); }
+  p { text-wrap: pretty; }
 }
 
 html {
-  /* Native scroll — a document scrolls like a document. Anchor jumps are
-     smooth via CSS; no Lenis, no scroll-jacking (design: motion is 160ms
-     opacity/underline + rules drawing in once). */
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  /* the board owns the viewport; the page itself does not scroll */
+  height: 100%;
 }
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
-
 body {
-  background: var(--paper);
+  height: 100%;
+  background: var(--ground);
   color: var(--ink);
   font-family: var(--font-serif), Georgia, serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  overflow: hidden;
+  /* text is not selectable anywhere on the site (Daman, 2026-08-07) */
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background 200ms ease, color 200ms ease;
 }
+::selection { background: color-mix(in srgb, var(--acc) 22%, transparent); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; border-radius: 3px; }
 
-::selection {
-  background: var(--wash);
-  color: var(--ink);
-}
-
-/* Thin document scrollbar */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--hairline) transparent;
-}
-
-/* Focus ring — drafting blue, sharp */
-:focus-visible {
-  outline: 2px solid var(--acc);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* ---- typographic utilities ---- */
+/* ---- type utilities ---- */
 .mono {
   font-family: var(--font-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
 }
-.serif {
-  font-family: var(--font-serif), Georgia, serif;
-}
-
-/* Mono label — the small-caps annotation voice */
-.label {
+.serif { font-family: var(--font-serif), Georgia, serif; }
+.kicker {
   font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 10.5px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
 }
 
-/* ---- THE LEDGER RULE — the signature element ----
-   number — title — right-aligned mono readout, on a full-width ink line.
-   The line draws in once when the section scrolls into view (600ms). */
-.ledger {
-  position: relative;
-  padding-top: 10px;
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
+/* ===== the board ===== */
+.board-stage {
+  position: fixed; inset: 0; z-index: 10; cursor: grab;
+  background:
+    radial-gradient(circle, var(--grid) 1.1px, transparent 1.1px) 0 0 / 24px 24px,
+    var(--ground);
+  touch-action: none;
 }
-.ledger::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 1px;
-  width: 100%;
-  background: currentColor;
-  transform-origin: left center;
-  transform: scaleX(1);
+.board-stage.dragging { cursor: grabbing; }
+.board-world {
+  position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform;
+  /* text stays crisp: zoom is capped at 1× (never magnified past native), and
+     we avoid promoting text to a low-res GPU layer at rest */
+  backface-visibility: hidden;
 }
-/* draw-in variant, activated by [data-inview] from useReveal */
-.ledger-draw::before {
-  transform: scaleX(0);
-  transition: transform 600ms cubic-bezier(0.25, 1, 0.5, 1);
+.node { cursor: grab; }
+.node:active { cursor: grabbing; }
+.node.n-plate:active, .node.n-proj:active { cursor: grabbing; }
+
+/* container boxes: a group box wraps a whole section; item boxes wrap one
+   project/plate. Behind the nodes, no pointer interception. Clearly visible. */
+.board-box { position: absolute; z-index: 0; border-radius: 18px; pointer-events: none; }
+.board-box-group {
+  border: 1.5px solid color-mix(in srgb, var(--acc) 32%, var(--node-bd));
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--acc) 8%, transparent);
 }
-[data-inview="true"] .ledger-draw::before,
-.ledger-draw[data-inview="true"]::before {
-  transform: scaleX(1);
+:root[data-theme="dark"] .board-box-group {
+  background: color-mix(in srgb, #ffffff 3%, transparent);
+  border-color: color-mix(in srgb, var(--acc) 34%, #ffffff 10%);
+}
+.board-box-item {
+  border: 1px solid color-mix(in srgb, var(--node-bd) 90%, var(--acc));
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--node) 55%, transparent);
+}
+.board-box-label {
+  position: absolute; left: 20px; top: 15px;
+  font-family: var(--font-mono), ui-monospace, monospace; font-size: 11.5px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--acc); white-space: nowrap;
+}
+.board-box-item .board-box-label { left: 16px; top: 11px; font-size: 10px; letter-spacing: 0.12em; color: var(--dim); }
+
+/* select-tool mode: crosshair cursor over the empty board */
+.board-stage.selecting { cursor: crosshair; }
+/* marquee rubber-band — highly visible while dragging */
+.board-marquee {
+  position: absolute; z-index: 6; pointer-events: none; border-radius: 4px;
+  border: 2px solid var(--acc);
+  background: color-mix(in srgb, var(--acc) 16%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--acc) 30%, transparent), 0 0 24px color-mix(in srgb, var(--acc) 22%, transparent);
+}
+/* selected node — obvious accent ring + lift */
+.node[data-selected="true"] {
+  outline: 2.5px solid var(--acc); outline-offset: 3px;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--acc) 22%, transparent), 0 10px 30px var(--shadow);
+}
+.node[data-selected="true"]::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: color-mix(in srgb, var(--acc) 6%, transparent); pointer-events: none;
 }
 
-/* content fade — 160ms ease-out opacity only (no translate) */
-.fade {
-  opacity: 0;
-  transition: opacity 160ms ease-out;
+svg.board-wires { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 1; }
+svg.board-wires path { fill: none; stroke: var(--line); stroke-width: 1.5; }
+svg.board-wires path.w-ship { stroke: color-mix(in oklab, var(--ship) 60%, var(--line)); }
+svg.board-wires path.w-art  { stroke: color-mix(in oklab, var(--art) 45%, var(--line)); }
+:root[data-theme="dark"] svg.board-wires path { filter: drop-shadow(0 0 3px var(--glow)); }
+
+/* ===== nodes ===== */
+.node {
+  position: absolute; z-index: 2;
+  background: var(--node); border: 1px solid var(--node-bd); border-radius: 4px;
+  padding: 12px 14px; color: var(--ink); box-shadow: 2px 2px 0 var(--shadow);
+  transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
 }
-[data-inview="true"] .fade,
-.fade[data-inview="true"] {
-  opacity: 1;
+:root[data-theme="dark"] .node { border-radius: 12px; box-shadow: 0 10px 40px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.03); }
+.node:hover { background: var(--node-hi); border-color: color-mix(in srgb, var(--acc) 40%, var(--node-bd)); }
+/* the kicker row is the DRAG HANDLE (grab here to move the card); body text is
+   selectable. A grip affordance shows the strip is draggable. */
+.node .n-kicker { color: var(--dim); margin-bottom: 5px; display: flex; align-items: center; gap: 6px; cursor: grab; }
+.node .n-kicker:active { cursor: grabbing; }
+.node .n-drag { cursor: grab; }
+.node .n-drag:active { cursor: grabbing; }
+.node .n-title-link, .node a, .node button { cursor: pointer; }
+.node .n-kicker .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.node .n-title { font-family: var(--font-mono), ui-monospace, monospace; font-size: 14px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; }
+.node .n-body { font-size: 12px; color: var(--dim); margin-top: 4px; line-height: 1.45; }
+.node .n-met { font-family: var(--font-mono), ui-monospace, monospace; font-size: 10px; color: var(--dim); margin-top: 8px; }
+.node .n-met em { font-style: normal; color: var(--acc); font-weight: 600; }
+
+/* project root node */
+.node.n-proj .n-title-link { display: inline-flex; align-items: baseline; gap: 5px; color: var(--ink); text-decoration: none; }
+.node.n-proj .n-title-link:hover { color: var(--acc); }
+.node.n-proj .n-go { font-size: 11px; color: var(--faint); transition: color 150ms, transform 150ms; }
+.node.n-proj .n-title-link:hover .n-go { color: var(--acc); }
+.node .n-metlbl { color: var(--faint); font-weight: 400; }
+/* the explicit expand control — clearly a button, separate from drag + page */
+.n-expand {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 11px;
+  font-family: var(--font-mono), ui-monospace, monospace; font-size: 9.5px; letter-spacing: 0.1em;
+  color: var(--dim); background: color-mix(in srgb, var(--acc) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--acc) 30%, var(--node-bd)); border-radius: 5px;
+  padding: 5px 9px; cursor: pointer; transition: background 150ms, color 150ms, border-color 150ms;
+}
+.n-expand:hover { color: var(--ink); background: color-mix(in srgb, var(--acc) 16%, transparent); border-color: var(--acc); }
+.n-expand:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.n-expand-ico { font-size: 13px; line-height: 1; width: 12px; text-align: center; color: var(--acc); }
+
+/* stage decisions: choice + reason, all shown (the tree carries the meat) */
+.n-decisions { list-style: none; margin: 8px 0 0; padding: 0; }
+.n-decisions li { margin-top: 6px; font-size: 11px; line-height: 1.45; }
+.n-decisions li:first-child { margin-top: 0; }
+.n-decisions .d-choice { color: var(--acc); font-size: 10.5px; font-weight: 600; }
+.n-decisions .d-reason { color: var(--dim); }
+
+/* stage-kind accents */
+.k-idea .n-kicker, .k-idea .dot { color: var(--acc); }
+.k-decision .n-kicker { color: var(--dim); }
+.k-production .n-kicker { color: var(--dim); }
+.k-end { border-color: color-mix(in oklab, var(--ship) 45%, var(--node-bd)); }
+.k-end .n-kicker { color: var(--ship); }
+.k-end.s-wip { border-color: color-mix(in oklab, var(--dev) 50%, var(--node-bd)); border-style: dashed; }
+.k-end.s-wip .n-kicker { color: var(--dev); }
+
+/* origin + contact + art nodes */
+.node.n-origin { border-color: color-mix(in srgb, var(--acc) 50%, var(--node-bd)); }
+.node.n-origin .n-title { font-family: var(--font-serif), serif; font-size: 19px; letter-spacing: -0.01em; }
+.node.n-origin .n-lede { font-size: 12.5px; color: var(--dim); margin-top: 8px; line-height: 1.5; }
+.node.n-origin .n-lede .em { color: var(--acc); }
+.node.n-art .n-kicker { color: var(--art); }
+
+/* welcome column: how-to + about read like real cards, a touch larger */
+.node.n-howto { border-color: color-mix(in srgb, var(--acc) 45%, var(--node-bd)); }
+.node.n-howto .n-title { font-family: var(--font-serif), serif; font-size: 17px; letter-spacing: -0.01em; }
+.node.n-howlist { list-style: none; margin: 9px 0 0; padding: 0; font-size: 11px; line-height: 1.9; color: var(--dim); }
+.node.n-howlist li { padding-left: 14px; position: relative; }
+.node.n-howlist li::before { content: "›"; position: absolute; left: 0; color: var(--acc); }
+.node.n-howlist b { color: var(--ink); font-weight: 600; }
+.node.n-about { border-color: color-mix(in srgb, var(--art) 40%, var(--node-bd)); }
+.node.n-about .n-title { font-family: var(--font-serif), serif; font-size: 18px; letter-spacing: -0.01em; }
+.node.n-plate { padding: 0; overflow: hidden; cursor: pointer; }
+.node.n-plate img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.node.n-plate .p-cap { position: absolute; left: 10px; bottom: 8px; font-family: var(--font-mono), ui-monospace, monospace; font-size: 9px; letter-spacing: 0.1em; color: #eee; text-shadow: 0 1px 3px rgba(0,0,0,.8); }
+
+.zone-title {
+  position: absolute; z-index: 4;
+  font-family: var(--font-mono), ui-monospace, monospace; font-size: 12px;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint);
+  white-space: nowrap; /* always horizontal — never wraps into a vertical stack */
+  pointer-events: none;
+  padding: 4px 10px; border-radius: 5px;
+  background: color-mix(in srgb, var(--ground) 78%, transparent);
+  backdrop-filter: blur(3px);
 }
 
+/* ===== fixed chrome over the board ===== */
+.hud { position: fixed; z-index: 30; }
+.hud-btn {
+  font-family: var(--font-mono), ui-monospace, monospace; font-size: 10.5px; letter-spacing: 0.1em;
+  color: var(--dim); background: color-mix(in srgb, var(--ground) 82%, transparent);
+  border: 1px solid var(--line); border-radius: 6px; padding: 7px 11px; cursor: pointer;
+  backdrop-filter: blur(8px); transition: color 150ms, border-color 150ms;
+}
+.hud-btn:hover { color: var(--ink); border-color: color-mix(in srgb, var(--acc) 45%, var(--line)); }
+.hud-btn[aria-current="true"] { color: var(--ink); border-color: var(--ink); }
+
+/* mobile: the board's chrome collapses to the essentials so it doesn't bury the
+   cards on a 375px screen. Secondary tools (MOVE/SELECT/THE WORK/THE PLATES/
+   RESET, the header role + status word) hide; WHOLE BOARD + zoom + OUTLINE +
+   theme remain. Touch users read via the Outline; multi-select isn't a touch
+   affordance anyway. */
+@media (max-width: 640px) {
+  .hud-secondary { display: none !important; }
+  .hud-btn { font-size: 11px; padding: 8px 10px; } /* larger tap target */
+  .zone-title { font-size: 10px; }
+}
+
+/* ===== a11y / linear outline fallback ===== */
+.outline-view { position: fixed; inset: 0; z-index: 60; background: var(--ground); overflow: auto; padding: 44px clamp(20px, 6vw, 80px); display: none; }
+.outline-view.on { display: block; }
+.outline-view h1 { font-family: var(--font-serif), serif; font-size: clamp(24px, 4vw, 36px); letter-spacing: -0.02em; max-width: 20ch; }
+.outline-view h2 { font-family: var(--font-mono), ui-monospace, monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin: 28px 0 10px; }
+.outline-view .o-proj { border-left: 2px solid var(--line); padding-left: 16px; margin-bottom: 18px; max-width: 70ch; }
+.outline-view .o-proj b { font-size: 16px; }
+.outline-view .o-proj .o-desc { color: var(--dim); font-size: 14px; margin-top: 2px; }
+.outline-view ol { margin: 8px 0 0 20px; color: var(--dim); font-size: 13.5px; line-height: 1.7; }
+
+.skip-link { position: fixed; left: -999px; top: 8px; z-index: 100; background: var(--acc); color: #fff; padding: 8px 14px; border-radius: 6px; }
+.skip-link:focus { left: 8px; }
+
+/* ===== project deep-dive pages (scrollable documents, both themes) ===== */
+.proj-page { min-height: 100%; background: var(--ground); color: var(--ink); }
+.proj-bar {
+  position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 16px;
+  padding: 12px clamp(18px, 4vw, 48px);
+  background: color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
+}
+.proj-back { font-family: var(--font-mono), ui-monospace, monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--dim); text-decoration: none; }
+.proj-back:hover { color: var(--acc); }
+.proj-bar-meta { margin-left: 0; font-size: 10.5px; letter-spacing: 0.12em; color: var(--faint); }
+.proj-bar .hud-btn { margin-left: auto; }
+
+.proj-main { max-width: 1180px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 48px) 120px; }
+.proj-hero { padding: clamp(48px, 8vh, 96px) 0 40px; }
+.proj-title { font-size: clamp(38px, 6vw, 68px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.02; margin-top: 14px; }
+.proj-summary { font-size: clamp(17px, 1.6vw, 21px); line-height: 1.5; color: var(--dim); max-width: 44ch; margin-top: 16px; }
+.proj-stack { font-size: 10.5px; letter-spacing: 0.12em; color: var(--faint); margin-top: 20px; }
+
+.proj-grid { display: grid; grid-template-columns: 1fr; gap: 40px; }
+@media (min-width: 940px) { .proj-grid { grid-template-columns: 1fr 280px; gap: 56px; } }
+.proj-reels { display: grid; gap: 24px; margin-bottom: 40px; }
+@media (min-width: 620px) { .proj-reels { grid-template-columns: 1fr 1fr; } }
+
+.proj-chapter { margin-top: 48px; }
+.proj-chapter-head { display: flex; align-items: baseline; gap: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.proj-chapter-num { font-size: 12px; font-weight: 500; color: var(--acc); }
+.proj-chapter-title { font-size: clamp(22px, 3vw, 30px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
+.proj-chapter-body { font-size: 16px; line-height: 1.75; color: var(--ink); max-width: 64ch; margin-top: 18px; }
+
+.proj-decisions { margin-top: 18px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; max-width: 64ch; }
+.proj-decision { display: grid; gap: 4px; padding: 13px 16px; border-bottom: 1px solid var(--line); font-size: 12px; line-height: 1.5; }
+@media (min-width: 560px) { .proj-decision { grid-template-columns: 230px 1fr; gap: 16px; } }
+.proj-decision:last-child { border-bottom: 0; }
+.proj-decision .pd-choice { color: var(--acc); font-weight: 600; letter-spacing: 0.03em; }
+.proj-decision .pd-reason { color: var(--dim); }
+
+.proj-next { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 64px; border-top: 1px solid var(--line); padding-top: 20px; text-decoration: none; }
+.proj-next-label { font-size: 11px; letter-spacing: 0.1em; color: var(--faint); }
+.proj-next-name { font-size: clamp(20px, 2.4vw, 26px); font-weight: 600; color: var(--ink); }
+.proj-next:hover .proj-next-name { color: var(--acc); }
+
+.proj-aside .proj-spec { position: sticky; top: 72px; }
+.proj-spec-label { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; color: var(--faint); margin-bottom: 10px; }
+.proj-spec-rows { border-top: 1px solid var(--ink); font-size: 10.5px; letter-spacing: 0.05em; }
+.proj-spec-row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); text-decoration: none; }
+.proj-spec-row .ps-label { color: var(--faint); }
+.proj-spec-row .ps-value { text-align: right; color: var(--ink); }
+.proj-spec-row .ps-acc { color: var(--acc); font-weight: 600; }
+a.proj-spec-row:hover .ps-value { text-decoration: underline; }
+
+/* ===== Monograph /read view — the reused v3 classes, re-skinned ===== */
+/* the /read page is a scrolling document (the board owns the viewport; this
+   route re-enables scroll via ScrollUnlock + .read-doc below) */
+.read-doc { height: auto; min-height: 100%; overflow-y: auto; background: var(--paper); color: var(--ink); }
+.read-bar {
+  position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 16px;
+  padding: 12px clamp(18px, 4vw, 48px);
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(10px); border-bottom: 1px solid var(--hairline);
+}
+.read-back { font-size: 11px; letter-spacing: 0.12em; color: var(--dim); text-decoration: none; }
+.read-back:hover { color: var(--acc); }
+.read-bar-meta { font-size: 10.5px; letter-spacing: 0.12em; color: var(--faint); }
+.read-bar .hud-btn { margin-left: auto; }
+.read-doc .label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+}
+/* content fade — 160ms opacity, activated by [data-inview] from useReveal */
+.fade { opacity: 0; transition: opacity 160ms ease-out; }
+[data-inview="true"] .fade, .fade[data-inview="true"] { opacity: 1; }
 /* hatched figure placeholder — engineering-print texture for missing images */
 .hatch {
-  background: repeating-linear-gradient(
-    45deg,
-    #edeae2 0 8px,
-    var(--hairline) 8px 9px
-  );
+  background: repeating-linear-gradient(45deg, var(--hatch-a) 0 8px, var(--hairline) 8px 9px);
   border: 1px solid var(--hairline);
 }
-
-/* link underline behaviour — 160ms, the only hover motion */
-.link-acc {
-  color: var(--acc);
-  border-bottom: 1px solid transparent;
-  transition: border-color 160ms ease-out;
-}
-.link-acc:hover {
-  border-bottom-color: var(--acc);
-}
+/* link underline — the only hover motion */
+.link-acc { color: var(--acc); border-bottom: 1px solid transparent; transition: border-color 160ms ease-out; text-decoration: none; }
+.link-acc:hover { border-bottom-color: var(--acc); }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-  .fade,
-  .ledger-draw::before {
-    opacity: 1;
-    transform: none;
-  }
+  *, *::before, *::after { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
+  .fade { opacity: 1; }
 }

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v4 — Structure wireframes (3 skeletons)</title>
+<style>
+  /* WIREFRAMES ONLY. No aesthetic. Greyscale, system font, visible structure.
+     The point is to judge the SKELETON — layout, navigation model, how much
+     scroll, how you move through content — not colour/type/mood. Styling
+     comes AFTER a structure is picked. */
+  :root{ --bd:#c9ccd2; --bd2:#e4e6ea; --ink:#20242c; --dim:#767b85; --box:#f0f1f4; --box2:#e7e9ee; --hi:#b9c0cc; --focus:#2a5bd7; }
+  *{box-sizing:border-box;margin:0}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:#fafbfc;line-height:1.4;font-size:14px}
+  .tabs{position:sticky;top:0;z-index:20;display:flex;gap:0;background:#fff;border-bottom:1px solid var(--bd);padding:0 16px}
+  .tabs button{font:inherit;font-size:13px;border:0;background:none;padding:14px 16px;cursor:pointer;color:var(--dim);border-bottom:2px solid transparent}
+  .tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink);font-weight:600}
+  .tabs .meta{margin-left:auto;align-self:center;font-size:11px;color:var(--dim);font-family:ui-monospace,monospace}
+  .frame{display:none;padding:22px 16px 60px}
+  .frame.on{display:block}
+  .note{max-width:900px;margin:0 auto 18px;font-size:12.5px;color:var(--dim);background:#fff;border:1px dashed var(--bd);padding:10px 14px;border-radius:6px}
+  .note b{color:var(--ink)}
+  .wf{max-width:1100px;margin:0 auto}
+  .lbl{font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  .box{background:var(--box);border:1px solid var(--bd2)}
+  .b2{background:var(--box2)}
+  .imgph{background:repeating-linear-gradient(45deg,#e2e4e9 0 10px,#eceef2 10px 20px);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;color:#9aa0ab;font-size:11px}
+  .scrollbadge{position:fixed;right:14px;bottom:14px;z-index:30;font-family:ui-monospace,monospace;font-size:11px;background:var(--ink);color:#fff;padding:6px 10px;border-radius:20px;opacity:.9}
+
+  /* ---------- A: COMMAND SURFACE (no scroll; ⌘K drives everything) ---------- */
+  #A .stage{height:calc(100vh - 150px);min-height:460px;display:grid;grid-template-columns:1.15fr .85fr;grid-template-rows:auto 1fr auto;gap:12px}
+  #A .idcard{grid-column:1/2;border:1px solid var(--bd);background:#fff;padding:18px 20px;border-radius:8px}
+  #A .idcard h1{font-size:22px;line-height:1.15;font-weight:650;margin-bottom:8px}
+  #A .idcard p{color:var(--dim);font-size:13px;max-width:46ch}
+  #A .cmd{grid-column:2/3;grid-row:1/3;border:1px solid var(--bd);background:#fff;border-radius:8px;display:flex;flex-direction:column;overflow:hidden}
+  #A .cmd .search{padding:12px 14px;border-bottom:1px solid var(--bd2);display:flex;align-items:center;gap:8px}
+  #A .cmd .search .kbd{margin-left:auto;font-family:ui-monospace,monospace;font-size:10px;border:1px solid var(--bd);border-radius:4px;padding:2px 6px;color:var(--dim)}
+  #A .cmd .search input{border:0;font:inherit;font-size:14px;flex:1;outline:none;background:none}
+  #A .cmd .results{overflow:auto;flex:1}
+  #A .cmd .grp{padding:8px 14px 4px}
+  #A .cmd .res{display:grid;grid-template-columns:16px 1fr auto;gap:10px;align-items:center;padding:9px 14px;cursor:pointer;border-left:2px solid transparent}
+  #A .cmd .res:hover,#A .cmd .res.sel{background:var(--box);border-left-color:var(--ink)}
+  #A .cmd .res .t{font-size:13px;font-weight:550}
+  #A .cmd .res .d{font-size:11px;color:var(--dim)}
+  #A .cmd .res .tag{font-family:ui-monospace,monospace;font-size:10px;color:var(--dim)}
+  #A .peek{grid-column:1/2;grid-row:2/3;border:1px solid var(--bd);background:#fff;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+  #A .peek .imgrow{display:flex;gap:8px;flex:1}
+  #A .peek .imgrow .imgph{flex:1}
+  #A .strip{grid-column:1/3;grid-row:3/4;display:flex;gap:10px;align-items:center;font-size:12px;color:var(--dim);border-top:1px solid var(--bd2);padding-top:10px}
+  #A .strip .lamp{width:8px;height:8px;border-radius:50%;background:#8a929e}
+  #A .strip a{margin-left:auto;color:var(--ink);text-decoration:none;border:1px solid var(--bd);padding:6px 12px;border-radius:6px}
+
+  /* ---------- B: DENSE INDEX (one ledger, everything above the fold) ---------- */
+  #B .masthead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:2px}
+  #B .masthead h1{font-size:19px;font-weight:650}
+  #B table{width:100%;border-collapse:collapse;font-size:13px}
+  #B th{text-align:left;font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--bd)}
+  #B td{padding:11px 10px;border-bottom:1px solid var(--bd2);vertical-align:top}
+  #B tr:hover td{background:var(--box)}
+  #B .cap{font-family:ui-monospace,monospace;font-size:10px;color:var(--dim);cursor:pointer}
+  #B .cap:hover{color:var(--ink)}
+  #B .nm{font-weight:600}
+  #B .mono{font-family:ui-monospace,monospace;font-size:11px;color:var(--dim)}
+  #B .sub{background:#fff}
+  #B .sub td{background:var(--box);border-bottom:1px solid var(--bd)}
+  #B .platestrip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+  #B .platestrip .imgph{aspect-ratio:4/3}
+  #B .foot{display:flex;justify-content:space-between;margin-top:16px;font-size:11px;color:var(--dim);font-family:ui-monospace,monospace}
+
+  /* ---------- C: SPATIAL BOARD (pan, don't scroll) ---------- */
+  #C .viewport{position:relative;height:calc(100vh - 150px);min-height:460px;border:1px solid var(--bd);border-radius:8px;overflow:hidden;background:
+    radial-gradient(circle,#dfe2e8 1px,transparent 1px) 0 0/26px 26px,#fbfcfd}
+  #C .canvas{position:absolute;inset:0;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+  #C .card{position:absolute;border:1px solid var(--bd);background:#fff;border-radius:8px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  #C .card .lbl{margin-bottom:6px}
+  #C .card.me{width:230px;left:40px;top:40px;border-color:var(--ink);border-width:2px}
+  #C .card.me h1{font-size:18px;font-weight:650;line-height:1.2}
+  #C .card.proj{width:190px}
+  #C .card.proj .nm{font-weight:600;font-size:14px}
+  #C .card.proj .d{font-size:11px;color:var(--dim);margin-top:3px}
+  #C .card.plate{width:150px;height:112px;padding:0;overflow:hidden}
+  #C .card.plate .imgph{width:100%;height:100%;border:0}
+  #C .edge{position:absolute;height:1px;background:var(--hi);transform-origin:left;z-index:-1}
+  #C .minimap{position:absolute;right:12px;bottom:12px;width:120px;height:80px;border:1px solid var(--bd);background:rgba(255,255,255,.9);border-radius:4px}
+  #C .minimap i{position:absolute;border:1.5px solid var(--focus);width:38px;height:30px;left:6px;top:8px;transition:.4s}
+  #C .zonebtns{position:absolute;left:12px;bottom:12px;display:flex;gap:6px}
+  #C .zonebtns button{font:inherit;font-size:11px;border:1px solid var(--bd);background:#fff;padding:6px 12px;border-radius:6px;cursor:pointer}
+  #C .zonebtns button[aria-current="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  @media(max-width:720px){
+    #A .stage{grid-template-columns:1fr;grid-template-rows:none;height:auto}
+    #A .cmd{grid-column:auto;grid-row:auto;height:60vh}
+    #A .peek,#A .idcard,#A .strip{grid-column:auto}
+    #C .viewport{height:70vh}
+  }
+</style>
+</head>
+<body>
+
+<div class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-t="A">A · Command surface</button>
+  <button role="tab" aria-selected="false" data-t="B">B · Dense index</button>
+  <button role="tab" aria-selected="false" data-t="C">C · Spatial board</button>
+  <span class="meta">WIREFRAMES — structure only, no styling</span>
+</div>
+
+<!-- ============ A: COMMAND SURFACE ============ -->
+<section class="frame on" id="A" role="tabpanel">
+  <div class="note"><b>A · Command surface.</b> One screen, no scroll. The whole portfolio is a searchable index (⌘K-native) — you type or arrow through work, art, and links; the left pane previews whatever's selected. Recruiter sees identity + can reach anything in one keystroke. <b>Signature interaction:</b> the command palette IS the site, not a shortcut bolted on. Structure to judge: fixed viewport, split identity/preview + live result list, keyboard-first.</div>
+  <div class="wf">
+    <div class="stage">
+      <div class="idcard">
+        <div class="lbl">Identity</div>
+        <h1>Daman — secure systems, engineered to run on your machine.</h1>
+        <p>Systems engineer, Hyderabad. Ex-3D artist. Local-first, security-hardened software. [intro line]</p>
+      </div>
+      <div class="cmd" aria-label="Command index">
+        <div class="search"><span class="lbl">▸</span><input placeholder="Search work, art, links…  (⌘K)"><span class="kbd">⌘K</span></div>
+        <div class="results">
+          <div class="grp lbl">Work — systems (4)</div>
+          <div class="res sel"><span>›</span><span><span class="t">protec</span><br><span class="d">Password manager that never phones home</span></span><span class="tag">NET CALLS 0</span></div>
+          <div class="res"><span>›</span><span><span class="t">n8n-automation</span><br><span class="d">Self-hosted AI triage on local Ollama</span></span><span class="tag">ACC 85%</span></div>
+          <div class="res"><span>›</span><span><span class="t">volt-techwear-store</span><br><span class="d">Techwear commerce, end to end</span></span><span class="tag">PUBLIC</span></div>
+          <div class="res"><span>›</span><span><span class="t">flux-player</span><br><span class="d">Native video player, instant start</span></span><span class="tag">PRIVATE</span></div>
+          <div class="grp lbl">Plates — art archive (4)</div>
+          <div class="res"><span>▦</span><span><span class="t">Umbraixs · Cinematic Car · Stylized · Guitar</span><br><span class="d">MA Animation · looks-dev</span></span><span class="tag">4 FRAMES</span></div>
+          <div class="grp lbl">Links</div>
+          <div class="res"><span>→</span><span class="t">GitHub · ArtStation · Email</span><span class="tag"></span></div>
+        </div>
+      </div>
+      <div class="peek">
+        <div class="lbl">Preview — selected result</div>
+        <div class="imgrow"><span class="imgph">shot 1</span><span class="imgph">shot 2</span></div>
+        <div style="font-size:12px;color:var(--dim)">Rust · Tauri · Argon2id — expands here in place; no navigation. Metric with provenance shown inline.</div>
+      </div>
+      <div class="strip"><span class="lamp"></span> Open to work · replies ~24h · 0 external requests <a href="#">Get in touch</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ B: DENSE INDEX ============ -->
+<section class="frame" id="B" role="tabpanel" hidden>
+  <div class="note"><b>B · Dense index.</b> A single data-dense page — the whole body of work as one sortable/expandable ledger, everything above the fold on desktop, ~one screen. Rows expand in place for detail (no navigation, minimal scroll). Reads like a well-made technical index or a spec sheet. <b>Signature interaction:</b> the ledger itself — dense, scannable, expand-in-place. Structure to judge: masthead + table + plate strip, all on one surface.</div>
+  <div class="wf">
+    <div class="masthead"><h1>Daman</h1><span class="mono">SYSTEMS · SECURITY · LOCAL-FIRST — OPEN TO WORK — ⌘K</span></div>
+    <table>
+      <thead><tr><th>#</th><th>Project</th><th>Stack</th><th>Reading</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <tr><td class="mono">01</td><td><span class="nm">protec</span><br><span class="mono" style="color:#999">password manager, never phones home</span></td><td class="mono">Rust · Tauri · Argon2id</td><td class="mono">NET CALLS = 0 · devtools-verifiable</td><td class="mono">Private ⌑</td><td class="cap">expand ▾</td></tr>
+        <tr class="sub"><td></td><td colspan="5">▸ inline dossier expands here: paragraph + gallery thumbnails + full metric provenance. No page change.</td></tr>
+        <tr><td class="mono">02</td><td><span class="nm">n8n-automation</span><br><span class="mono" style="color:#999">self-hosted AI triage on local Ollama</span></td><td class="mono">n8n · Ollama · local LLM</td><td class="mono">ROUTE ACC = 85% · n=40 eval</td><td class="mono">Public ↗</td><td class="cap">expand ▾</td></tr>
+        <tr><td class="mono">03</td><td><span class="nm">volt-techwear-store</span><br><span class="mono" style="color:#999">techwear commerce, end to end</span></td><td class="mono">Next · Stripe-ready</td><td class="mono">STATIC EXPORT</td><td class="mono">Public ↗</td><td class="cap">expand ▾</td></tr>
+        <tr><td class="mono">04</td><td><span class="nm">flux-player</span><br><span class="mono" style="color:#999">native video player, instant start</span></td><td class="mono">Native · single binary</td><td class="mono">ZERO SPLASH</td><td class="mono">Private ⌑</td><td class="cap">expand ▾</td></tr>
+      </tbody>
+    </table>
+    <div class="platestrip"><span class="imgph">PL.01</span><span class="imgph">PL.02</span><span class="imgph">PL.03</span><span class="imgph">PL.04</span></div>
+    <div class="foot"><span>ART ARCHIVE · MA ANIMATION</span><span>0 EXTERNAL REQUESTS · NO ANALYTICS</span></div>
+  </div>
+</section>
+
+<!-- ============ C: SPATIAL BOARD ============ -->
+<section class="frame" id="C" role="tabpanel" hidden>
+  <div class="note"><b>C · Spatial board.</b> You don't scroll — you pan a 2D board. Identity at origin, work and art laid out as connected cards in space; jump between zones with the buttons or arrows. A minimap shows where you are. Feels like a working canvas, not a document. <b>Signature interaction:</b> spatial navigation + the connections between pieces. Structure to judge: fixed viewport + pannable canvas + zone jumps + minimap. (Riskiest for a11y — needs a keyboard/list fallback, noted.)</div>
+  <div class="wf">
+    <div class="viewport">
+      <div class="canvas" id="Ccanvas">
+        <div class="card me"><div class="lbl">Origin</div><h1>Daman</h1><div style="font-size:11px;color:var(--dim);margin-top:6px">secure systems · ex-3D artist · Hyderabad</div></div>
+        <div class="edge" style="left:270px;top:70px;width:120px"></div>
+        <div class="card proj" style="left:390px;top:40px"><div class="lbl">Work 01</div><div class="nm">protec</div><div class="d">never phones home · NET CALLS 0</div></div>
+        <div class="card proj" style="left:390px;top:150px"><div class="lbl">Work 02</div><div class="nm">n8n-automation</div><div class="d">local AI triage · ACC 85%</div></div>
+        <div class="card proj" style="left:620px;top:95px"><div class="lbl">Work 03</div><div class="nm">volt-techwear-store</div><div class="d">commerce, end to end</div></div>
+        <div class="card proj" style="left:620px;top:205px"><div class="lbl">Work 04</div><div class="nm">flux-player</div><div class="d">instant native player</div></div>
+        <div class="card plate" style="left:120px;top:230px"><span class="imgph">PL.01 Umbraixs</span></div>
+        <div class="card plate" style="left:290px;top:290px"><span class="imgph">PL.02 Car</span></div>
+        <div class="card plate" style="left:460px;top:330px"><span class="imgph">PL.03 Stylized</span></div>
+        <div class="card plate" style="left:630px;top:340px"><span class="imgph">PL.04 Guitar</span></div>
+      </div>
+      <div class="zonebtns">
+        <button aria-current="true" data-z="0">Home</button>
+        <button data-z="1">Work</button>
+        <button data-z="2">Art</button>
+        <button data-z="3">Contact</button>
+      </div>
+      <div class="minimap"><i id="mmi"></i></div>
+    </div>
+  </div>
+</section>
+
+<div class="scrollbadge" id="badge">A · no page scroll</div>
+
+<script>
+  var frames={A:document.getElementById('A'),B:document.getElementById('B'),C:document.getElementById('C')};
+  var badge=document.getElementById('badge');
+  var badgeText={A:'A · no page scroll (fixed viewport)',B:'B · ~1 screen, rows expand in place',C:'C · pan, don\'t scroll'};
+  document.querySelectorAll('.tabs button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.tabs button').forEach(function(x){x.setAttribute('aria-selected','false')});
+      b.setAttribute('aria-selected','true');
+      var t=b.dataset.t;
+      for(var k in frames){ frames[k].classList.toggle('on',k===t); frames[k].hidden=(k!==t); }
+      badge.textContent=badgeText[t]; window.scrollTo(0,0);
+    });
+  });
+  // A: keyboard arrows move the selection (demonstrate keyboard-first)
+  (function(){ var list=document.querySelectorAll('#A .res'); var i=0;
+    document.addEventListener('keydown',function(e){ if(!frames.A.classList.contains('on'))return;
+      if(e.key==='ArrowDown'||e.key==='ArrowUp'){ list[i].classList.remove('sel'); i=(i+(e.key==='ArrowDown'?1:list.length-1))%list.length; list[i].classList.add('sel'); e.preventDefault(); } });
+  })();
+  // C: zone jumps pan the canvas + move minimap
+  (function(){ var cv=document.getElementById('Ccanvas'), mmi=document.getElementById('mmi');
+    var zones=[[0,0,6,8],[-330,-20,58,20],[-260,-230,44,54],[-500,-120,20,54]];
+    document.querySelectorAll('#C .zonebtns button').forEach(function(b){
+      b.addEventListener('click',function(){
+        document.querySelectorAll('#C .zonebtns button').forEach(function(x){x.setAttribute('aria-current','false')});
+        b.setAttribute('aria-current','true');
+        var z=zones[+b.dataset.z]; cv.style.transform='translate('+z[0]+'px,'+z[1]+'px)';
+        mmi.style.left=z[2]+'px'; mmi.style.top=z[3]+'px';
+      });
+    });
+  })();
+</script>
+</body>
+</html>

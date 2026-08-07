@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daman — the board</title>
+<style>
+  /* ============================================================
+     FLOW-BOARD (Daman's idea) — the whole portfolio is ONE 2D board.
+     Every project is laid out as the real production DAG that made it:
+       IDEA → DECISIONS → PRODUCTION → SHIPPED
+     The flowchart is not decoration; it IS the navigation and the story.
+     You PAN/ZOOM the board (no page scroll). Nodes open in place.
+     A11y: the same graph is exposed as a linear outline (skip link).
+     This is a STRUCTURE prototype — light paint, real behaviour.
+     ============================================================ */
+  :root{
+    --paper:#0e0f13; --grid:#191b22; --ink:#e9eaee; --dim:#8b909c; --faint:#575c68;
+    --line:#2c2f39; --node:#161821; --node-hi:#1d2029;
+    --sys:#5b8cff;    /* systems accent */
+    --art:#e0a24a;    /* art accent */
+    --ship:#3ecf8e;   /* shipped */
+    --mono:ui-monospace,"SF Mono",Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0}
+  html,body{height:100%;overflow:hidden}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;font-size:14px;user-select:none}
+  .mono{font-family:var(--mono)}
+  a{color:inherit}
+  .skip{position:fixed;left:-999px;top:8px;z-index:100;background:#fff;color:#000;padding:8px 14px;border-radius:6px}
+  .skip:focus{left:8px}
+
+  /* ---- fixed chrome over the board ---- */
+  .hud{position:fixed;inset:0 0 auto 0;z-index:30;display:flex;align-items:center;gap:16px;
+    padding:14px 18px;pointer-events:none}
+  .hud .id{pointer-events:auto}
+  .hud .id b{font-size:15px;letter-spacing:-.01em}
+  .hud .id span{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-left:10px}
+  .hud .status{margin-left:auto;pointer-events:auto;display:flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--dim)}
+  .hud .status .lamp{width:7px;height:7px;border-radius:50%;background:var(--ship);
+    box-shadow:0 0 0 3px rgba(62,207,142,.16)}
+  .hud .k{pointer-events:auto;font-family:var(--mono);font-size:10.5px;color:var(--dim);
+    border:1px solid var(--line);border-radius:5px;padding:5px 9px;background:rgba(20,22,30,.7);cursor:pointer}
+  .hud .k:hover{color:var(--ink);border-color:var(--faint)}
+
+  /* legend / zone rail bottom-left */
+  .rail{position:fixed;left:18px;bottom:18px;z-index:30;display:flex;gap:7px}
+  .rail button{font:inherit;font-size:11.5px;font-family:var(--mono);letter-spacing:.04em;
+    color:var(--dim);background:rgba(20,22,30,.75);border:1px solid var(--line);
+    border-radius:6px;padding:7px 12px;cursor:pointer;backdrop-filter:blur(6px)}
+  .rail button:hover{color:var(--ink)}
+  .rail button[aria-current="true"]{color:var(--ink);border-color:var(--faint)}
+  .rail button .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:1px}
+
+  /* zoom + minimap bottom-right */
+  .zoom{position:fixed;right:18px;bottom:18px;z-index:30;display:flex;flex-direction:column;gap:6px}
+  .zoom button{width:34px;height:34px;font-size:18px;color:var(--dim);background:rgba(20,22,30,.75);
+    border:1px solid var(--line);border-radius:6px;cursor:pointer;backdrop-filter:blur(6px)}
+  .zoom button:hover{color:var(--ink)}
+  .minimap{position:fixed;right:18px;top:64px;z-index:30;width:150px;height:104px;
+    border:1px solid var(--line);background:rgba(14,15,19,.85);border-radius:6px;overflow:hidden;backdrop-filter:blur(6px)}
+  .minimap .mm-node{position:absolute;background:var(--faint);border-radius:1px}
+  .minimap .mm-view{position:absolute;border:1.5px solid var(--sys);border-radius:2px;transition:.15s}
+
+  .hint{position:fixed;left:50%;top:56px;transform:translateX(-50%);z-index:30;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--faint);pointer-events:none;
+    transition:opacity .5s}
+
+  /* ---- the board ---- */
+  #stage{position:fixed;inset:0;z-index:10;cursor:grab;
+    background:
+      radial-gradient(circle, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    background-attachment:local}
+  #stage.drag{cursor:grabbing}
+  #world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+  svg.wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none;z-index:1}
+  svg.wires path{fill:none;stroke:var(--line);stroke-width:1.5}
+  svg.wires path.sys{stroke:color-mix(in oklab,var(--sys) 55%,var(--line))}
+  svg.wires path.art{stroke:color-mix(in oklab,var(--art) 55%,var(--line))}
+
+  .node{position:absolute;z-index:2;background:var(--node);border:1px solid var(--line);
+    border-radius:9px;padding:12px 14px;transition:border-color .15s,box-shadow .15s,background .15s}
+  .node:hover{background:var(--node-hi);border-color:var(--faint)}
+  .node .kind{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--faint);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .node .kind .d{width:6px;height:6px;border-radius:50%}
+  .node .ttl{font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.25}
+  .node .sub{font-size:12px;color:var(--dim);margin-top:4px;line-height:1.4}
+  .node .met{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:8px}
+  .node .met em{font-style:normal;color:var(--ink)}
+  .node .met .src{font-size:9px;color:var(--faint)}
+
+  /* the ORIGIN node (identity) */
+  .node.origin{width:280px;border-color:var(--faint)}
+  .node.origin .ttl{font-size:22px;font-weight:650;line-height:1.1}
+  .node.origin .lede{font-size:12.5px;color:var(--dim);margin-top:10px;line-height:1.5}
+  .node.origin .em{color:var(--sys)}
+
+  /* PROJECT root node — the openable one */
+  .node.proj{width:210px;cursor:pointer}
+  .node.proj.sys{border-left:2px solid var(--sys)}
+  .node.proj.art{border-left:2px solid var(--art)}
+  .node.proj .open{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin-top:9px}
+  .node.proj:focus-visible{outline:2px solid var(--sys);outline-offset:2px}
+
+  /* stage nodes in a project's DAG (idea/decision/prod/shipped) */
+  .node.step{width:170px}
+  .node.step.ship{border-color:color-mix(in oklab,var(--ship) 40%,var(--line))}
+  .node.step.ship .kind .d{background:var(--ship)}
+  .node.step .ttl{font-size:12.5px;font-weight:550}
+  .node.step .sub{font-size:11px}
+
+  /* a project's expanded DAG — hidden until opened */
+  .dag{display:none}
+  .dag.on{display:block}
+
+  /* art plate node */
+  .node.plate{width:150px;height:104px;padding:0;overflow:hidden;cursor:pointer}
+  .node.plate .ph{width:100%;height:100%;
+    background:repeating-linear-gradient(45deg,#20222b 0 9px,#191b22 9px 18px);
+    display:flex;align-items:flex-end;padding:8px}
+  .node.plate .ph span{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--dim)}
+
+  /* zone titles floating on the board */
+  .zonetitle{position:absolute;font-family:var(--mono);font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--faint);z-index:2}
+
+  /* ---- a11y linear fallback (visually offscreen unless focused-in) ---- */
+  .outline{position:fixed;inset:0;z-index:50;background:var(--paper);overflow:auto;padding:40px;display:none}
+  .outline.on{display:block}
+  .outline h2{font-size:13px;font-family:var(--mono);letter-spacing:.1em;color:var(--dim);margin:22px 0 8px}
+  .outline .o-proj{border-left:2px solid var(--line);padding-left:14px;margin-bottom:14px}
+  .outline .o-proj b{font-size:15px}
+  .outline ol{margin:6px 0 0 18px;color:var(--dim);font-size:13px;line-height:1.7}
+  .outline .close{position:fixed;right:24px;top:20px;background:none;border:1px solid var(--line);
+    color:var(--ink);border-radius:6px;padding:8px 14px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#outline" id="skiplink">Skip the board — read as a linear outline</a>
+
+<div class="hud">
+  <div class="id"><b>Daman</b><span>Systems · Security · Local-first</span></div>
+  <div class="status"><span class="lamp"></span>OPEN TO WORK · REPLIES ~24H</div>
+  <button class="k" id="fitbtn">⌂ FIT</button>
+  <button class="k" id="outbtn">☰ OUTLINE</button>
+</div>
+
+<div class="hint" id="hint">DRAG TO PAN · SCROLL TO ZOOM · CLICK A PROJECT TO OPEN ITS BUILD</div>
+
+<div class="minimap" id="minimap"><div class="mm-view" id="mmview"></div></div>
+
+<main id="stage" aria-label="Portfolio board — pan and zoom">
+  <div id="world">
+    <svg class="wires" id="wires" width="3000" height="1800"></svg>
+
+    <!-- zone labels -->
+    <div class="zonetitle" style="left:60px;top:14px">◆ ORIGIN</div>
+    <div class="zonetitle" style="left:540px;top:14px" data-zone="work">◆ THE WORK — how each system got built</div>
+    <div class="zonetitle" style="left:60px;top:640px" data-zone="art">◆ THE PLATES — art archive</div>
+
+    <!-- ORIGIN -->
+    <div class="node origin" id="n-origin" style="left:60px;top:60px" data-x="60" data-y="60">
+      <div class="kind"><span class="d" style="background:var(--ink)"></span>Origin</div>
+      <div class="ttl">Secure systems, engineered to run on your machine.</div>
+      <div class="lede">Systems engineer in Hyderabad. Ex‑3D artist. Every project below is drawn as the actual path that built it — <span class="em">idea → decisions → production → shipped.</span></div>
+      <div class="met mono" style="margin-top:12px">GITHUB @damanjz · ARTSTATION @damanpsd</div>
+    </div>
+
+    <!-- PROJECT ROOTS (systems) : click to expand each DAG -->
+    <div class="node proj sys" id="p-protec" style="left:560px;top:70px" data-x="560" data-y="70"
+         role="button" tabindex="0" aria-expanded="false" data-proj="protec">
+      <div class="kind"><span class="d" style="background:var(--sys)"></span>Work 01 · Security</div>
+      <div class="ttl">protec</div>
+      <div class="sub">A password manager that never phones home.</div>
+      <div class="met"><em>NET CALLS = 0</em> <span class="src">· devtools‑verifiable</span></div>
+      <div class="open">▸ CLICK TO TRACE THE BUILD</div>
+    </div>
+
+    <div class="node proj sys" id="p-n8n" style="left:560px;top:250px" data-x="560" data-y="250"
+         role="button" tabindex="0" aria-expanded="false" data-proj="n8n">
+      <div class="kind"><span class="d" style="background:var(--sys)"></span>Work 02 · Automation</div>
+      <div class="ttl">n8n-automation</div>
+      <div class="sub">Self‑hosted AI support triage on local Ollama.</div>
+      <div class="met"><em>ROUTE ACC = 85%</em> <span class="src">· n=40 eval, vs 70% baseline</span></div>
+      <div class="open">▸ build graph — sketched in this prototype</div>
+    </div>
+
+    <div class="node proj sys" id="p-volt" style="left:560px;top:430px" data-x="560" data-y="430"
+         role="button" tabindex="0" aria-expanded="false" data-proj="volt">
+      <div class="kind"><span class="d" style="background:var(--sys)"></span>Work 03 · Commerce</div>
+      <div class="ttl">volt-techwear-store</div>
+      <div class="sub">Techwear commerce, end to end.</div>
+      <div class="met"><em>STATIC EXPORT</em></div>
+      <div class="open">▸ build graph — sketched in this prototype</div>
+    </div>
+
+    <!-- one project shown PRE-EXPANDED so the concept reads instantly -->
+    <div class="dag on" id="dag-protec">
+      <div class="node step" style="left:820px;top:40px" data-x="820" data-y="40">
+        <div class="kind"><span class="d" style="background:var(--sys)"></span>Idea</div>
+        <div class="ttl">A vault that can't leak</div>
+        <div class="sub">because it has nothing to leak to.</div>
+      </div>
+      <div class="node step" style="left:820px;top:150px" data-x="820" data-y="150">
+        <div class="kind"><span class="d" style="background:var(--sys)"></span>Decision</div>
+        <div class="ttl">Rust + Tauri</div>
+        <div class="sub">native, tiny, memory‑safe core.</div>
+      </div>
+      <div class="node step" style="left:1010px;top:95px" data-x="1010" data-y="95">
+        <div class="kind"><span class="d" style="background:var(--sys)"></span>Production</div>
+        <div class="ttl">Argon2id + local file</div>
+        <div class="sub">key derivation tuned; zero network calls by construction.</div>
+      </div>
+      <div class="node step ship" style="left:1200px;top:95px" data-x="1200" data-y="95">
+        <div class="kind"><span class="d"></span>Shipped</div>
+        <div class="ttl">protec v1</div>
+        <div class="met"><em>NET CALLS = 0</em></div>
+      </div>
+    </div>
+
+    <!-- PLATES (art) : nodes wired off a small art hub -->
+    <div class="node plate" style="left:120px;top:700px" data-x="120" data-y="700"><div class="ph"><span>PL.01 · UMBRAIXS</span></div></div>
+    <div class="node plate" style="left:300px;top:740px" data-x="300" data-y="740"><div class="ph"><span>PL.02 · CINEMATIC CAR</span></div></div>
+    <div class="node plate" style="left:480px;top:700px" data-x="480" data-y="700"><div class="ph"><span>PL.03 · STYLIZED</span></div></div>
+    <div class="node plate" style="left:660px;top:740px" data-x="660" data-y="740"><div class="ph"><span>PL.04 · GUITAR LOOKS‑DEV</span></div></div>
+  </div>
+</main>
+
+<div class="rail">
+  <button data-fit="all" aria-current="true"><span class="dot" style="background:var(--ink)"></span>Whole board</button>
+  <button data-fit="work"><span class="dot" style="background:var(--sys)"></span>The work</button>
+  <button data-fit="art"><span class="dot" style="background:var(--art)"></span>The plates</button>
+</div>
+
+<div class="zoom">
+  <button id="zin" aria-label="Zoom in">+</button>
+  <button id="zout" aria-label="Zoom out">−</button>
+</div>
+
+<!-- a11y / no-JS linear outline -->
+<section class="outline" id="outline" aria-label="Portfolio as linear outline">
+  <button class="close" id="outclose">Back to the board ✕</button>
+  <h1 style="font-size:22px">Daman — secure systems, engineered to run on your machine.</h1>
+  <p style="color:var(--dim);margin-top:8px;max-width:60ch">Systems engineer, Hyderabad. Ex-3D artist. The board version lays each project out as its production graph; this is the same content, linear.</p>
+  <h2>The work</h2>
+  <div class="o-proj"><b>protec</b> — password manager that never phones home.
+    <ol><li>Idea: a vault that can't leak.</li><li>Decision: Rust + Tauri.</li><li>Production: Argon2id, local file, zero network by construction.</li><li>Shipped: NET CALLS = 0 (devtools-verifiable).</li></ol></div>
+  <div class="o-proj"><b>n8n-automation</b> — self-hosted AI triage on local Ollama.
+    <ol><li>Idea → Decision → Production → Shipped: ROUTE ACC = 85% (n=40 eval, vs 70% baseline).</li></ol></div>
+  <div class="o-proj"><b>volt-techwear-store</b> — techwear commerce, end to end. Static export.</div>
+  <div class="o-proj"><b>flux-player</b> — native video player, instant start. Single binary.</div>
+  <h2>The plates — art archive (MA Animation)</h2>
+  <p style="color:var(--dim)">Umbraixs · Cinematic Car · Stylized Studies · Guitar looks-dev.</p>
+  <h2>Contact</h2>
+  <p style="color:var(--dim)">GitHub @damanjz · ArtStation @damanpsd · email — 0 external requests, no analytics.</p>
+</section>
+
+<script>
+(function(){
+  var stage=document.getElementById('stage'), world=document.getElementById('world'),
+      wires=document.getElementById('wires'), mmview=document.getElementById('mmview'),
+      hint=document.getElementById('hint');
+  var tx=0, ty=0, scale=1, MIN=.45, MAX=1.8;
+
+  function apply(){ world.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')'; updateMM(); }
+
+  /* ---- wires: connect origin→projects, project→its dag, art hub ---- */
+  var links=[
+    ['n-origin','p-protec','sys'],['n-origin','p-n8n','sys'],['n-origin','p-volt','sys'],
+    ['p-protec','#dag0','sys'] // dag chain drawn below
+  ];
+  function center(el){ var x=+el.dataset.x, y=+el.dataset.y; return [x+el.offsetWidth/2, y+el.offsetHeight/2]; }
+  function edge(el,side){ var x=+el.dataset.x, y=+el.dataset.y, w=el.offsetWidth, h=el.offsetHeight;
+    return side==='r'?[x+w,y+h/2]:side==='l'?[x,y+h/2]:[x+w/2,y+h/2]; }
+  function drawWire(a,b,cls){ var p1=edge(a,'r'), p2=edge(b,'l');
+    var mx=(p1[0]+p2[0])/2;
+    var d='M'+p1[0]+','+p1[1]+' C'+mx+','+p1[1]+' '+mx+','+p2[1]+' '+p2[0]+','+p2[1];
+    var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',d); if(cls)path.setAttribute('class',cls); wires.appendChild(path); return path; }
+  function rebuildWires(){ wires.innerHTML='';
+    var O=document.getElementById('n-origin');
+    ['p-protec','p-n8n','p-volt'].forEach(function(id){ drawWire(O,document.getElementById(id),'sys'); });
+    // protec dag chain (it's pre-expanded)
+    var steps=document.querySelectorAll('#dag-protec .step');
+    drawWire(document.getElementById('p-protec'),steps[0],'sys');
+    drawWire(steps[0],steps[2],'sys'); drawWire(steps[1],steps[2],'sys'); drawWire(steps[2],steps[3],'ship sys');
+    // origin -> art hub (first plate)
+    var plates=document.querySelectorAll('.node.plate');
+    drawWire(O,plates[0],'art');
+    for(var i=0;i<plates.length-1;i++) drawWire(plates[i],plates[i+1],'art');
+  }
+
+  /* ---- pan (pointer drag) ---- */
+  var down=false, sx=0, sy=0, ox=0, oy=0, moved=false;
+  stage.addEventListener('pointerdown',function(e){
+    if(e.target.closest('.node.proj, .node.plate, button, a')) return;
+    down=true; moved=false; sx=e.clientX; sy=e.clientY; ox=tx; oy=ty; stage.classList.add('drag');
+    stage.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener('pointermove',function(e){ if(!down)return;
+    tx=ox+(e.clientX-sx); ty=oy+(e.clientY-sy); if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>4)moved=true; apply();
+    if(hint.style.opacity!=='0'){ hint.style.opacity='0'; } });
+  function up(){ down=false; stage.classList.remove('drag'); }
+  stage.addEventListener('pointerup',up); stage.addEventListener('pointercancel',up);
+
+  /* ---- zoom (wheel, anchored at cursor) ---- */
+  stage.addEventListener('wheel',function(e){ e.preventDefault();
+    var r=stage.getBoundingClientRect(), cx=e.clientX-r.left, cy=e.clientY-r.top;
+    var ns=Math.min(MAX,Math.max(MIN, scale*(e.deltaY<0?1.12:0.89)));
+    var k=ns/scale; tx=cx-(cx-tx)*k; ty=cy-(cy-ty)*k; scale=ns; apply();
+    hint.style.opacity='0';
+  },{passive:false});
+  document.getElementById('zin').onclick=function(){ zoomBy(1.18); };
+  document.getElementById('zout').onclick=function(){ zoomBy(0.85); };
+  function zoomBy(k){ var r=stage.getBoundingClientRect(), cx=r.width/2, cy=r.height/2;
+    var ns=Math.min(MAX,Math.max(MIN,scale*k)); var m=ns/scale; tx=cx-(cx-tx)*m; ty=cy-(cy-ty)*m; scale=ns; apply(); }
+
+  /* ---- fit-to-zone: frame a bounding box ---- */
+  function nodesIn(sel){ return [].slice.call(document.querySelectorAll(sel)); }
+  function bbox(nodes){ var x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+    nodes.forEach(function(n){ var x=+n.dataset.x,y=+n.dataset.y,w=n.offsetWidth,h=n.offsetHeight;
+      x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x+w);y1=Math.max(y1,y+h); });
+    return [x0,y0,x1,y1]; }
+  function fitTo(nodes,pad){ pad=pad||90; var b=bbox(nodes), r=stage.getBoundingClientRect();
+    var bw=b[2]-b[0]+pad*2, bh=b[3]-b[1]+pad*2;
+    var ns=Math.min(MAX,Math.max(MIN, Math.min(r.width/bw, r.height/bh)));
+    scale=ns; tx=(r.width-(b[0]+b[2])*ns)/2; ty=(r.height-(b[1]+b[3])*ns)/2; apply(); }
+  var fitSets={
+    all:function(){ return nodesIn('.node'); },
+    work:function(){ return nodesIn('.node.proj, #dag-protec .step'); },
+    art:function(){ return nodesIn('.node.plate'); }
+  };
+  document.querySelectorAll('.rail button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.rail button').forEach(function(x){x.setAttribute('aria-current','false')});
+      b.setAttribute('aria-current','true'); fitTo(fitSets[b.dataset.fit]()); });
+  });
+  document.getElementById('fitbtn').onclick=function(){ fitTo(fitSets.all()); };
+
+  /* ---- open a project DAG in place (click / Enter) ---- */
+  document.querySelectorAll('.node.proj').forEach(function(p){
+    function toggle(){ if(moved)return;
+      var open=p.getAttribute('aria-expanded')==='true';
+      p.setAttribute('aria-expanded', open?'false':'true');
+      // (prototype: only protec has a built-out dag; others show intent)
+      var dag=document.getElementById('dag-'+p.dataset.proj);
+      if(dag){ dag.classList.toggle('on',!open); rebuildWires(); }
+      if(!open){ var set=[p]; if(dag){ set=set.concat([].slice.call(dag.querySelectorAll('.step'))); } fitTo(set,70); }
+    }
+    p.addEventListener('click',toggle);
+    p.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+  });
+
+  /* ---- minimap ---- */
+  var WORLD_W=1400, WORLD_H=880;
+  function updateMM(){ var r=stage.getBoundingClientRect();
+    var mm=document.getElementById('minimap'), mw=mm.clientWidth, mh=mm.clientHeight;
+    var kx=mw/WORLD_W, ky=mh/WORLD_H;
+    // viewport rect in world coords
+    var vx=-tx/scale, vy=-ty/scale, vw=r.width/scale, vh=r.height/scale;
+    mmview.style.left=(vx*kx)+'px'; mmview.style.top=(vy*ky)+'px';
+    mmview.style.width=(vw*kx)+'px'; mmview.style.height=(vh*ky)+'px';
+  }
+  (function seedMM(){ var mm=document.getElementById('minimap'), kx=mm.clientWidth/WORLD_W, ky=mm.clientHeight/WORLD_H;
+    document.querySelectorAll('.node').forEach(function(n){ var d=document.createElement('div'); d.className='mm-node';
+      d.style.left=(+n.dataset.x*kx)+'px'; d.style.top=(+n.dataset.y*ky)+'px';
+      d.style.width=Math.max(3,n.offsetWidth*kx)+'px'; d.style.height=Math.max(3,n.offsetHeight*ky)+'px';
+      mm.appendChild(d); }); })();
+
+  /* ---- outline (a11y + escape hatch) ---- */
+  var outline=document.getElementById('outline');
+  function showOutline(v){ outline.classList.toggle('on',v); }
+  document.getElementById('outbtn').onclick=function(){ showOutline(true); };
+  document.getElementById('skiplink').addEventListener('click',function(e){ e.preventDefault(); showOutline(true); });
+  document.getElementById('outclose').onclick=function(){ showOutline(false); };
+  addEventListener('keydown',function(e){ if(e.key==='Escape') showOutline(false); });
+
+  /* ---- init: draw wires, fit whole board ---- */
+  function init(){ rebuildWires(); fitTo(fitSets.all()); }
+  if(document.readyState!=='loading') init(); else addEventListener('DOMContentLoaded',init);
+  addEventListener('resize',function(){ updateMM(); });
+})();
+</script>
+</body>
+</html>

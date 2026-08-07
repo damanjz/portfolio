@@ -3,10 +3,9 @@ import { Source_Serif_4, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { site, seo } from "@/content";
 import { StructuredData } from "./structured-data";
-import CommandPalette from "@/components/CommandPalette";
 
-// Two families only (The Monograph): serif does the talking,
-// mono does the structural work. A clean break from v1/v2.
+// Two self-hosted families (via next/font — no runtime request to Google):
+// serif for names/titles, mono for the board's structural voice.
 const serif = Source_Serif_4({
   variable: "--font-source-serif",
   subsets: ["latin"],
@@ -50,11 +49,20 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${serif.variable} ${mono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        {/* No-flash theme: apply the persisted / system theme before paint. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var t=localStorage.getItem('theme');if(t){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();",
+          }}
+        />
+      </head>
       <body className="min-h-full">
         <StructuredData />
         {children}
-        <CommandPalette />
       </body>
     </html>
   );

@@ -1,0 +1,166 @@
+<!-- @dsCard group="Directions v4" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Direction — Light Study</title>
+<style>
+  /* ============================================================
+     DIRECTION 03 — LIGHT STUDY
+     The bridge of both lives: an engineer who used to light
+     scenes. Warm tungsten cinema — big serif under a moving key
+     light, engineering proof written as f-stop annotations.
+     Atomic unit: the light pool / the annotation.
+     ============================================================ */
+  :root{
+    --stage:#151210; --deep:#0e0c0a; --cream:#f0e9df; --ash:#9a8f82;
+    --tungsten:#ffb454; --edge:rgba(240,233,223,.12);
+    --serif:Georgia,"Times New Roman",serif;
+    --mono:Consolas,ui-monospace,monospace;
+  }
+  *{margin:0;box-sizing:border-box}
+  body{background:var(--stage);color:var(--cream);font-family:var(--serif);-webkit-font-smoothing:antialiased}
+  .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ash)}
+
+  .head{display:flex;justify-content:space-between;align-items:baseline;padding:20px 32px;
+    border-bottom:1px solid var(--edge)}
+  .head b{font-size:17px;font-weight:600;font-style:italic}
+  .head .k{display:flex;gap:24px;align-items:baseline}
+  .head .k .on{color:var(--tungsten)}
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 32px}
+
+  /* hero — the name under a key light */
+  .hero{padding:92px 0 64px;position:relative}
+  .hero .kick{color:var(--tungsten);margin-bottom:24px}
+  /* one exposure: the softbox passes across the headline ONCE on load and
+     settles — a single take, like the metaphor demands. Never loops. */
+  h1{font-size:clamp(38px,5.6vw,66px);line-height:1.08;letter-spacing:-.012em;font-weight:500;max-width:18ch;
+    background:linear-gradient(100deg,var(--cream) 20%,#fff 38%,var(--cream) 52%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    background-size:220% 100%;animation:sweep 2.6s ease-out .4s 1 both}
+  @keyframes sweep{from{background-position:110% 0}to{background-position:-40% 0}}
+  @media (prefers-reduced-motion: reduce){
+    h1{animation:none;background:none;-webkit-text-fill-color:var(--cream);color:var(--cream)}
+  }
+  h1 .pvt{font-style:italic;-webkit-text-fill-color:var(--tungsten)}
+  .hero p{margin-top:24px;max-width:52ch;font-size:16px;line-height:1.75;color:var(--ash)}
+  .anno{position:absolute;right:0;top:96px;text-align:right;font-family:var(--mono);font-size:10.5px;
+    letter-spacing:.12em;line-height:2.1;color:var(--ash);opacity:.85}
+  .anno em{font-style:normal;color:var(--tungsten)}
+  .hero .row{display:flex;gap:16px;margin-top:34px;align-items:baseline}
+  .btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;background:var(--cream);color:#141210;
+    padding:13px 26px;border:0;cursor:pointer}
+  .btn:hover{background:var(--tungsten)}
+  .ghost{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ash);
+    border-bottom:1px solid var(--edge);padding-bottom:3px;background:none;cursor:pointer}
+  .ghost:hover{color:var(--cream);border-color:var(--cream)}
+
+  /* work — subjects that light on hover */
+  .sec{padding:38px 0 12px}
+  .sechead{display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:1px solid var(--edge);padding-bottom:12px}
+  .sechead h2{font-size:24px;font-weight:500;font-style:italic}
+  .subject{display:grid;grid-template-columns:70px 1fr 230px 110px;gap:20px;align-items:center;
+    padding:24px 16px;border-bottom:1px solid var(--edge);cursor:pointer;position:relative;
+    transition:background .35s ease}
+  .subject:hover{background:radial-gradient(70% 130% at 30% 50%,rgba(255,180,84,.09),transparent 70%)}
+  .subject:hover .nm{color:#fff}
+  .subject:hover .fstop{opacity:1}
+  .subject .num{font-family:var(--mono);font-size:11px;color:var(--ash)}
+  .subject .nm{font-size:21px;font-weight:500;transition:color .3s}
+  .subject .ds{font-size:13.5px;color:var(--ash);margin-top:4px}
+  .subject .spec{font-family:var(--mono);font-size:11px;line-height:1.8;letter-spacing:.06em;color:var(--ash)}
+  .subject .spec .src{font-size:9.5px;color:#7c7369}
+  /* f-stops rest legible (composited ≈6:1) and brighten on approach; at build
+     they are decorative — aria-hidden — or focus-reachable if given meaning */
+  .subject .fstop{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--tungsten);
+    text-align:right;opacity:.7;transition:opacity .3s}
+
+  /* plates — film frames, first-class citizens in this direction */
+  .frames{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+  .frame{aspect-ratio:3/2;position:relative;overflow:hidden;background:
+    radial-gradient(130% 100% at 40% 10%,#3a2c1c 0%,#1c1712 55%,#131110 100%)}
+  .frame::before{content:"";position:absolute;inset:0;border:1px solid rgba(255,180,84,.25);
+    opacity:0;transition:opacity .3s}
+  .frame:hover::before{opacity:1}
+  .frame .cap{position:absolute;left:12px;bottom:10px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.14em;color:var(--ash)}
+  .frame .fnum{position:absolute;right:12px;top:10px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.14em;color:var(--tungsten)}
+
+  .foot{margin:68px 0 40px;border-top:1px solid var(--edge);padding-top:18px;display:flex;
+    justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ash)}
+  .foot .rc:hover{color:var(--tungsten);cursor:pointer}
+
+  .specsheet{margin:0 0 60px;border:1px solid var(--edge);padding:22px 24px;background:var(--deep);
+    font-family:var(--mono);font-size:11px;line-height:2;color:var(--ash)}
+  .specsheet b{color:var(--cream)}
+</style>
+</head>
+<body>
+
+<header class="head">
+  <b>Daman</b>
+  <div class="k">
+    <span class="lbl">Systems · Security · Local-first</span>
+    <span class="lbl on">Open to work</span>
+    <span class="lbl">Ctrl+K — the contact sheet</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <h1>Secure systems, engineered to run on your machine — <span class="pvt">private by design.</span></h1>
+    <div class="anno">
+      KEY 5600K · <em>f/2.8</em><br>
+      FILL — BOUNCE ONLY<br>
+      SUBJECT: SOFTWARE<br>
+      TAKES: UNTIL RIGHT
+    </div>
+    <p>I'm Daman — a systems engineer in Hyderabad building software that runs entirely on your machine: hardened, measured, and yours. Years of lighting 3D scenes came first; the discipline carried over.</p>
+    <div class="row">
+      <button class="btn">VIEW THE WORK ↓</button>
+      <button class="ghost">github.com/damanjz ↗</button>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sechead"><h2>The subjects — Work</h2><span class="lbl">4 systems · lit on approach</span></div>
+    <div>
+      <div class="subject"><span class="num">P.01</span><div><div class="nm">protec</div><div class="ds">A password manager that never phones home.</div></div><span class="spec">RUST · TAURI · ARGON2ID<br>NET CALLS = 0 <span class="src">· DEVTOOLS-VERIFIABLE</span></span><span class="fstop">KEY ON · f/1.8</span></div>
+      <div class="subject"><span class="num">P.02</span><div><div class="nm">n8n-automation</div><div class="ds">Self-hosted AI support triage on local Ollama.</div></div><span class="spec">N8N · OLLAMA · LOCAL LLM<br>ROUTE ACC = 85% <span class="src">· N=40 EVAL</span></span><span class="fstop">KEY ON · f/2.8</span></div>
+      <div class="subject"><span class="num">P.03</span><div><div class="nm">volt-techwear-store</div><div class="ds">Techwear commerce, end to end.</div></div><span class="spec">NEXT · STRIPE-READY<br>STATIC EXPORT</span><span class="fstop">KEY ON · f/4</span></div>
+      <div class="subject"><span class="num">P.04</span><div><div class="nm">flux-player</div><div class="ds">A native video player that starts instantly.</div></div><span class="spec">NATIVE · ZERO SPLASH<br>SINGLE BINARY</span><span class="fstop">KEY ON · f/2</span></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sechead"><h2>The frames — Plates</h2><span class="lbl">Art archive · MA Animation</span></div>
+    <div class="frames">
+      <div class="frame"><span class="fnum">FR.01</span><span class="cap">UMBRAIXS — ENVIRONMENT</span></div>
+      <div class="frame"><span class="fnum">FR.02</span><span class="cap">CINEMATIC CAR — PRODUCT</span></div>
+      <div class="frame"><span class="fnum">FR.04</span><span class="cap">GUITAR LOOKS-DEV · 3 OF 4 SHOWN</span></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>© 2026 DAMAN · HYDERABAD, IN</span>
+    <span>SHOT ON PRACTICALS — 0 EXTERNAL REQUESTS, NO ANALYTICS</span>
+    <span class="rc">RELIGHT ↻</span>
+  </div>
+
+  <div class="specsheet">
+    <b>DIRECTION 03 — LIGHT STUDY.</b> An engineer who used to light scenes.<br>
+    <b>Atomic unit:</b> the light pool + the annotation — every hover is a light placed, every proof is written like camera notes.<br>
+    <b>Palette:</b> stage #151210 · deep #0E0C0A · cream #F0E9DF · ash #9A8F82 · tungsten #FFB454 (warm accent, &lt;5%).<br>
+    <b>Type:</b> editorial serif for display (self-hosted; italic is structural, not decorative) + Consolas-class mono annotations. The only direction of the three that keeps a serif voice.<br>
+    <b>Honesty standard:</b> real numbers with provenance or qualitative claims (N=40 EVAL etc.); f-stop annotations are declared set-dressing — aria-hidden at build unless given real meaning.<br>
+    <b>Signature experience:</b> the KEY LIGHT — the cursor is a soft warm light; approach a subject and it's lit while its f-stop annotation brightens. The headline takes ONE exposure sweep on load, then rests (single take; reduced-motion gets solid cream). Footer RELIGHT re-exposes the whole page from black.<br>
+    <b>Motion:</b> exposure fades (up from dark, never dropping in), single sweeps, printout annotations. Motion engine carries over with cinematic timing.<br>
+    <b>Keeps:</b> zero external requests ("shot on practicals") · Plates are FIRST-CLASS here — the direction that honors the art most · Ctrl+K as the contact sheet · SetLines/printout/REPRINT.
+  </div>
+</div>
+</body>
+</html>
