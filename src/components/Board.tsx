@@ -670,23 +670,22 @@ export default function Board() {
   // across a rAF, a timed fallback, fonts.ready, and window.load until the
   // welcome nodes measure taller than the 90px placeholder, then stop.
   useEffect(() => {
-    // MOBILE: fit to ALL roots (the whole map, since it opens collapsed).
-    // DESKTOP: focus the welcome column at native scale.
+    // START HERE: every visitor lands framed on the WELCOME column (origin +
+    // how-to + about + contact) — the "who I am / how to read this board" zone —
+    // on both desktop and mobile (Daman). The rest of the open board is a pan
+    // away. Responsive (a fit, not a hardcoded camera), so it frames right on
+    // any screen size.
     const mobile = isCoarse();
-    const rootIds = new Set(
-      model.nodes.filter((n) => n.role === "proj" || n.id === "art-hub").map((n) => n.id),
-    );
-    const TARGET = mobile ? rootIds : new Set(["howto", "origin", "about"]);
-    const probeId = mobile ? [...rootIds][0] : "howto";
+    const TARGET = new Set(["origin", "howto", "about", "contact"]);
     let settled = false;
     const measured = () => {
-      const el = worldRef.current?.querySelector<HTMLElement>(`[data-node="${probeId}"]`);
+      const el = worldRef.current?.querySelector<HTMLElement>('[data-node="origin"]');
       return !!el && el.offsetHeight > 100; // real card, not the placeholder
     };
     const settle = () => {
       if (settled) return;
       drawWires();
-      fitTo(TARGET, mobile ? 40 : 70);
+      fitTo(TARGET, mobile ? 48 : 90);
       if (measured()) settled = true; // stop once framed against real heights
     };
     const r1 = requestAnimationFrame(settle);
