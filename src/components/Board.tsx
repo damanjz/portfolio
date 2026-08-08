@@ -272,6 +272,9 @@ const POS_KEY = "board-positions-v1";
 const ZOOM_MAX = 1.5; // allow zooming in to 150% (Daman)
 const ZOOM_MIN = 0.28;
 const ZOOM_MIN_TOUCH = 0.12; // wider zoom-out on phones so the whole board reaches one screen
+// below this scale the flowing-wire glints are too small to see → pause them
+// (they still cost a full-frame repaint each). Above it, the flow runs.
+const FLOW_ZOOM_FLOOR = 0.55;
 const isCoarse = () =>
   typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
@@ -384,6 +387,13 @@ export default function Board() {
       w.style.zoom = String(s);
       w.style.transform = `translate(${tx / s}px, ${ty / s}px)`;
     }
+    // ZOOMED-OUT FLOW PAUSE: past ~0.55× a 3px pulse on a hair-thin wire is
+    // invisible, but the 80 animations still repaint every frame — pure waste
+    // when you've pulled back to survey the board. Flag `.far` → CSS pauses the
+    // flow (same mechanism as .calm/.busy). Wires stay drawn; only the
+    // never-seen animation stops. Helps every machine, most on a potato.
+    const st = stageRef.current;
+    if (st) st.classList.toggle("far", s < FLOW_ZOOM_FLOOR);
     markBusy(); // pause flow-wire animation during the interaction
   }, [markBusy]);
   // ref so the once-bound ([]-deps) drag handler can call the latest markBusy

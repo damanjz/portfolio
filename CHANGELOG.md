@@ -17,6 +17,7 @@ production DAG (idea → decisions → production → shipped). Dual theme: **Te
 - **Wires stop glitching on zoom** — they re-measure and redraw against the settled coordinates after the crisp swap, so they never sit misaligned mid-zoom.
 - **Group-move optimized** — dragged nodes' DOM elements are resolved once at drag-start instead of re-queried every pointer-move frame (**~6× cheaper** on a full-board selection).
 - **Low-end guard** — on a weak device (≤4 cores / ≤4 GB RAM / reduced-motion) the ~80 perpetual flowing-wire animations (the dominant *sustained* compositor cost) drop to static wires: the board still reads as a DAG, just without the moving glint. Restored automatically on capable machines.
+- **Zoomed-out flow pause** — past ~0.55× the moving wire-glints are too small to see, but the 80 animations still repaint every frame. Below the threshold they pause (`.far` class, same mechanism as the idle pause); above it they resume. Wires stay drawn — only the never-seen animation stops. Helps every machine, most on a potato.
 
 ### v4.7 — Mobile board + per-art DAGs — 2026-08-08
 - **Mobile: touch-tuned board** (direction C) — real pinch-to-zoom (about the midpoint, wider zoom-out on touch), inertial pan, opens collapsed + fits all roots, card-drag disabled on touch, and a thumb-zone bottom toolbar (fit / zoom / theme / read). Desktop board unchanged.
