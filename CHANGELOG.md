@@ -12,6 +12,9 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
+### v4.9.1 — Wire-glow flicker fix — 2026-08-08
+- The wire glow used to flick off/on while panning — the bloom was suppressed during every pan/zoom/drag to protect weak GPUs, which on a capable machine reads as a flicker. Panning with the static glow live is ~0.03ms/frame (the already-rasterized filter just composites), so it's free on a capable GPU. Now the glow is dropped only on low-end devices — which show a flat bright wire always — so no machine ever sees the glow toggle. Removed the now-dead interaction-suppression machinery.
+
 ### v4.9 — Static bloomed wires + real contact email — 2026-08-08
 - **Real contact email.** Replaced the `hello@example.com` placeholder (live in the `/read` mailto) with the real work address. The board Contact node now offers email + GitHub.
 - **Static bloomed wires.** Dropped the animated flowing-glint for a steady glowing wire — a bright accent core with a soft two-layer drop-shadow halo, in all three wire colors, themed for light and dark. One consistent look for everyone. Potato-safe: the glow is static at rest and drops to a plain bright stroke during pan/zoom/drag and on low-end devices, so a weak GPU never re-renders a blurred layer while moving.
