@@ -12,7 +12,7 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
-### v4.8 — Potato-PC performance pass — 2026-08-08 (committed, not yet deployed)
+### v4.8 — Potato-PC performance pass — 2026-08-08
 - **Zoom is no longer a per-frame relayout.** The CSS `zoom` property (chosen in v4.4 for crisp text) was forcing a full ~80-node relayout on every wheel tick — profiled at **27 ms/frame** (worse on weak/integrated GPUs → the "not fluid when zooming out" jank). Now zoom animates via GPU-composited `transform: scale` during the gesture (**0.24 ms/frame, measured 113× faster**) and swaps to the crisp `zoom` property once, ~180 ms after zooming stops. Fluid in motion, razor-sharp at rest.
 - **Wires stop glitching on zoom** — they re-measure and redraw against the settled coordinates after the crisp swap, so they never sit misaligned mid-zoom.
 - **Group-move optimized** — dragged nodes' DOM elements are resolved once at drag-start instead of re-queried every pointer-move frame (**~6× cheaper** on a full-board selection).
