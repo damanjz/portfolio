@@ -37,9 +37,11 @@ function Node({
         </div>
         <div className="n-title">{site.name}</div>
         <div className="n-lede">
-          Secure systems, engineered to run on your machine. Systems engineer,
-          Hyderabad — and an <span className="em">ex-3D artist</span>. Every
-          project here is drawn as the path that built it.
+          Creative technologist in Hyderabad — a trained{" "}
+          <span className="em">3D environment artist</span> and self-taught
+          systems engineer. Real-time worlds on one side, hardened local-first
+          software on the other. Every project here is drawn as the path that
+          built it.
         </div>
         <div className="n-met mono">GITHUB @{site.handle} · ARTSTATION @damanpsd</div>
       </div>

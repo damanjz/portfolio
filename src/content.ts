@@ -11,19 +11,19 @@ export const site = {
   handle: "damanjz",
   name: "Daman", // PLACEHOLDER — confirm your preferred display name
   // Folio line, mono, uppercase — the whole positioning in three words.
-  role: "Systems · Security · Local-first",
+  role: "3D Art · Systems · Local-first",
   // 00 — THESIS. The only italic on the page is the em phrase.
-  thesisLead: "Secure systems, engineered to run on your machine —",
-  thesisEm: "private by design.",
+  thesisLead: "A 3D artist who builds hardened software —",
+  thesisEm: "the same mind, both crafts.",
   intro:
-    "I'm Daman — a systems engineer in Hyderabad building software that runs entirely on your machine: hardened, measured, and yours.",
+    "I'm Daman — a creative technologist in Hyderabad. I trained as a 3D environment artist, then taught myself to engineer local-first, security-hardened software. Composition on one side, threat models on the other; it's the same eye running both.",
   location: "Hyderabad, IN",
   status: "Open to work",
   replies: "replies in ~24h",
   email: "daman.w3d@gmail.com", // public work contact
-  metaTitle: "Daman — Secure systems, engineered to run on your machine.",
+  metaTitle: "Daman — Creative technologist: 3D artist & systems engineer.",
   metaDescription:
-    "Daman is a systems engineer in Hyderabad building local-first, security-hardened software: a Rust password manager, self-hosted AI automation, commerce systems, and native desktop apps.",
+    "Daman is a creative technologist in Hyderabad — a trained 3D environment artist and self-taught systems engineer. Real-time Unreal environments and looks-dev on one side; local-first, security-hardened software (a Rust password manager, self-hosted AI automation, native apps) on the other.",
 } as const;
 
 export const socials = [
@@ -108,12 +108,12 @@ export const projects: Project[] = [
     tagline: "A password manager that never phones home.",
     discipline: "systems",
     category: "security",
-    description: "A password manager that never phones home.",
+    description: "Rust core, encrypted local vault, Windows Hello unlock — and a browser extension that autofills with no server in the middle.",
     stack: ["Rust", "Tauri", "Svelte", "WebExt", "Windows Hello"],
     status: "public",
     href: "https://github.com/damanjz/protec",
     metric: { label: "audit", value: "16 hardening fixes" },
-    year: "2026",
+    year: "Jun 2026", // repo created 2026-06-20
     summary:
       "A password manager that never phones home — Rust core, encrypted local vault, zero cloud dependency.",
     gallery: [
@@ -206,12 +206,12 @@ export const projects: Project[] = [
     tagline: "Techwear commerce, end to end.",
     discipline: "systems",
     category: "commerce",
-    description: "Techwear commerce, end to end.",
+    description: "A Next.js 15 storefront where membership identity, clearance-gated access, and secure Server Action checkout are one system, not a pretty front end over nothing.",
     stack: ["Next.js 15", "Prisma", "Postgres", "NextAuth"],
     status: "public",
     href: "https://github.com/damanjz/volt-techwear-store",
     metric: { label: "stack", value: "Next 15 · Prisma 7" },
-    year: "2026",
+    year: "Mar 2026", // repo created 2026-03-13
     summary:
       "VOLT HQ — a full Next.js 15 techwear storefront: membership identity, dynamic clearance leveling, secure Server Action checkouts.",
     gallery: [
@@ -254,12 +254,12 @@ export const projects: Project[] = [
     tagline: "A native video player that starts instantly.",
     discipline: "systems",
     category: "multimedia",
-    description: "A native video player that starts instantly.",
+    description: "A Python + PySide6 desktop player — a deliberate homage to Windows Media Player 12, built native with Qt instead of wrapping a web view.",
     stack: ["Python", "PySide6"],
     status: "public",
     href: "https://github.com/damanjz/flux-player",
     metric: { label: "runtime", value: "native" },
-    year: "2026",
+    year: "Mar 2026", // repo created 2026-03-10
     summary:
       "A sleek Windows video player in Python + PySide6 — a deliberate homage to Windows Media Player 12. Native desktop, no web wrapper.",
     gallery: [
@@ -307,7 +307,7 @@ export const projects: Project[] = [
     href: "https://github.com/damanjz/NOCTRA",
     hrefLabel: "view source",
     metric: { label: "state", value: "under development" },
-    year: "2026",
+    year: "Feb 2026", // repo created 2026-02-25
     summary:
       "\"Own the after hours.\" A cultural-membership commerce app — React Native front end, a security-hardened Node backend, Razorpay payments — built deep, then paused when the business case didn't hold.",
     gallery: [],
@@ -356,7 +356,7 @@ export const projects: Project[] = [
     href: "https://umbrav.vercel.app",
     hrefLabel: "view live",
     metric: { label: "dependencies", value: "zero" },
-    year: "2026",
+    year: "Feb 2026", // repo created 2026-02-25
     summary:
       "A full multi-page athletic-wear storefront built with no framework and no build step — 34 products, a scroll-driven hero, and a custom WebGL shader up top, all hand-written.",
     gallery: [],

@@ -54,7 +54,7 @@ export default function Hero() {
           <div className="mono border-t border-ink text-[11px] tracking-[0.06em]">
             {[
               { k: "LOCATION", v: site.location.toUpperCase(), acc: false },
-              { k: "FOCUS", v: "SECURITY · LOCAL-FIRST", acc: false },
+              { k: "FOCUS", v: "3D ART · SYSTEMS", acc: false },
               { k: "STATUS", v: site.status.toUpperCase(), acc: true },
               { k: "INDEX", v: modK.toUpperCase(), acc: false },
             ].map((row) => (
