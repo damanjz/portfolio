@@ -332,21 +332,6 @@ export default function Board() {
   // view transform
   const view = useRef({ tx: 0, ty: 0, s: 1 });
 
-  // Mark the board "busy" during active pan/zoom/drag so the 49 flowing-wire
-  // animations pause (they compound the repaint cost that makes zoom jank).
-  // Auto-clears ~220ms after the last movement. Stable (ref-based, no deps).
-  const busyTimer = useRef<number | null>(null);
-  const markBusy = useCallback(() => {
-    const st = stageRef.current;
-    if (!st) return;
-    if (!st.classList.contains("busy")) st.classList.add("busy");
-    if (busyTimer.current != null) clearTimeout(busyTimer.current);
-    busyTimer.current = window.setTimeout(() => {
-      stageRef.current?.classList.remove("busy");
-      busyTimer.current = null;
-    }, 220);
-  }, []);
-
   // Zoom is applied two ways for a reason (measured: the CSS `zoom` property
   // forces a full relayout of the ~80-node world every frame — 7ms+ on a fast
   // box, 20–40ms on a weak/integrated GPU → the "not fluid when zooming out"
@@ -386,11 +371,7 @@ export default function Board() {
       w.style.zoom = String(s);
       w.style.transform = `translate(${tx / s}px, ${ty / s}px)`;
     }
-    markBusy(); // drop the wire-glow blur during the interaction (see .busy CSS)
-  }, [markBusy]);
-  // ref so the once-bound ([]-deps) drag handler can call the latest markBusy
-  const markBusyRef = useRef(markBusy);
-  markBusyRef.current = markBusy;
+  }, []);
 
   // which stage nodes are shown: project stages only when that project is open;
   // art-pipeline stages only when the art hub is open.
@@ -440,7 +421,7 @@ export default function Board() {
       else if (kind === "art") path.setAttribute("class", "w-art");
       svg.appendChild(path);
       // bloomed core overlaid on the same curve — a bright glowing accent line
-      // (static; the halo is CSS drop-shadow, suppressed during .busy / low-end)
+      // (static; the halo is a CSS drop-shadow, dropped only on low-end devices)
       const flow = document.createElementNS("http://www.w3.org/2000/svg", "path");
       flow.setAttribute("d", d);
       flow.setAttribute("class", `w-flow${kind === "ship" ? " f-ship" : kind === "art" ? " f-art" : ""}`);
@@ -567,8 +548,6 @@ export default function Board() {
           /* ignore */
         }
       }
-      // pause flow-wire animation during the drag (same busy mechanism)
-      markBusyRef.current?.();
       // move every node in the drag group by the same delta, and RECORD the
       // final positions on dragState — onUp persists from here, NOT from the DOM
       // (a mid-drag React re-render can reset el.style.left to the state value,
@@ -786,7 +765,6 @@ export default function Board() {
       if (pts.has(e.pointerId)) pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
       // ── PINCH: two pointers → zoom about their midpoint ──
       if (pinch && pts.size >= 2) {
-        markBusyRef.current?.();
         const [a, b] = [...pts.values()];
         const d = dist(a, b);
         if (pinch.d0 > 0) {

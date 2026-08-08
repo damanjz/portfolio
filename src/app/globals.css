@@ -274,13 +274,11 @@ svg.board-wires path.w-flow.f-art {
    never overrides the .w-flow bloom filters above (which are the whole point). */
 :root[data-theme="dark"] svg.board-wires path:not(.w-flow) { filter: drop-shadow(0 0 3px var(--glow)); }
 :root[data-theme="dark"] svg.board-wires path.w-flow { stroke-width: 1.9; }
-/* PERF — the static glow is cheap AT REST (composited), but re-rendering a
-   blurred layer WHILE the world pans/zooms/drags is the costly part on a weak
-   GPU. So drop the halo to a plain bright stroke during active interaction
-   (.busy, auto-clears ~220ms after the last move) and on a low-end device. The
-   wire stays visible and colored — it just loses the blur while moving / on a
-   potato. .calm and .far no longer gate anything (no animation to pause). */
-.board-stage.busy svg.board-wires path.w-flow,
+/* PERF — the static glow rasterizes once and composites, so a capable GPU keeps
+   it on THROUGH pan/zoom/drag at ~0.03ms/frame (measured; translate/scale don't
+   re-blur the already-rasterized layer). It's dropped ONLY on a low-end device,
+   which gets a flat bright wire always — so no machine ever sees the glow toggle
+   on/off (the "flicker" the earlier per-pan .busy suppression caused). */
 .board-stage.low-end svg.board-wires path.w-flow { filter: none; }
 @media (prefers-reduced-motion: reduce) {
   svg.board-wires path.w-flow { animation: none; stroke-dasharray: none; opacity: 0.55; }
