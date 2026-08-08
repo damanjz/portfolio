@@ -12,6 +12,11 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
+### v4.9 — Static bloomed wires + real contact email — 2026-08-08
+- **Real contact email.** Replaced the `hello@example.com` placeholder (live in the `/read` mailto) with the real work address. The board Contact node now offers email + GitHub.
+- **Static bloomed wires.** Dropped the animated flowing-glint for a steady glowing wire — a bright accent core with a soft two-layer drop-shadow halo, in all three wire colors, themed for light and dark. One consistent look for everyone. Potato-safe: the glow is static at rest and drops to a plain bright stroke during pan/zoom/drag and on low-end devices, so a weak GPU never re-renders a blurred layer while moving.
+- Removed the now-dead wire animation machinery (keyframe, idle/hidden/zoomed-out pause toggles, per-wire delay); fixed a dark-theme bug where the base-track glow overrode the colored blooms.
+
 ### v4.8 — Potato-PC performance pass — 2026-08-08
 - **Zoom is no longer a per-frame relayout.** The CSS `zoom` property (chosen in v4.4 for crisp text) was forcing a full ~80-node relayout on every wheel tick — profiled at **27 ms/frame** (worse on weak/integrated GPUs → the "not fluid when zooming out" jank). Now zoom animates via GPU-composited `transform: scale` during the gesture (**0.24 ms/frame, measured 113× faster**) and swaps to the crisp `zoom` property once, ~180 ms after zooming stops. Fluid in motion, razor-sharp at rest.
 - **Wires stop glitching on zoom** — they re-measure and redraw against the settled coordinates after the crisp swap, so they never sit misaligned mid-zoom.
