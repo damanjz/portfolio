@@ -12,6 +12,11 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
+### v4.10 — Reposition as creative technologist + audit fixes — 2026-08-08
+- **Positioning.** The site now leads as a creative technologist — a trained 3D environment artist and self-taught systems engineer — instead of "systems engineer" alone, which had erased half the story. Updated across the hero thesis, intro, page metadata, the board's Origin node, and the About and Focus lines.
+- **Distinct project descriptions** for protec, volt, and flux (previously duplicated their taglines).
+- **Real build dates** — each project now carries the actual month from its repo history rather than a bare year.
+
 ### v4.9.1 — Wire-glow flicker fix — 2026-08-08
 - The wire glow used to flick off/on while panning — the bloom was suppressed during every pan/zoom/drag to protect weak GPUs, which on a capable machine reads as a flicker. Panning with the static glow live is ~0.03ms/frame (the already-rasterized filter just composites), so it's free on a capable GPU. Now the glow is dropped only on low-end devices — which show a flat bright wire always — so no machine ever sees the glow toggle. Removed the now-dead interaction-suppression machinery.
 
