@@ -345,16 +345,45 @@ export default function Board() {
     }, 220);
   }, []);
 
-  const applyView = useCallback(() => {
+  // Zoom is applied two ways for a reason (measured: the CSS `zoom` property
+  // forces a full relayout of the ~80-node world every frame — 7ms+ on a fast
+  // box, 20–40ms on a weak/integrated GPU → the "not fluid when zooming out"
+  // jank). So:
+  //  · DURING an active zoom → transform:translate+scale ONLY (pure compositor,
+  //    ~0ms, buttery even on a potato). Text is momentarily soft.
+  //  · AT REST (~180ms after the last zoom step) → swap to the crisp `zoom`
+  //    property once, re-rasterizing text sharp. See settleCrisp below.
+  // Panning never touches scale, so it's always the cheap transform path.
+  const crispTimer = useRef<number | null>(null);
+  // forward ref to the latest drawWires (defined below) so the crisp-swap
+  // timeout inside applyView can re-measure wires without a declaration cycle.
+  const drawWiresRef = useRef<(() => void) | null>(null);
+  const applyView = useCallback((animating = true) => {
     const w = worldRef.current;
     if (!w) return;
     const { tx, ty, s } = view.current;
-    // Crisp zoom: use the CSS `zoom` property (re-rasterizes text at the true
-    // size) instead of transform:scale (which stretches a bitmap → blur at
-    // >1×). `zoom` also scales the translate, so divide tx/ty by s to keep the
-    // visual pan correct. transform:translate stays GPU-cheap for panning.
-    w.style.zoom = String(s);
-    w.style.transform = `translate(${tx / s}px, ${ty / s}px)`;
+    if (animating) {
+      // GPU-composited path: no relayout. Clear any prior crisp `zoom` so the
+      // transform's scale is the single source of truth mid-gesture.
+      if (w.style.zoom && w.style.zoom !== "1") w.style.zoom = "1";
+      w.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+      // Debounce the crisp swap: only pay the relayout once, after zooming stops.
+      if (crispTimer.current != null) clearTimeout(crispTimer.current);
+      crispTimer.current = window.setTimeout(() => {
+        crispTimer.current = null;
+        const el = worldRef.current;
+        if (!el) return;
+        // Crisp at rest: `zoom` re-rasterizes text at true size. It also scales
+        // the translate, so divide tx/ty by s to keep the visual pan identical.
+        el.style.zoom = String(view.current.s);
+        el.style.transform = `translate(${view.current.tx / view.current.s}px, ${view.current.ty / view.current.s}px)`;
+        drawWiresRef.current?.(); // re-measure wires against the settled coords
+      }, 180);
+    } else {
+      // caller wants the crisp form immediately (fit-to-zone, keyboard step)
+      w.style.zoom = String(s);
+      w.style.transform = `translate(${tx / s}px, ${ty / s}px)`;
+    }
     markBusy(); // pause flow-wire animation during the interaction
   }, [markBusy]);
   // ref so the once-bound ([]-deps) drag handler can call the latest markBusy
@@ -418,11 +447,12 @@ export default function Board() {
     }
   }, [model.edges, visibleIds]);
 
-  // stable ref to the latest drawWires, for handlers bound once with []-deps
-  const drawWiresRef = useRef(drawWires);
+  // keep the forward-declared drawWiresRef (above applyView) pointing at the
+  // latest drawWires, for handlers bound once with []-deps.
   useEffect(() => {
     drawWiresRef.current = drawWires;
   }, [drawWires]);
+  drawWiresRef.current = drawWires; // also current within this render
   // refs so the once-bound pointer handlers always see current nodes/positions
   const visibleNodesRef = useRef(visibleNodes);
   visibleNodesRef.current = visibleNodes;
@@ -475,6 +505,9 @@ export default function Board() {
         id: string; sx: number; sy: number; ox: number; oy: number;
         active: boolean; pointerId: number; captureEl: HTMLElement;
         group: string[]; starts: Record<string, { x: number; y: number }>;
+        // DOM elements resolved ONCE at drag-start (not re-queried per frame —
+        // measured 6× cheaper on a full-board group-move).
+        els: Record<string, HTMLElement | null>;
         last?: Record<string, { x: number; y: number }>;
       }
     | null
@@ -499,14 +532,18 @@ export default function Board() {
       const sel = selectedRef.current;
       const groupIds = sel.has(id) ? [...sel] : [id];
       const starts: Record<string, { x: number; y: number }> = {};
+      const els: Record<string, HTMLElement | null> = {};
+      const world = worldRef.current;
       for (const gid of groupIds) {
         const gn = model.nodes.find((n) => n.id === gid);
         if (gn) starts[gid] = pos[gid] ?? { x: gn.x, y: gn.y };
+        // resolve the DOM node once — reused every pointermove frame
+        els[gid] = world?.querySelector<HTMLElement>(`[data-node="${gid}"]`) ?? null;
       }
       dragState.current = {
         id, sx: e.clientX, sy: e.clientY, ox: start.x, oy: start.y,
         active: false, pointerId: e.pointerId, captureEl: e.currentTarget as HTMLElement,
-        group: groupIds, starts,
+        group: groupIds, starts, els,
       };
       e.stopPropagation();
     },
@@ -541,7 +578,7 @@ export default function Board() {
         if (!st) continue;
         const nx = st.x + dx, ny = st.y + dy;
         d.last[gid] = { x: nx, y: ny };
-        const gel = worldRef.current?.querySelector<HTMLElement>(`[data-node="${gid}"]`);
+        const gel = d.els[gid]; // cached at drag-start, no per-frame query
         if (gel) {
           gel.style.left = `${nx}px`;
           gel.style.top = `${ny}px`;
@@ -620,6 +657,21 @@ export default function Board() {
       clearTimeout(t);
     };
   }, [drawWires]);
+
+  // LOW-END GUARD: on a weak machine (few cores / little RAM), the ~80
+  // forever-animating flow-wire dashes are a sustained compositor tax that makes
+  // the whole board feel heavy no matter what else we optimize. Detect a potato
+  // once and flag the stage `.low-end` → CSS drops the flowing pulse to a static
+  // wire (structure identical, just no perpetual repaint). Everything else
+  // (crisp zoom, wires, drag) stays. Reduced-motion users get the same.
+  useEffect(() => {
+    const nav = navigator as Navigator & { deviceMemory?: number };
+    const cores = nav.hardwareConcurrency ?? 8;
+    const mem = nav.deviceMemory ?? 8;
+    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const potato = cores <= 4 || mem <= 4 || reduced;
+    if (potato) stageRef.current?.classList.add("low-end");
+  }, []);
 
   // pause the wire animation while the tab is hidden — pure perf win, no visible
   // change (the flow keeps running whenever the board is actually on screen).

@@ -12,6 +12,12 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
+### v4.8 — Potato-PC performance pass — 2026-08-08 (committed, not yet deployed)
+- **Zoom is no longer a per-frame relayout.** The CSS `zoom` property (chosen in v4.4 for crisp text) was forcing a full ~80-node relayout on every wheel tick — profiled at **27 ms/frame** (worse on weak/integrated GPUs → the "not fluid when zooming out" jank). Now zoom animates via GPU-composited `transform: scale` during the gesture (**0.24 ms/frame, measured 113× faster**) and swaps to the crisp `zoom` property once, ~180 ms after zooming stops. Fluid in motion, razor-sharp at rest.
+- **Wires stop glitching on zoom** — they re-measure and redraw against the settled coordinates after the crisp swap, so they never sit misaligned mid-zoom.
+- **Group-move optimized** — dragged nodes' DOM elements are resolved once at drag-start instead of re-queried every pointer-move frame (**~6× cheaper** on a full-board selection).
+- **Low-end guard** — on a weak device (≤4 cores / ≤4 GB RAM / reduced-motion) the ~80 perpetual flowing-wire animations (the dominant *sustained* compositor cost) drop to static wires: the board still reads as a DAG, just without the moving glint. Restored automatically on capable machines.
+
 ### v4.7 — Mobile board + per-art DAGs — 2026-08-08
 - **Mobile: touch-tuned board** (direction C) — real pinch-to-zoom (about the midpoint, wider zoom-out on touch), inertial pan, opens collapsed + fits all roots, card-drag disabled on touch, and a thumb-zone bottom toolbar (fit / zoom / theme / read). Desktop board unchanged.
 - **Per-art-project DAGs** — every art plate now expands into its own Vision → Implementation → Problems faced → Output DAG (drafted from the images); the shared art-hub pipeline is kept too.

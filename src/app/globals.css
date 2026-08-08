@@ -273,6 +273,10 @@ svg.board-wires path.w-flow.f-art  { stroke: color-mix(in srgb, var(--art) 90%, 
    settles (~220ms). */
 .board-stage.calm svg.board-wires path.w-flow,
 .board-stage.busy svg.board-wires path.w-flow { animation-play-state: paused; }
+/* LOW-END: on a weak device the perpetual flow repaint is the dominant
+   sustained cost. Drop the moving pulse entirely (the static wire stays), so a
+   potato PC keeps the board fluid. Set from a core/RAM probe in Board.tsx. */
+.board-stage.low-end svg.board-wires path.w-flow { display: none; }
 @media (prefers-reduced-motion: reduce) {
   svg.board-wires path.w-flow { animation: none; stroke-dasharray: none; opacity: 0.55; }
 }
