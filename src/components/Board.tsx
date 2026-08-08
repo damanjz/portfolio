@@ -274,9 +274,6 @@ const POS_KEY = "board-positions-v1";
 const ZOOM_MAX = 1.5; // allow zooming in to 150% (Daman)
 const ZOOM_MIN = 0.28;
 const ZOOM_MIN_TOUCH = 0.12; // wider zoom-out on phones so the whole board reaches one screen
-// below this scale the flowing-wire glints are too small to see → pause them
-// (they still cost a full-frame repaint each). Above it, the flow runs.
-const FLOW_ZOOM_FLOOR = 0.55;
 const isCoarse = () =>
   typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
@@ -389,14 +386,7 @@ export default function Board() {
       w.style.zoom = String(s);
       w.style.transform = `translate(${tx / s}px, ${ty / s}px)`;
     }
-    // ZOOMED-OUT FLOW PAUSE: past ~0.55× a 3px pulse on a hair-thin wire is
-    // invisible, but the 80 animations still repaint every frame — pure waste
-    // when you've pulled back to survey the board. Flag `.far` → CSS pauses the
-    // flow (same mechanism as .calm/.busy). Wires stay drawn; only the
-    // never-seen animation stops. Helps every machine, most on a potato.
-    const st = stageRef.current;
-    if (st) st.classList.toggle("far", s < FLOW_ZOOM_FLOOR);
-    markBusy(); // pause flow-wire animation during the interaction
+    markBusy(); // drop the wire-glow blur during the interaction (see .busy CSS)
   }, [markBusy]);
   // ref so the once-bound ([]-deps) drag handler can call the latest markBusy
   const markBusyRef = useRef(markBusy);
@@ -449,12 +439,11 @@ export default function Board() {
       if (kind === "ship") path.setAttribute("class", "w-ship");
       else if (kind === "art") path.setAttribute("class", "w-art");
       svg.appendChild(path);
-      // flowing pulse overlaid on the same curve — a glint travels the wire
+      // bloomed core overlaid on the same curve — a bright glowing accent line
+      // (static; the halo is CSS drop-shadow, suppressed during .busy / low-end)
       const flow = document.createElementNS("http://www.w3.org/2000/svg", "path");
       flow.setAttribute("d", d);
       flow.setAttribute("class", `w-flow${kind === "ship" ? " f-ship" : kind === "art" ? " f-art" : ""}`);
-      // desync each wire's pulse so they don't all blink in lockstep
-      flow.style.animationDelay = `${((p1[1] + p2[0]) % 1400) / 1000}s`;
       svg.appendChild(flow);
     }
   }, [model.edges, visibleIds]);
@@ -670,12 +659,13 @@ export default function Board() {
     };
   }, [drawWires]);
 
-  // LOW-END GUARD: on a weak machine (few cores / little RAM), the ~80
-  // forever-animating flow-wire dashes are a sustained compositor tax that makes
-  // the whole board feel heavy no matter what else we optimize. Detect a potato
-  // once and flag the stage `.low-end` → CSS drops the flowing pulse to a static
-  // wire (structure identical, just no perpetual repaint). Everything else
+  // LOW-END GUARD: on a weak machine (few cores / little RAM), re-rendering the
+  // blurred wire-glow layer is a needless cost. Detect a potato once and flag
+  // the stage `.low-end` → CSS drops the wire bloom's drop-shadow to a plain
+  // bright stroke (still visible + colored, just no halo). Everything else
   // (crisp zoom, wires, drag) stays. Reduced-motion users get the same.
+  // (The old idle-pause / tab-hidden / zoomed-out `.calm`/`.far` effects were
+  // removed with the wire ANIMATION — a static glow has nothing to pause.)
   useEffect(() => {
     const nav = navigator as Navigator & { deviceMemory?: number };
     const cores = nav.hardwareConcurrency ?? 8;
@@ -683,47 +673,6 @@ export default function Board() {
     const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const potato = cores <= 4 || mem <= 4 || reduced;
     if (potato) stageRef.current?.classList.add("low-end");
-  }, []);
-
-  // pause the wire animation while the tab is hidden — pure perf win, no visible
-  // change (the flow keeps running whenever the board is actually on screen).
-  useEffect(() => {
-    const onVis = () => {
-      const st = stageRef.current;
-      if (st) st.classList.toggle("calm", document.hidden);
-    };
-    document.addEventListener("visibilitychange", onVis);
-    if (document.hidden) onVis();
-    return () => document.removeEventListener("visibilitychange", onVis);
-  }, []);
-
-  // IDLE-PAUSE: 80 flowing-wire animations repainting forever is a sustained
-  // compositor load that makes a long-open session feel progressively laggy.
-  // After ~4s of no interaction, pause them (add .calm); any pointer/scroll/key
-  // activity wakes them instantly. Not a leak (verified nothing accumulates) —
-  // this just stops paying for animation nobody's watching.
-  useEffect(() => {
-    let idle: number | null = null;
-    const sleep = () => stageRef.current?.classList.add("calm");
-    const wake = () => {
-      const st = stageRef.current;
-      if (st && !document.hidden) st.classList.remove("calm");
-      if (idle != null) clearTimeout(idle);
-      idle = window.setTimeout(sleep, 4000);
-    };
-    const opts = { passive: true } as AddEventListenerOptions;
-    window.addEventListener("pointermove", wake, opts);
-    window.addEventListener("pointerdown", wake, opts);
-    window.addEventListener("wheel", wake, opts);
-    window.addEventListener("keydown", wake);
-    idle = window.setTimeout(sleep, 4000); // sleep if untouched from the start
-    return () => {
-      if (idle != null) clearTimeout(idle);
-      window.removeEventListener("pointermove", wake);
-      window.removeEventListener("pointerdown", wake);
-      window.removeEventListener("wheel", wake);
-      window.removeEventListener("keydown", wake);
-    };
   }, []);
 
   // initial view: open focused on the welcome column (how-to + origin + about)

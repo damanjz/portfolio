@@ -251,33 +251,37 @@ svg.board-wires { position: absolute; left: 0; top: 0; overflow: visible; pointe
 svg.board-wires path { fill: none; stroke: var(--line); stroke-width: 1.5; }
 svg.board-wires path.w-ship { stroke: color-mix(in oklab, var(--ship) 60%, var(--line)); }
 svg.board-wires path.w-art  { stroke: color-mix(in oklab, var(--art) 45%, var(--line)); }
-:root[data-theme="dark"] svg.board-wires path { filter: drop-shadow(0 0 3px var(--glow)); }
-/* flowing pulse: a second overlaid path (.w-flow) with a dashed accent stroke
-   whose dashoffset animates, so a little light appears to travel along the wire.
-   PERF: no per-frame filter (drop-shadow re-blurs every frame = expensive on
-   weak GPUs) — the glow is baked into a brighter static stroke instead. The
-   whole board can pause these via .board-stage.calm (set when idle). */
+/* STATIC BLOOMED WIRE (replaced the moving glint, Daman): the .w-flow overlay
+   is no longer animated — it's a bright accent-colored core with a soft blurred
+   halo (drop-shadow), giving every wire a steady glow. The filter is STATIC, so
+   it rasterizes once and just composites — none of the per-frame re-blur cost
+   the old animated version would have had. One consistent look for everyone. */
 svg.board-wires path.w-flow {
-  stroke: color-mix(in srgb, var(--acc) 78%, transparent);
-  stroke-width: 2; stroke-linecap: round;
-  stroke-dasharray: 3 26; /* short dash, long gap = a moving glint */
-  animation: wire-flow 1.4s linear infinite;
+  stroke: color-mix(in srgb, var(--acc) 88%, transparent);
+  stroke-width: 1.6; stroke-linecap: round;
+  filter: drop-shadow(0 0 3px var(--acc)) drop-shadow(0 0 6px color-mix(in srgb, var(--acc) 55%, transparent));
 }
-svg.board-wires path.w-flow.f-ship { stroke: color-mix(in srgb, var(--ship) 90%, transparent); }
-svg.board-wires path.w-flow.f-art  { stroke: color-mix(in srgb, var(--art) 90%, transparent); }
-:root[data-theme="dark"] svg.board-wires path.w-flow { stroke-width: 2.4; }
-@keyframes wire-flow { from { stroke-dashoffset: 29; } to { stroke-dashoffset: 0; } }
-/* pause the continuous flow repaint when the tab is hidden (.calm) OR during
-   active pan/zoom/drag (.busy) — the board is already repainting then, and the
-   49 animating dashes are what tip zoom into jank. Resumes when interaction
-   settles (~220ms). */
-.board-stage.calm svg.board-wires path.w-flow,
+svg.board-wires path.w-flow.f-ship {
+  stroke: color-mix(in srgb, var(--ship) 92%, transparent);
+  filter: drop-shadow(0 0 3px var(--ship)) drop-shadow(0 0 6px color-mix(in srgb, var(--ship) 55%, transparent));
+}
+svg.board-wires path.w-flow.f-art {
+  stroke: color-mix(in srgb, var(--art) 92%, transparent);
+  filter: drop-shadow(0 0 3px var(--art)) drop-shadow(0 0 6px color-mix(in srgb, var(--art) 55%, transparent));
+}
+/* dark theme: the faint base TRACK gets a subtle glow, and the bloomed core
+   reads brighter against near-black. Scope the base glow to :not(.w-flow) so it
+   never overrides the .w-flow bloom filters above (which are the whole point). */
+:root[data-theme="dark"] svg.board-wires path:not(.w-flow) { filter: drop-shadow(0 0 3px var(--glow)); }
+:root[data-theme="dark"] svg.board-wires path.w-flow { stroke-width: 1.9; }
+/* PERF — the static glow is cheap AT REST (composited), but re-rendering a
+   blurred layer WHILE the world pans/zooms/drags is the costly part on a weak
+   GPU. So drop the halo to a plain bright stroke during active interaction
+   (.busy, auto-clears ~220ms after the last move) and on a low-end device. The
+   wire stays visible and colored — it just loses the blur while moving / on a
+   potato. .calm and .far no longer gate anything (no animation to pause). */
 .board-stage.busy svg.board-wires path.w-flow,
-.board-stage.far svg.board-wires path.w-flow { animation-play-state: paused; }
-/* LOW-END: on a weak device the perpetual flow repaint is the dominant
-   sustained cost. Drop the moving pulse entirely (the static wire stays), so a
-   potato PC keeps the board fluid. Set from a core/RAM probe in Board.tsx. */
-.board-stage.low-end svg.board-wires path.w-flow { display: none; }
+.board-stage.low-end svg.board-wires path.w-flow { filter: none; }
 @media (prefers-reduced-motion: reduce) {
   svg.board-wires path.w-flow { animation: none; stroke-dasharray: none; opacity: 0.55; }
 }
