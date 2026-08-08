@@ -20,7 +20,7 @@ export const site = {
   location: "Hyderabad, IN",
   status: "Open to work",
   replies: "replies in ~24h",
-  email: "hello@example.com", // PLACEHOLDER — set your real contact address
+  email: "daman.w3d@gmail.com", // public work contact
   metaTitle: "Daman — Secure systems, engineered to run on your machine.",
   metaDescription:
     "Daman is a systems engineer in Hyderabad building local-first, security-hardened software: a Rust password manager, self-hosted AI automation, commerce systems, and native desktop apps.",
@@ -29,7 +29,6 @@ export const site = {
 export const socials = [
   { label: "ArtStation", handle: "@damanpsd", href: "https://www.artstation.com/damanpsd" },
   { label: "GitHub", handle: "@damanjz", href: "https://github.com/damanjz" },
-  // PLACEHOLDER — set your real contact address.
   { label: "Email", handle: site.email, href: `mailto:${site.email}` },
 ] as const;
 

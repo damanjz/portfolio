@@ -104,10 +104,12 @@ function Node({
         </div>
         <div className="n-title">Get in touch</div>
         <div className="n-body">
-          {site.status} · {site.replies}. No inbox in the open — reach me on
+          {site.status} · {site.replies}. Email me directly, or find me on
           GitHub.
         </div>
         <div className="n-met mono">
+          <a href={`mailto:${site.email}`}>{site.email} ↗</a>
+          <br />
           <a href={`https://github.com/${site.handle}`} target="_blank" rel="noopener noreferrer">
             github.com/{site.handle} ↗
           </a>
