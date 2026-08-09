@@ -320,7 +320,8 @@ export function buildBoard(projects: Project[]): BoardModel {
   const sysItemBoxes: Box[] = [];
 
   nodes.push({ id: "work-hub", role: "work", x: SYS_COL, y: workHubY, w: ROOT_W });
-  edges.push(["origin", "work-hub"]);
+  // colored branch like the art hub (art uses "art"; systems uses "ship")
+  edges.push(["origin", "work-hub", "ship"]);
   {
     const stagesWork = workStages();
     const wMembers = ["work-hub"];
@@ -346,8 +347,9 @@ export function buildBoard(projects: Project[]): BoardModel {
     const rootId = `root-${p.slug}`;
     nodes.push({ id: rootId, role: "proj", x: SYS_COL, y: rootY, w: ROOT_W, project: p });
     // every systems project branches out of the WORK HUB (Daman) — the flow reads
-    // "here's how I build → and here's everything it produced", not project-per-origin.
-    edges.push(["work-hub", rootId]);
+    // "here's how I build → and here's everything it produced". Colored "ship"
+    // wire so the fan-out reads like the art hub's colored branch to its plates.
+    edges.push(["work-hub", rootId, "ship"]);
 
     const stages = deriveStages(p);
     // the box wraps the root + this project's stage nodes; the Board's liveBox
