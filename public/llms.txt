@@ -1,0 +1,44 @@
+# Daman — Creative Technologist
+
+> Daman is a creative technologist in Hyderabad, India — a trained 3D environment
+> artist (MA Animation, University of Salford, Merit) and a self-taught, AI-assisted
+> systems engineer. The same eye runs both crafts: composition and value on the art
+> side, threat models and local-first architecture on the software side. Working
+> style: local-first, $0-recurring, evidence-over-vibes (profile before optimizing,
+> measure before shipping).
+
+Site: https://damanjz.github.io/portfolio/
+Contact: daman.w3d@gmail.com · GitHub @damanjz · ArtStation @damanpsd
+Status: Open to work (replies in ~24h)
+
+## Principles
+- Local-first: data lives on the user's disk; sync is a feature, not a landlord.
+- Measured: if it isn't evaluated, it isn't done — evals gate every prompt.
+- Build the tool: when the right tool doesn't exist, that becomes the project.
+- Hardened: threat-model first; every dependency and surface earns its keep.
+
+## Systems / software projects
+- [protec](https://damanjz.github.io/portfolio/projects/protec/): A password manager that never phones home — Rust core, encrypted local vault, Windows Hello unlock, browser extension over native messaging. 16 hardening fixes from a six-agent audit. Public: https://github.com/damanjz/protec
+- [n8n-automation](https://damanjz.github.io/portfolio/projects/n8n-automation/): Self-hosted AI support triage on local Ollama — routes tickets and drafts KB-grounded replies for human approval, gated by a 40-case eval corpus (88% vs 70% baseline). Private.
+- [volt-techwear-store](https://damanjz.github.io/portfolio/projects/volt-techwear-store/): A full Next.js 15 techwear storefront — membership identity, clearance-gated access, secure Server Action checkout, Prisma/Postgres/NextAuth. Public: https://github.com/damanjz/volt-techwear-store
+- [flux-player](https://damanjz.github.io/portfolio/projects/flux-player/): A native Windows video player in Python + PySide6 (Qt) — a homage to Windows Media Player 12, no web wrapper. Public: https://github.com/damanjz/flux-player
+- [NOCTRA](https://damanjz.github.io/portfolio/projects/noctra/): A full-stack Indian street-luxury commerce app (React Native/Expo, Node/Express/Prisma, Razorpay UPI, RS256 JWT) — built deep, then paused on an honest business call. Under development: https://github.com/damanjz/NOCTRA
+- [umbra](https://damanjz.github.io/portfolio/projects/umbra/): A complete athletic-wear storefront hand-built in vanilla HTML/CSS/JS — 34 products, a custom mouse-reactive WebGL shader hero, zero dependencies. Live: https://umbrav.vercel.app
+
+## 3D / technical art (archive from MA Animation)
+- [Umbraixs](https://damanjz.github.io/portfolio/projects/umbraixs/): A semi-stylized medieval-village environment in Unreal Engine 5.6 (Lumen, Nanite) — ~100 fps against a 60 fps target. MA Animation technical showcase.
+- [Cinematic Car Render](https://damanjz.github.io/portfolio/projects/cinematic-car/): A low-key Blender/Cycles studio lighting study — a sports car read through rim light and colored gels on near-black.
+- [Stylized Studies](https://damanjz.github.io/portfolio/projects/stylized-studies/): Cel-shaded (NPR) pieces and Geometry-Nodes procedural generators (castle, city, flock) in Blender.
+- [Product Placement Dev](https://damanjz.github.io/portfolio/projects/product-placement-dev/): Looks-dev for signature electric guitars — low-key studio lighting, texturing, compositing, cut to 9:16 social reels.
+- [Procedural Clouds](https://damanjz.github.io/portfolio/projects/procedural-clouds/): A golden-hour volumetric cloud study in Blender.
+- [Cityscape](https://damanjz.github.io/portfolio/projects/cityscape/): A dense procedural downtown rendered in greyscale clay — scale from geometry.
+- [Highway Night Stop](https://damanjz.github.io/portfolio/projects/highway-stop/): A nocturnal roadside scene lit by fog, sodium light and neon.
+- [Interior Study](https://damanjz.github.io/portfolio/projects/interior-study/): A warm evening living-room lighting-and-materials study in Blender.
+
+## Stack
+Engineering: Rust, Python, Tauri, PySide6. Web: TypeScript, Next.js 15, Svelte, Prisma/Postgres. Ops: Docker, n8n, Ollama, GitHub Actions. 3D: Unreal Engine 5, Blender, Substance Painter.
+
+## Links
+- Linear reading view (all content, no JS board): https://damanjz.github.io/portfolio/read/
+- GitHub: https://github.com/damanjz
+- ArtStation: https://www.artstation.com/damanpsd

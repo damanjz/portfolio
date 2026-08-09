@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { site, seo } from "@/content";
+import { site } from "@/content";
 import Hero from "@/components/Hero";
 import Work from "@/components/Work";
 import Plates from "@/components/Plates";
@@ -21,10 +21,10 @@ import ScrollUnlock from "@/components/ScrollUnlock";
 export const metadata: Metadata = {
   title: `${site.name} — read`,
   description: site.metaDescription,
-  alternates: { canonical: "/read" },
+  alternates: { canonical: "/read/" },
   openGraph: {
     type: "website",
-    url: "/read",
+    url: "/read/",
     title: `${site.name} — read`,
     description: site.metaDescription,
   },

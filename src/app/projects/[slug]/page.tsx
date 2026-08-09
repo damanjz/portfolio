@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { projects, getProject, categoryLabel, site, seo } from "@/content";
+import { projects, getProject, categoryLabel, site } from "@/content";
 import Gallery from "@/components/Gallery";
 import YouTubeFigure from "@/components/YouTubeFigure";
 import VideoFigure from "@/components/VideoFigure";
@@ -23,17 +23,21 @@ export async function generateMetadata({
   const p = getProject(slug);
   if (!p) return { title: "Not found" };
   const title = `${p.name} — ${site.name}`;
+  // real WebP cover when the project has a gallery; otherwise the shared OG image
+  // (never the site URL — that's not an image, which broke empty-gallery cards).
+  const ogImage = p.gallery[0]?.src ?? "/og.png";
   return {
     title,
     description: p.summary,
-    alternates: { canonical: `/projects/${p.slug}` },
+    alternates: { canonical: `/projects/${p.slug}/` },
     openGraph: {
       type: "article",
-      url: `/projects/${p.slug}`,
+      url: `/projects/${p.slug}/`,
       title,
       description: p.summary,
-      images: [{ url: p.gallery[0]?.src ?? seo.url }],
+      images: [{ url: ogImage }],
     },
+    twitter: { card: "summary_large_image", title, description: p.summary, images: [ogImage] },
   };
 }
 

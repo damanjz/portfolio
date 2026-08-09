@@ -99,14 +99,3 @@ export function deriveStages(p: Project): Stage[] {
 
   return stages;
 }
-
-/** Edges of the derived DAG: root → idea → decision → prod… → end (a chain,
- *  with decision and first production both feeding the next as the board draws
- *  them). Kept linear so the graph reads left-to-right without crossing wires. */
-export function stageEdges(stages: Stage[]): [string, string][] {
-  const e: [string, string][] = [];
-  for (let i = 0; i < stages.length - 1; i++) {
-    e.push([stages[i].id, stages[i + 1].id]);
-  }
-  return e;
-}

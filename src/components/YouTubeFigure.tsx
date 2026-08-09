@@ -30,7 +30,10 @@ export default function YouTubeFigure({
             className="absolute inset-0 h-full w-full"
             src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`}
             title={title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            // trimmed to what playback actually needs (dropped accelerometer /
+            // gyroscope / clipboard-write) + don't leak the full referrer URL.
+            allow="autoplay; encrypted-media; picture-in-picture"
+            referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
           />
         ) : (

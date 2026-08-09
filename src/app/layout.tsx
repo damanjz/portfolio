@@ -25,6 +25,19 @@ export const metadata: Metadata = {
   metadataBase: new URL(seo.url),
   title: site.metaTitle,
   description: site.metaDescription,
+  authors: [{ name: "Daman", url: seo.url }],
+  creator: "Daman",
+  keywords: [
+    "creative technologist",
+    "3D environment artist",
+    "Unreal Engine",
+    "Blender",
+    "systems engineer",
+    "Rust",
+    "local-first software",
+    "Hyderabad",
+    "Daman",
+  ],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -33,11 +46,13 @@ export const metadata: Metadata = {
     title: site.metaTitle,
     description: site.metaDescription,
     locale: "en_US",
+    images: [{ url: "/og.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: site.metaTitle,
     description: site.metaDescription,
+    images: ["/og.png"],
   },
   robots: { index: true, follow: true },
 };

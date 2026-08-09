@@ -35,7 +35,10 @@ function Node({
           <span className="dot" />
           Origin
         </div>
-        <div className="n-title">{site.name}</div>
+        {/* h1 (not div) so the board home has a document heading for crawlers /
+            agents — Tailwind preflight zeroes UA heading styles, so with the
+            .n-title class this renders pixel-identical to the old div. */}
+        <h1 className="n-title">{site.name}</h1>
         <div className="n-lede">
           Creative technologist in Hyderabad — a trained{" "}
           <span className="em">3D environment artist</span> and self-taught
