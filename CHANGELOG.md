@@ -12,6 +12,14 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
+### v4.13 — Final pass: SEO, dead-code, 404, AI-agent, docs — 2026-08-08
+- **SEO** — added `sitemap.xml` and `robots.txt`; per-project structured data (`SoftwareSourceCode` / `VisualArtwork`) alongside the site-wide `Person`; shortened the home title and meta description to fit search-result limits; canonical/OG trailing slashes; a semantic heading outline (h1 + h2s) on the board home; `authors` / `keywords` metadata. Fixed an OG bug where empty-gallery projects pointed `og:image` at the site URL instead of an image.
+- **AI-agent readability** — added `llms.txt`, an LLM-readable summary of the site.
+- **Custom 404** — an on-brand `not-found.tsx` → `404.html` ("this node isn't on the board"), dual-theme, `noindex`.
+- **Security** — hardened the YouTube embed (referrer policy + trimmed permissions).
+- **Dead code removed** — an unused component, a dead export, unused imports, and several orphaned CSS rules (net −61 lines).
+- **Docs** — added this project's README and LICENSE (MIT for the source code; content is All Rights Reserved).
+
 ### v4.12 — Layout re-bake, no box outlines, art-output wire, stable zoom — 2026-08-08
 - **Board re-arranged** — the hand-arranged node layout was re-baked as the new default.
 - **Box outlines removed** — the framed rectangles around each project/plate are gone; the group labels stay.
