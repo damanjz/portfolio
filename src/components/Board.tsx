@@ -234,10 +234,14 @@ function Node({
           <span className="dot" />
           {p.num} · {p.category}
         </div>
-        {/* title navigates into the project's deep-dive page */}
-        <Link href={`/projects/${p.slug}`} prefetch={false} className="n-title n-title-link" draggable={false}>
-          {p.name} <span className="n-go">↗</span>
-        </Link>
+        {/* title navigates into the project's deep-dive page. Wrapped in an h2
+            with display:contents so the board home has a heading outline for
+            crawlers/agents while adding ZERO layout box (pixel-identical). */}
+        <h2 style={{ display: "contents" }}>
+          <Link href={`/projects/${p.slug}`} prefetch={false} className="n-title n-title-link" draggable={false}>
+            {p.name} <span className="n-go">↗</span>
+          </Link>
+        </h2>
         <div className="n-body">{p.description}</div>
         {p.metric && (
           <div className="n-met">

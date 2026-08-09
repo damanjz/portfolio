@@ -7,6 +7,7 @@ import YouTubeFigure from "@/components/YouTubeFigure";
 import VideoFigure from "@/components/VideoFigure";
 import ThemeToggle from "@/components/ThemeToggle";
 import ScrollUnlock from "@/components/ScrollUnlock";
+import { ProjectJsonLd } from "./project-jsonld";
 
 type Params = { slug: string };
 
@@ -57,6 +58,8 @@ export default async function ProjectPage({
 
   return (
     <div className="proj-page">
+      {/* machine-readable case-study schema (renders no visible DOM) */}
+      <ProjectJsonLd p={p} />
       {/* this route scrolls (the board route locks body scroll) */}
       <ScrollUnlock />
 

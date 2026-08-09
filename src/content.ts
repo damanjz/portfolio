@@ -21,9 +21,11 @@ export const site = {
   status: "Open to work",
   replies: "replies in ~24h",
   email: "daman.w3d@gmail.com", // public work contact
-  metaTitle: "Daman — Creative technologist: 3D artist & systems engineer.",
+  // Title < 60 chars (Google truncates ~60); keywords front-loaded.
+  metaTitle: "Daman — 3D Environment Artist & Systems Engineer",
+  // Description < 160 chars (Google truncates ~155); primary keywords early.
   metaDescription:
-    "Daman is a creative technologist in Hyderabad — a trained 3D environment artist and self-taught systems engineer. Real-time Unreal environments and looks-dev on one side; local-first, security-hardened software (a Rust password manager, self-hosted AI automation, native apps) on the other.",
+    "Daman is a creative technologist in Hyderabad: a 3D environment artist (Unreal, Blender) and self-taught systems engineer building local-first software.",
 } as const;
 
 export const socials = [
