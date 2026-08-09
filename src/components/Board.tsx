@@ -153,6 +153,39 @@ function Node({
     );
   }
 
+  if (n.role === "work") {
+    return (
+      <div className="node n-art n-work" style={base} {...nid} {...dragHandle} aria-expanded={expanded}>
+        <div className="n-kicker kicker">
+          <span className="dot" />
+          The Work · how I build software
+        </div>
+        <div className="n-title">How I build software</div>
+        <div className="n-body">
+          The same process behind every system below — local-first, threat-modeled,
+          measured, hardened. Trace it before the projects.
+        </div>
+        <div className="n-met mono">
+          <a href={`https://github.com/${site.handle}`} target="_blank" rel="noopener noreferrer">
+            github.com/{site.handle} ↗
+          </a>
+        </div>
+        {/* expand the ENGINEERING pipeline (mirror of the art pipeline) */}
+        <button
+          type="button"
+          className="n-expand"
+          aria-expanded={expanded}
+          aria-label={expanded ? "Collapse the build process" : "Expand the build process"}
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => { e.stopPropagation(); onToggle("work"); }}
+        >
+          <span className="n-expand-ico">{expanded ? "−" : "+"}</span>
+          {expanded ? "COLLAPSE PROCESS" : "TRACE THE PROCESS"}
+        </button>
+      </div>
+    );
+  }
+
   if (n.role === "plate" && n.plate) {
     const p = n.plate;
     const cover = p.gallery?.[0]?.src;
@@ -274,8 +307,14 @@ function Node({
 
 const POS_KEY = "board-positions-v1";
 const ZOOM_MAX = 1.5; // allow zooming in to 150% (Daman)
-const ZOOM_MIN = 0.28;
-const ZOOM_MIN_TOUCH = 0.12; // wider zoom-out on phones so the whole board reaches one screen
+// zoom-out floors: capped so the board can't shrink to a distant speck (Daman).
+// A "fit the whole board" scale is computed at runtime and used as the real floor
+// when it's tighter than these — so the min always keeps the board readable.
+const ZOOM_MIN = 0.42;
+const ZOOM_MIN_TOUCH = 0.22; // phones can pull back a bit further to reach one screen
+// how far past the content edges the camera may pan before it's clamped — a
+// margin of empty board around the arrangement, so you can't wander into the void.
+const PAN_MARGIN = 600;
 const isCoarse = () =>
   typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
@@ -288,6 +327,7 @@ export default function Board() {
       new Set<string>([
         ...projects.filter((p) => p.discipline === "systems").map((p) => p.slug),
         "art",
+        "work",
         ...projects.filter((p) => p.discipline === "craft").map((p) => `plate-${p.slug}`),
       ]),
   );
@@ -334,6 +374,57 @@ export default function Board() {
   // view transform
   const view = useRef({ tx: 0, ty: 0, s: 1 });
 
+  // ── PAN BOUNDS: keep the board on screen — the camera can't wander off into
+  //    empty void (Daman). We clamp tx/ty so the content rect (all node
+  //    positions + PAN_MARGIN of slack) always overlaps the viewport. Computed
+  //    from live positions so it tracks dragged nodes; recomputed cheaply.
+  const contentRect = useCallback(() => {
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const n of model.nodes) {
+      const p = pos[n.id] ?? { x: n.x, y: n.y };
+      x0 = Math.min(x0, p.x); y0 = Math.min(y0, p.y);
+      x1 = Math.max(x1, p.x + n.w); y1 = Math.max(y1, p.y + 300); // +300 ≈ tall card
+    }
+    if (!isFinite(x0)) return null;
+    return { x0: x0 - PAN_MARGIN, y0: y0 - PAN_MARGIN, x1: x1 + PAN_MARGIN, y1: y1 + PAN_MARGIN };
+  }, [model.nodes, pos]);
+  const contentRectRef = useRef(contentRect);
+  contentRectRef.current = contentRect;
+
+  // clamp view.current.tx/ty so the content rect can't be panned entirely out of
+  // the viewport. Screen coords: a world point wx maps to tx + wx*s. We require
+  // the content's on-screen span to still cover the stage (with margin baked into
+  // the rect), i.e. right edge ≥ 0 and left edge ≤ stageW (and same vertically).
+  const clampView = useCallback(() => {
+    const stage = stageRef.current;
+    const r = contentRectRef.current?.();
+    if (!stage || !r) return;
+    const { width: vw, height: vh } = stage.getBoundingClientRect();
+    const s = view.current.s;
+    const cw = (r.x1 - r.x0) * s, ch = (r.y1 - r.y0) * s;
+    // allowed tx range so the scaled content rect stays overlapping the viewport
+    const minTx = cw >= vw ? vw - (r.x1 * s) : -(r.x0 * s);
+    const maxTx = cw >= vw ? -(r.x0 * s) : vw - (r.x1 * s);
+    const minTy = ch >= vh ? vh - (r.y1 * s) : -(r.y0 * s);
+    const maxTy = ch >= vh ? -(r.y0 * s) : vh - (r.y1 * s);
+    view.current.tx = Math.min(maxTx, Math.max(minTx, view.current.tx));
+    view.current.ty = Math.min(maxTy, Math.max(minTy, view.current.ty));
+  }, []);
+  const clampViewRef = useRef(clampView);
+  clampViewRef.current = clampView;
+
+  // shared adaptive zoom-out floor (used by the +/− buttons + keyboard zoom):
+  // the larger of the fixed floor and the "fit the whole board" scale.
+  const minZoomOut = useCallback(() => {
+    const floor = isCoarse() ? ZOOM_MIN_TOUCH : ZOOM_MIN;
+    const stage = stageRef.current;
+    const r = contentRectRef.current?.();
+    if (!stage || !r) return floor;
+    const vr = stage.getBoundingClientRect();
+    const fit = Math.min(vr.width / (r.x1 - r.x0), vr.height / (r.y1 - r.y0));
+    return Math.max(floor, fit);
+  }, []);
+
   // Zoom is applied two ways for a reason (measured: the CSS `zoom` property
   // forces a full relayout of the ~80-node world every frame — 7ms+ on a fast
   // box, 20–40ms on a weak/integrated GPU → the "not fluid when zooming out"
@@ -350,6 +441,7 @@ export default function Board() {
   const applyView = useCallback((animating = true) => {
     const w = worldRef.current;
     if (!w) return;
+    clampViewRef.current?.(); // keep the board on screen — no panning into the void
     const { tx, ty, s } = view.current;
     if (animating) {
       // GPU-composited path: no relayout. Clear any prior crisp `zoom` so the
@@ -383,11 +475,13 @@ export default function Board() {
         if (n.role === "stage") return !!n.project && open.has(n.project.slug);
         if (n.role === "artstage") {
           // per-plate DAG stage id = "plate-<slug>-<key>" → gate on its plate;
-          // shared art-hub stage (e.g. "art-concept") → gate on the hub.
+          // work-pipeline stage (e.g. "work-scope") → gate on the work hub;
+          // shared art-hub stage (e.g. "art-concept") → gate on the art hub.
           if (n.id.startsWith("plate-")) {
             const plateId = n.id.replace(/-(vision|impl|problems|output)$/, "");
             return open.has(plateId);
           }
+          if (n.id.startsWith("work-")) return open.has("work");
           return open.has("art");
         }
         return true;
@@ -717,7 +811,17 @@ export default function Board() {
         y: (clientY - r.top - view.current.ty) / view.current.s,
       };
     };
-    const minZoom = () => (isCoarse() ? ZOOM_MIN_TOUCH : ZOOM_MIN);
+    // Zoom-out floor = the LARGER of the fixed floor and the scale that just
+    // fits the whole content rect on screen — so you can never zoom out past
+    // "the whole board fills the view" into empty space (Daman's cap).
+    const minZoom = () => {
+      const floor = isCoarse() ? ZOOM_MIN_TOUCH : ZOOM_MIN;
+      const r = contentRectRef.current?.();
+      if (!r) return floor;
+      const vr = stage.getBoundingClientRect();
+      const fit = Math.min(vr.width / (r.x1 - r.x0), vr.height / (r.y1 - r.y0));
+      return Math.max(floor, fit);
+    };
     // active touch/pen/mouse pointers for multi-touch pinch
     const pts = new Map<number, { x: number; y: number }>();
     // pinch state
@@ -857,8 +961,7 @@ export default function Board() {
     const r = stage.getBoundingClientRect();
     const cx = r.width / 2,
       cy = r.height / 2;
-    const lo = isCoarse() ? ZOOM_MIN_TOUCH : ZOOM_MIN;
-    const ns = Math.min(ZOOM_MAX, Math.max(lo, view.current.s * k));
+    const ns = Math.min(ZOOM_MAX, Math.max(minZoomOut(), view.current.s * k));
     const m = ns / view.current.s;
     view.current.tx = cx - (cx - view.current.tx) * m;
     view.current.ty = cy - (cy - view.current.ty) * m;
@@ -995,6 +1098,8 @@ export default function Board() {
                 ? open.has(`plate-${n.plate.slug}`)
                 : n.role === "art"
                 ? open.has("art")
+                : n.role === "work"
+                ? open.has("work")
                 : !!n.project && open.has(n.project.slug)
             }
             selected={selected.has(n.id)}

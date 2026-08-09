@@ -14,7 +14,7 @@ export type PlacedNode = {
   x: number;
   y: number;
   w: number;
-  role: "origin" | "proj" | "stage" | "plate" | "art" | "artstage" | "contact" | "about" | "howto";
+  role: "origin" | "proj" | "stage" | "plate" | "art" | "artstage" | "contact" | "about" | "howto" | "work";
   project?: Project;
   stage?: Stage;
   artStage?: ArtStage; // a step in the art pipeline (art-hub DAG)
@@ -43,6 +43,27 @@ const ART_PIPELINE: ArtStage[] = [
     body: "Profile with stat fps / stat gpu, tune LODs / culling / Nanite overrides (100fps on target), render the shot bank, then comp + cut in After Effects and Premiere." },
 ];
 export function artStages(): ArtStage[] { return ART_PIPELINE; }
+
+/** The engineering pipeline — how Daman builds software, mirroring the art hub.
+ *  Derived from the real project decisions (protec's threat-model + 16-fix audit,
+ *  n8n's eval-gated 88%-vs-70% routing, NOCTRA's pause-on-a-business-call, the
+ *  Server-Actions / native-over-Electron calls) and the R.1–R.4 principles.
+ *  Shown as the work-hub's DAG, the systems-side twin of the art pipeline. */
+const WORK_PIPELINE: ArtStage[] = [
+  { id: "work-scope", label: "Scope", title: "Scope the real problem",
+    body: "Start from the actual problem, not a feature list — \"every password manager is someone else's database with a subscription.\" And pause a build when the case doesn't hold (NOCTRA): knowing when to stop is part of the work." },
+  { id: "work-threat", label: "Threat-model", title: "Threat-model first",
+    body: "Before code: what's the attack surface, what data must never leave the machine, what earns its keep. Local-first by default — your data lives on your disk; sync is a feature, not a landlord." },
+  { id: "work-build", label: "Build", title: "Build the core",
+    body: "A hardened core owns the sensitive path — a Rust engine, native messaging over a local server, Server Actions over client-trusted flows, native over Electron. When the right tool doesn't exist, that becomes the project." },
+  { id: "work-measure", label: "Measure", title: "Measure, don't guess",
+    body: "If it isn't evaluated, it isn't done. An eval corpus gates every prompt change — AI routing shipped only once it beat the rules baseline, 88% vs 70%. Profile before you optimize; numbers over vibes." },
+  { id: "work-harden", label: "Harden", title: "Harden every surface",
+    body: "Zeroize secrets on drop, rate-limit reveals, verify senders and schemes. A six-agent whole-codebase audit shipped 16 fixes on protec. Every dependency and surface earns its keep." },
+  { id: "work-ship", label: "Ship", title: "Ship it running",
+    body: "Built to run unattended — exactly-once processing, a self-healing watchdog, nightly backups, stress-tested recovery. $0 recurring, and yours to run." },
+];
+export function workStages(): ArtStage[] { return WORK_PIPELINE; }
 
 export type Zone = {
   label: string;
@@ -289,9 +310,37 @@ export function buildBoard(projects: Project[]): BoardModel {
   // ══ SYSTEMS COLUMN — far right. Each project = an item box (root + DAG). ═══
   const SYS_COL = WELCOME_X2 + WELCOME_W + COL_GAP;
   const SYS_STAGE0 = SYS_COL + ROOT_W + 110;
+  // WORK HUB — the engineering-process card, the systems-side twin of the art
+  // hub. Sits above the project roots; its pipeline DAG flows RIGHT (like the
+  // project DAGs), shown only when the hub is expanded. "How I build software"
+  // before the individual builds.
+  const workHubY = ROW0 - 260;
   const sysTop = ROW0 + 40;
   let maxRight = SYS_STAGE0;
   const sysItemBoxes: Box[] = [];
+
+  nodes.push({ id: "work-hub", role: "work", x: SYS_COL, y: workHubY, w: ROOT_W });
+  edges.push(["origin", "work-hub"]);
+  {
+    const stagesWork = workStages();
+    const wMembers = ["work-hub"];
+    let prevWork = "work-hub";
+    stagesWork.forEach((s, j) => {
+      const sx = SYS_STAGE0 + j * STAGE_GAP_X;
+      nodes.push({ id: s.id, role: "artstage", x: sx, y: workHubY, w: STAGE_W, artStage: s });
+      edges.push([prevWork, s.id, "ship"]);
+      prevWork = s.id;
+      wMembers.push(s.id);
+      if (sx + STAGE_W > maxRight) maxRight = sx + STAGE_W;
+    });
+    sysItemBoxes.push({
+      id: "box-work-hub", kind: "item", label: "THE WORK · HOW I BUILD",
+      members: wMembers,
+      x: SYS_COL - BOX_PAD, y: workHubY - BOX_PAD - BOX_LABEL_H,
+      w: ROOT_W + BOX_PAD * 2, h: 150 + BOX_PAD * 2 + BOX_LABEL_H,
+    });
+  }
+
   systems.forEach((p, i) => {
     const rootY = sysTop + i * SECTION_PITCH;
     const rootId = `root-${p.slug}`;
