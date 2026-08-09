@@ -12,6 +12,14 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
+### v4.12 — Layout re-bake, no box outlines, art-output wire, stable zoom — 2026-08-08
+- **Board re-arranged** — the hand-arranged node layout was re-baked as the new default.
+- **Box outlines removed** — the framed rectangles around each project/plate are gone; the group labels stay.
+- **Art "output" wire recolored** — the wire leading into each art project's Output step is now a distinct teal-blue, apart from the amber art wires.
+- **Stable zoom** — zoom now uses a single rendering mode at every level, so text no longer shimmers or reflows as you zoom (it was swapping modes at rest before). Slightly softer away from 100%, sharp at 100%.
+- **Tighter zoom-out cap + pan bounds** — the board can't be zoomed or panned as far into empty space.
+- **Work-hub wires are plain orange** — the work hub's connections (origin → hub, hub → each project, and the process pipeline chain) use the plain accent wire, not the green branch colour. Only the project-DAG "shipped" end wires stay green.
+
 ### v4.11 — Engineering-process hub + zoom cap + pan bounds — 2026-08-08
 - **"How I build software" hub** — a process node before the systems projects, the engineering-side twin of the art hub. Expands into a 6-stage build DAG (Scope → Threat-model → Build → Measure → Harden → Ship), drawn from the real project decisions and principles.
 - **Zoom-out cap** — the board can no longer shrink to a distant speck; the floor is the larger of a fixed minimum and the scale that fits the whole board.
