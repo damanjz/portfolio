@@ -12,6 +12,10 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
+### v4.14 — OG image + favicon — 2026-08-08
+- **OG image** (`public/og.png`, 1200×630) — the "origin node on the board": name, role, and wires fanning to project chips over the dot-grid, in the Nocturne palette. This is the preview card shown when the site is shared on social platforms.
+- **Favicon** (`app/icon.svg`) — a serif "D" node in the accent colour, traced from the Source Serif 4 glyph so it renders crisply at any size independent of webfonts.
+
 ### v4.13 — Final pass: SEO, dead-code, 404, AI-agent, docs — 2026-08-08
 - **SEO** — added `sitemap.xml` and `robots.txt`; per-project structured data (`SoftwareSourceCode` / `VisualArtwork`) alongside the site-wide `Person`; shortened the home title and meta description to fit search-result limits; canonical/OG trailing slashes; a semantic heading outline (h1 + h2s) on the board home; `authors` / `keywords` metadata. Fixed an OG bug where empty-gallery projects pointed `og:image` at the site URL instead of an image.
 - **AI-agent readability** — added `llms.txt`, an LLM-readable summary of the site.
