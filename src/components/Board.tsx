@@ -310,11 +310,12 @@ const ZOOM_MAX = 1.5; // allow zooming in to 150% (Daman)
 // zoom-out floors: capped so the board can't shrink to a distant speck (Daman).
 // A "fit the whole board" scale is computed at runtime and used as the real floor
 // when it's tighter than these — so the min always keeps the board readable.
-const ZOOM_MIN = 0.42;
-const ZOOM_MIN_TOUCH = 0.22; // phones can pull back a bit further to reach one screen
+const ZOOM_MIN = 0.55; // tighter zoom-out cap (Daman) — board can't shrink far
+const ZOOM_MIN_TOUCH = 0.3; // phones can pull back a bit further to reach one screen
 // how far past the content edges the camera may pan before it's clamped — a
-// margin of empty board around the arrangement, so you can't wander into the void.
-const PAN_MARGIN = 600;
+// TIGHT margin of empty board around the arrangement (Daman: don't let the board
+// drift far out when we're not using that space), so you stay near the content.
+const PAN_MARGIN = 260;
 const isCoarse = () =>
   typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
@@ -425,46 +426,20 @@ export default function Board() {
     return Math.max(floor, fit);
   }, []);
 
-  // Zoom is applied two ways for a reason (measured: the CSS `zoom` property
-  // forces a full relayout of the ~80-node world every frame — 7ms+ on a fast
-  // box, 20–40ms on a weak/integrated GPU → the "not fluid when zooming out"
-  // jank). So:
-  //  · DURING an active zoom → transform:translate+scale ONLY (pure compositor,
-  //    ~0ms, buttery even on a potato). Text is momentarily soft.
-  //  · AT REST (~180ms after the last zoom step) → swap to the crisp `zoom`
-  //    property once, re-rasterizing text sharp. See settleCrisp below.
-  // Panning never touches scale, so it's always the cheap transform path.
-  const crispTimer = useRef<number | null>(null);
-  // forward ref to the latest drawWires (defined below) so the crisp-swap
-  // timeout inside applyView can re-measure wires without a declaration cycle.
+  // Zoom = pure GPU transform:translate+scale, ALWAYS (Daman). The old approach
+  // swapped to the CSS `zoom` property at rest for razor-crisp text, but that
+  // swap re-rasterized the text and made it visibly shimmer / reflow at the
+  // settle moment. Using one mode everywhere kills that: the layout never
+  // changes coordinate systems, so text is rock-stable. Tradeoff — text is
+  // slightly soft away from 100%, razor-sharp AT 100%. Compositor-only, so it's
+  // buttery on any machine, no relayout at any zoom level.
   const drawWiresRef = useRef<(() => void) | null>(null);
-  const applyView = useCallback((animating = true) => {
+  const applyView = useCallback(() => {
     const w = worldRef.current;
     if (!w) return;
     clampViewRef.current?.(); // keep the board on screen — no panning into the void
     const { tx, ty, s } = view.current;
-    if (animating) {
-      // GPU-composited path: no relayout. Clear any prior crisp `zoom` so the
-      // transform's scale is the single source of truth mid-gesture.
-      if (w.style.zoom && w.style.zoom !== "1") w.style.zoom = "1";
-      w.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
-      // Debounce the crisp swap: only pay the relayout once, after zooming stops.
-      if (crispTimer.current != null) clearTimeout(crispTimer.current);
-      crispTimer.current = window.setTimeout(() => {
-        crispTimer.current = null;
-        const el = worldRef.current;
-        if (!el) return;
-        // Crisp at rest: `zoom` re-rasterizes text at true size. It also scales
-        // the translate, so divide tx/ty by s to keep the visual pan identical.
-        el.style.zoom = String(view.current.s);
-        el.style.transform = `translate(${view.current.tx / view.current.s}px, ${view.current.ty / view.current.s}px)`;
-        drawWiresRef.current?.(); // re-measure wires against the settled coords
-      }, 180);
-    } else {
-      // caller wants the crisp form immediately (fit-to-zone, keyboard step)
-      w.style.zoom = String(s);
-      w.style.transform = `translate(${tx / s}px, ${ty / s}px)`;
-    }
+    w.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
   }, []);
 
   // which stage nodes are shown: project stages only when that project is open;
@@ -515,12 +490,13 @@ export default function Board() {
       path.setAttribute("d", d);
       if (kind === "ship") path.setAttribute("class", "w-ship");
       else if (kind === "art") path.setAttribute("class", "w-art");
+      else if (kind === "out") path.setAttribute("class", "w-out");
       svg.appendChild(path);
       // bloomed core overlaid on the same curve — a bright glowing accent line
       // (static; the halo is a CSS drop-shadow, dropped only on low-end devices)
       const flow = document.createElementNS("http://www.w3.org/2000/svg", "path");
       flow.setAttribute("d", d);
-      flow.setAttribute("class", `w-flow${kind === "ship" ? " f-ship" : kind === "art" ? " f-art" : ""}`);
+      flow.setAttribute("class", `w-flow${kind === "ship" ? " f-ship" : kind === "art" ? " f-art" : kind === "out" ? " f-out" : ""}`);
       svg.appendChild(flow);
     }
   }, [model.edges, visibleIds]);

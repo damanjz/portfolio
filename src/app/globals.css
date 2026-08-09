@@ -28,6 +28,7 @@
   --acc: #d1442b;
   --art: #a06a1e;
   --ship: #237a4e;
+  --out: #2a7db0; /* art-DAG "output" wire — a distinct teal-blue (light) */
   --dev: #c98a2e;
   --shadow: rgba(26, 25, 23, 0.08);
   --glow: transparent;
@@ -55,6 +56,7 @@
   --acc: #ff7a3c;
   --art: #e0a24a;
   --ship: #57c98a;
+  --out: #4db8e8; /* art-DAG "output" wire — brighter teal-blue (dark) */
   --dev: #e0b45a;
   --shadow: rgba(0, 0, 0, 0.5);
   --glow: rgba(255, 122, 60, 0.18);
@@ -215,10 +217,11 @@ body {
   background: color-mix(in srgb, #ffffff 3%, transparent);
   border-color: color-mix(in srgb, var(--acc) 34%, #ffffff 10%);
 }
+/* item boxes: outline + background removed (Daman) — the group LABEL stays,
+   floating above its cluster, but no framed rectangle around each project. */
 .board-box-item {
-  border: 1px solid color-mix(in srgb, var(--node-bd) 90%, var(--acc));
-  border-radius: 13px;
-  background: color-mix(in srgb, var(--node) 55%, transparent);
+  border: none;
+  background: none;
 }
 .board-box-label {
   position: absolute; left: 20px; top: 15px;
@@ -251,6 +254,7 @@ svg.board-wires { position: absolute; left: 0; top: 0; overflow: visible; pointe
 svg.board-wires path { fill: none; stroke: var(--line); stroke-width: 1.5; }
 svg.board-wires path.w-ship { stroke: color-mix(in oklab, var(--ship) 60%, var(--line)); }
 svg.board-wires path.w-art  { stroke: color-mix(in oklab, var(--art) 45%, var(--line)); }
+svg.board-wires path.w-out  { stroke: color-mix(in oklab, var(--out) 60%, var(--line)); }
 /* STATIC BLOOMED WIRE (replaced the moving glint, Daman): the .w-flow overlay
    is no longer animated — it's a bright accent-colored core with a soft blurred
    halo (drop-shadow), giving every wire a steady glow. The filter is STATIC, so
@@ -268,6 +272,10 @@ svg.board-wires path.w-flow.f-ship {
 svg.board-wires path.w-flow.f-art {
   stroke: color-mix(in srgb, var(--art) 92%, transparent);
   filter: drop-shadow(0 0 3px var(--art)) drop-shadow(0 0 6px color-mix(in srgb, var(--art) 55%, transparent));
+}
+svg.board-wires path.w-flow.f-out {
+  stroke: color-mix(in srgb, var(--out) 92%, transparent);
+  filter: drop-shadow(0 0 3px var(--out)) drop-shadow(0 0 6px color-mix(in srgb, var(--out) 55%, transparent));
 }
 /* dark theme: the faint base TRACK gets a subtle glow, and the bloomed core
    reads brighter against near-black. Scope the base glow to :not(.w-flow) so it
