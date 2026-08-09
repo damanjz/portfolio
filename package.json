@@ -2,6 +2,11 @@
   "name": "daman-portfolio",
   "version": "0.1.0",
   "private": true,
+  "description": "Daman's portfolio — a creative-technologist site built as a pannable flow-board (Next.js, static export → GitHub Pages).",
+  "homepage": "https://damanjz.github.io/portfolio/",
+  "repository": { "type": "git", "url": "https://github.com/damanjz/portfolio.git" },
+  "author": "Daman (https://github.com/damanjz)",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
