@@ -12,6 +12,11 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
+### v4.11 — Engineering-process hub + zoom cap + pan bounds — 2026-08-08
+- **"How I build software" hub** — a process node before the systems projects, the engineering-side twin of the art hub. Expands into a 6-stage build DAG (Scope → Threat-model → Build → Measure → Harden → Ship), drawn from the real project decisions and principles.
+- **Zoom-out cap** — the board can no longer shrink to a distant speck; the floor is the larger of a fixed minimum and the scale that fits the whole board.
+- **Pan bounds** — the camera is clamped so the board always stays on screen; no panning off into empty space.
+
 ### v4.10 — Reposition as creative technologist + audit fixes — 2026-08-08
 - **Positioning.** The site now leads as a creative technologist — a trained 3D environment artist and self-taught systems engineer — instead of "systems engineer" alone, which had erased half the story. Updated across the hero thesis, intro, page metadata, the board's Origin node, and the About and Focus lines.
 - **Distinct project descriptions** for protec, volt, and flux (previously duplicated their taglines).
