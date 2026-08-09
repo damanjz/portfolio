@@ -345,7 +345,9 @@ export function buildBoard(projects: Project[]): BoardModel {
     const rootY = sysTop + i * SECTION_PITCH;
     const rootId = `root-${p.slug}`;
     nodes.push({ id: rootId, role: "proj", x: SYS_COL, y: rootY, w: ROOT_W, project: p });
-    edges.push(["origin", rootId]);
+    // every systems project branches out of the WORK HUB (Daman) — the flow reads
+    // "here's how I build → and here's everything it produced", not project-per-origin.
+    edges.push(["work-hub", rootId]);
 
     const stages = deriveStages(p);
     // the box wraps the root + this project's stage nodes; the Board's liveBox
