@@ -231,7 +231,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* figures (gallery, video, youtube) */
 .figs { display: grid; grid-template-columns: 1fr 1fr; gap: 32px 16px; }
 .figs .fig:first-child { grid-column: 1 / -1; }
-.figs .fig:first-child .frame { aspect-ratio: 16 / 9; }
+.figs .fig:first-child .frame { aspect-ratio: 16 / 10; }
 .fig { text-align: left; display: block; width: 100%; }
 .fig .frame { position: relative; border-radius: var(--radius); overflow: hidden; aspect-ratio: 16 / 10; background: #d0d0cb; }
 .fig .frame img, .fig .frame video, .fig .frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; border: 0; }

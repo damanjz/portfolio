@@ -38,6 +38,7 @@ export const categories = [
   { id: "commerce", label: "Commerce", discipline: "systems" },
   { id: "multimedia", label: "Multimedia", discipline: "systems" },
   { id: "analytics", label: "Analytics", discipline: "systems" },
+  { id: "productivity", label: "Productivity", discipline: "systems" },
 ] as const;
 
 export type CategoryId = (typeof categories)[number]["id"];
@@ -96,7 +97,10 @@ export const projects: Project[] = [
     year: "Jun 2026", // repo created 2026-06-20
     summary:
       "A password manager that never phones home — Rust core, encrypted local vault, zero cloud dependency.",
-    gallery: [],
+    gallery: [
+      { src: "/shots/protec/app.webp", alt: "Protec's vault with an entry open: username, revealed password, URL, notes and tags (demo data)", caption: "The vault, with demo entries: one secret revealed at a time, copied with a shortcut, cleared from the clipboard after." },
+      { src: "/shots/protec/how-it-works.webp", alt: "Diagram: browser extension to desktop app over native messaging, Windows Hello unlock, Rust core encryption, vault file on disk", caption: "How it works: the extension talks to the app over native messaging, Windows Hello gates the unlock, and the Rust core encrypts a vault that never leaves the disk." },
+    ],
     sections: [
       {
         heading: "Problem",
@@ -227,7 +231,11 @@ export const projects: Project[] = [
     year: "Mar 2026", // repo created 2026-03-10
     summary:
       "A sleek Windows video player in Python + PySide6 — a deliberate homage to Windows Media Player 12. Native desktop, no web wrapper.",
-    gallery: [],
+    gallery: [
+      { src: "/shots/flux-player/player.webp", alt: "Flux Player playing a portrait guitar reel, with the seek bar, transport controls and Now Playing list", caption: "Playback: the Windows Media Player 12 layout rebuilt in Qt, with the Now Playing list beside the video." },
+      { src: "/shots/flux-player/player-2.webp", alt: "Flux Player paused on a close-up of guitar pickups and a painted body", caption: "Native controls: seek, speed, repeat and shuffle, no browser underneath." },
+      { src: "/shots/flux-player/menu.webp", alt: "Flux Player with the Play menu open: play, stop, previous, next, playback speed, repeat, shuffle", caption: "Keyboard-first: every control has a shortcut in the Play menu." },
+    ],
     sections: [
       {
         heading: "Homage",
@@ -256,96 +264,52 @@ export const projects: Project[] = [
     specAccent: "RUNTIME",
   },
   {
-    slug: "noctra",
-    name: "NOCTRA",
-    tagline: "A full-stack street-luxury app — and the call to pause it.",
+    slug: "ai-calendar",
+    name: "ai-calendar",
+    tagline: "A calendar that people and AI assistants book into, behind one conflict check.",
     discipline: "systems",
-    category: "commerce",
-    stack: ["React Native", "Expo", "Express", "Prisma", "Postgres", "Redis", "Razorpay"],
-    status: "wip",
-    href: "https://github.com/damanjz/NOCTRA",
+    category: "productivity",
+    stack: ["React 19", "Vite", "Node", "Express 5", "node:test"],
+    status: "public",
+    href: "https://github.com/damanjz/ai-calendar",
     hrefLabel: "view source",
-    metric: { label: "state", value: "under development" },
-    year: "Feb 2026", // repo created 2026-02-25
+    metric: { label: "tests", value: "177 · ~91% coverage" },
+    year: "Aug 2026",
     summary:
-      "\"Own the after hours.\" A cultural-membership commerce app — React Native front end, a security-hardened Node backend, Razorpay payments — built deep, then paused when the business case didn't hold.",
-    gallery: [],
-    sections: [
-      {
-        heading: "Idea",
-        body: "NOCTRA was a business idea before it was code: a premium Indian street-luxury app where buying clothes earns access, not just a transaction. A cultural-membership layer — tiers, drop windows, waitlist position, referral clout — rather than a points program. The goal was to take a real product concept from strategy all the way to a working full-stack system.",
-      },
-      {
-        heading: "Build",
-        body: "A React Native (Expo) app over a Node/Express/Prisma backend, PostgreSQL and Redis, Socket.io for live drops, and a Next.js admin panel — a documented 12-table schema behind it. Auth runs Firebase phone-OTP into custom RS256 JWTs with single-use refresh rotation; the backend carries helmet, rate-limiting, zod validation and sanitize-html. The same security instinct as protec, in a commerce backend. Payments are Razorpay, UPI-first — built for how India actually pays.",
-      },
-      {
-        heading: "The decision most portfolios hide",
-        body: "I paused it. Once the system was real enough to judge the business case honestly, it didn't hold — so I stepped back rather than sink more time into something that wouldn't be profitable. The repo is still there to pick back up. Scoping a real product, building it deep, and knowing when to pause is part of the work too. The full docs set — architecture, security, scalability, deployment — is a real artifact of that thinking.",
-      },
-    ],
-    decisions: [
-      { choice: "MEMBERSHIP AS PRODUCT", reason: "the app is the brand — status, not a points program" },
-      { choice: "RS256 JWT + ROTATION", reason: "single-use refresh tokens; the protec instinct in a commerce backend" },
-      { choice: "UPI-FIRST (RAZORPAY)", reason: "built for how India actually pays" },
-      { choice: "PAUSE ON A BUSINESS CALL", reason: "judged the case honestly, then stopped — a skill too" },
-    ],
-    facts: [
-      { label: "TYPE", value: "FULL-STACK MOBILE" },
-      { label: "APP", value: "REACT NATIVE · EXPO" },
-      { label: "BACKEND", value: "NODE · EXPRESS · PRISMA" },
-      { label: "DATA", value: "POSTGRES · REDIS" },
-      { label: "AUTH", value: "FIREBASE + RS256 JWT" },
-      { label: "PAYMENTS", value: "RAZORPAY (UPI)" },
-      { label: "STATUS", value: "UNDER DEVELOPMENT" },
-    ],
-    specAccent: "STATUS",
-  },
-  {
-    slug: "umbra",
-    name: "umbra",
-    tagline: "A storefront built from scratch — no framework, real WebGL.",
-    discipline: "systems",
-    category: "commerce",
-    stack: ["Vanilla JS", "WebGL", "HTML", "CSS"],
-    status: "live",
-    href: "https://umbrav.vercel.app",
-    hrefLabel: "view live",
-    metric: { label: "dependencies", value: "zero" },
-    year: "Feb 2026", // repo created 2026-02-25
-    summary:
-      "A full multi-page athletic-wear storefront built with no framework and no build step — 34 products, a scroll-driven hero, and a custom WebGL shader up top, all hand-written.",
+      "An open-source calendar with a web app and a REST API, so an AI assistant can check availability, spot conflicts and book events across a local file, Google, Outlook and CalDAV.",
     gallery: [
-      { src: "/shots/umbra/home.webp", alt: "Umbra home page: the giant UMBRA wordmark over the WebGL shader hero", caption: "The hero — a hand-written WebGL shader in the brand violet behind the wordmark." },
+      { src: "/shots/ai-calendar/month.webp", alt: "AI Calendar month view with work and personal events (demo data booked through the API)", caption: "Month view, with demo events that were booked through the API, the same way an assistant would." },
+      { src: "/shots/ai-calendar/how-it-works.webp", alt: "Diagram: an AI assistant and people both use one REST API, which checks conflicts and writes to calendar providers", caption: "How it works: the assistant and the web app share one API, so the same conflict check guards every booking." },
+      { src: "/shots/ai-calendar/booking.webp", alt: "The booking form: title, calendar, date, start and end, location, description, attendees", caption: "Booking by hand goes through the same endpoint and the same conflict rules." },
     ],
     sections: [
       {
-        heading: "Idea",
-        body: "Umbra — \"shadow of style,\" premium athletic gear forged in the shadows. I wanted to build a complete storefront by hand: no framework, no build step, no dependencies to hide behind. Just HTML, CSS, and JavaScript, taken as far as they go — the fundamentals, proven.",
+        heading: "Problem",
+        body: "AI assistants can talk about a schedule but can't safely act on it. Every calendar service has its own API, and nothing stops an assistant from double-booking someone.",
       },
       {
         heading: "Build",
-        body: "A full multi-page site — men, women, kids, sport categories, 34 products with detail pages — plus a scroll-driven hero and a working cart and checkout on localStorage, no backend. Everything is hand-written; the deployed build (umbra_v) is the tightened version.",
+        body: "One npm workspace: a React 19 web app (month, week, day and agenda views, drag to reschedule) and a Node and Express 5 API with endpoints for availability, conflicts, booking and editing. Providers share one contract: a local file by default, plus Google, Outlook and CalDAV adapters. Repeating events, working hours, time zones, reminders, search and ICS import and export are all built in, and a written guide tells assistants how to use the API.",
       },
       {
-        heading: "The shader",
-        body: "The hero runs a real WebGL shader — custom vertex and fragment programs in the brand's deep-violet palette, reactive to the mouse. It's the 3D instinct from my art years showing up in the browser: not a library's default effect, but shader code written to match the brand.",
+        heading: "Measurement",
+        body: "177 automated tests across 15 suites, about 91% coverage, run by GitHub Actions on every push. Code-review findings were written as failing tests first, then fixed. The Google, Outlook and CalDAV adapters are tested against stand-ins; the local provider is the one running for real.",
       },
     ],
     decisions: [
-      { choice: "VANILLA > FRAMEWORK", reason: "prove the fundamentals; every page and animation is mine" },
-      { choice: "CUSTOM WEBGL HERO", reason: "hand-written shaders, brand palette — the art instinct in the browser" },
-      { choice: "LOCALSTORAGE CART", reason: "a working checkout with zero backend; fully static" },
+      { choice: "CONFLICTS IN THE API", reason: "assistants get the same check as the UI; double-booking needs an explicit override" },
+      { choice: "LOCALHOST BY DEFAULT", reason: "listens on 127.0.0.1 only, with an optional API key" },
+      { choice: "ONE TEST RUNNER", reason: "Node's built-in runner, no extra frameworks to maintain" },
     ],
     facts: [
-      { label: "TYPE", value: "STOREFRONT · FRONT-END" },
-      { label: "BUILT", value: "VANILLA HTML · CSS · JS" },
-      { label: "HERO", value: "CUSTOM WEBGL SHADER" },
-      { label: "CART", value: "LOCALSTORAGE" },
-      { label: "SCOPE", value: "34 PRODUCTS · MULTI-PAGE" },
-      { label: "STATUS", value: "LIVE" },
+      { label: "TYPE", value: "WEB APP + REST API" },
+      { label: "FRONT END", value: "REACT 19 · VITE" },
+      { label: "API", value: "NODE · EXPRESS 5" },
+      { label: "PROVIDERS", value: "LOCAL · GOOGLE · OUTLOOK · CALDAV" },
+      { label: "TESTS", value: "177 · ~91% COVERAGE" },
+      { label: "STATUS", value: "PUBLIC REPO" },
     ],
-    specAccent: "HERO",
+    specAccent: "TESTS",
   },
   {
     slug: "finance-bi",
@@ -888,11 +852,11 @@ export const tracks: Track[] = [
     intro: "I ship complete software with AI as the co-pilot and my judgement at the wheel:",
     introEm: "local-first, security-hardened, measured before it ships.",
     stats: [
-      { value: "06", label: "projects shipped or in build" },
+      { value: "05", label: "projects shipped" },
       { value: "16", label: "security fixes from one audit" },
       { value: "88%", label: "routing accuracy, AI triage" },
     ],
-    ribbon: ["Rust", "TypeScript", "Next.js", "Python", "Tauri", "Ollama", "Postgres", "WebGL"],
+    ribbon: ["Rust", "TypeScript", "Next.js", "React", "Node", "Python", "Tauri", "Ollama", "Postgres"],
     outro: ["Let's build", "something"],
   },
   {

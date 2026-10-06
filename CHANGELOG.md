@@ -9,6 +9,12 @@ All notable changes to the portfolio. v5 ("three doors") replaced v4 ("the flow-
 
 The site splits into three crafts, each with its own door: AI-assisted systems developer, 3D environment artist, BI and data analyst. Warm grey, near-black, one orange; Archivo caps and Space Grotesk.
 
+### v5.3 — Systems door: real screens — 2026-10-07
+- **Added** `ai-calendar` (React web app + REST API that AI assistants book into; 177 tests).
+- **Removed** `umbra` and `noctra`; VOLT stays.
+- **Real screenshots** for Protec (its real UI with demo data), Flux Player (captured from the running app) and AI Calendar (running locally, demo events booked through its own API).
+- **How-it-works diagrams** for Protec and AI Calendar, in the site style with the screenshots inside; first figure on a project page now shows at 16:10 so diagrams are never cropped.
+
 ### v5.2 — Case studies + share image — 2026-10-07
 - **Case studies** — each BI project page links its full case study PDF (finance-bi, hr-analytics, hospital-operations, supply-chain; 7 to 8 pages each).
 - **Share image** — new `og.png` in the v5 look (name, the three doors, the ribbon), rendered from the built fonts by `scripts/og.mjs`.
