@@ -144,7 +144,7 @@ export const projects: Project[] = [
     summary:
       "A self-hosted support-triage pipeline: a local Ollama model routes tickets and drafts KB-grounded replies for human approval — every prompt change gated by an eval corpus.",
     gallery: [
-      { src: "/shots/n8n-automation/canvas.webp", alt: "n8n canvas: a test workflow fans out to guardrail checks for jailbreaks, NSFW content, PII, secret keys and topic drift, each with pass and fail paths, collected by a results node", caption: "The n8n canvas: test cases fan out to guardrail checks (jailbreaks, NSFW, PII, secret keys, topic drift), each with a pass and a fail path." },
+      { src: "/shots/n8n-automation/canvas.webp", alt: "n8n canvas of a separate guardrails test workflow: test cases fan out to guardrail checks for jailbreaks, NSFW content, PII, secret keys and topic drift, each with pass and fail paths, collected by a results node", caption: "A separate guardrails test workflow on n8n: test cases fan out to checks for jailbreaks, NSFW content, PII, secret keys and topic drift, each with a pass and a fail path. The triage pipeline itself runs on local Ollama." },
     ],
     sections: [
       {
