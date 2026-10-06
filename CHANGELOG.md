@@ -12,6 +12,9 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
+### v4.16 — hr-analytics screenshots refreshed — 2026-10-06
+- The three `hr-analytics` shots re-captured after the workbench gained a 24 px outer gutter (content was about 7 px from the canvas edge).
+
 ### v4.15 — Analytics: finance-bi + hr-analytics — 2026-10-06
 - **Two BI case studies added** — `finance-bi` (P.07: DuckDB model, 15 reconciliation checks, generated Power BI report) and `hr-analytics` (P.08: people analytics, fair flight-risk model, generated Tableau workbench, live on Tableau Public). Each gets a full DAG row on the board, a detail page, and a `/read` entry.
 - **New category** — `Analytics` under systems, a fifth filter chip.
