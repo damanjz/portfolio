@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { projects, getProject, categoryLabel, site, trackOf, getTrack, projectsIn, realShots, displayName, fitOf } from "@/content";
-import { asset } from "@/lib/asset";
+import { projects, getProject, categoryLabel, site, trackOf, getTrack, projectsIn, displayName, fitOf } from "@/content";
+import { asset, srcSet } from "@/lib/asset";
 import Bar from "@/components/Bar";
 import Split from "@/components/Split";
 import Gallery from "@/components/Gallery";
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const p = getProject((await params).slug);
   if (!p) return { title: "Not found" };
   const title = `${displayName(p.name)} — ${site.name}`;
-  const ogImage = realShots(p)[0]?.src ?? "/og.png";
+  const ogImage = p.gallery[0]?.src ?? "/og.png";
   return {
     title,
     description: p.summary,
@@ -41,7 +41,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
   const peers = projectsIn(track.id);
   const idx = peers.findIndex((x) => x.slug === p.slug);
   const next = peers[(idx + 1) % peers.length];
-  const shots = realShots(p);
+  const shots = p.gallery;
   const cover = shots[0] ?? (p.reels?.[0] ? { src: p.reels[0].poster, alt: p.name, caption: "" } : undefined);
   const rest = shots[0] ? shots.slice(1) : shots;
   const title = displayName(p.name);
@@ -82,7 +82,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
 
       {cover && (
         <div className="cs-cover" data-colorize="">
-          <img src={asset(cover.src)} alt={cover.alt} />
+          <img src={asset(cover.src)} srcSet={srcSet(cover.src)} sizes="(max-width: 760px) 100vw, 96vw" alt={cover.alt} fetchPriority="high" />
         </div>
       )}
 

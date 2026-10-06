@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { asset } from "@/lib/asset";
+import { asset, srcSet } from "@/lib/asset";
 import type { Shot } from "@/content";
 
 /** Figures: the first runs full width, the rest in pairs. Click opens a dark
@@ -35,7 +35,7 @@ export default function Gallery({ shots, start = 1 }: { shots: Shot[]; start?: n
         {shots.map((s, i) => (
           <button key={s.src} className="fig" onClick={() => setOpen(i)} data-fade="" data-cursor="Expand">
             <div className="frame">
-              <img src={asset(s.src)} alt={s.alt} loading="lazy" />
+              <img src={asset(s.src)} srcSet={srcSet(s.src)} sizes={i === 0 ? "(max-width: 760px) 100vw, 96vw" : "(max-width: 760px) 100vw, 48vw"} alt={s.alt} loading="lazy" decoding="async" />
             </div>
             <div className="cap-line">
               <span className="n">{String(i + start).padStart(2, "0")}</span>

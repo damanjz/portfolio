@@ -9,6 +9,14 @@ All notable changes to the portfolio. v5 ("three doors") replaced v4 ("the flow-
 
 The site splits into three crafts, each with its own door: AI-assisted systems developer, 3D environment artist, BI and data analyst. Warm grey, near-black, one orange; Archivo caps and Space Grotesk.
 
+### v5.1 — Faster, lighter — 2026-10-07
+- **Script** — GSAP replaced by one native animation loop that only touches on-screen elements: landing JS 253 to 208 KB gzipped, door pages 233 to 190 KB.
+- **CSS** — Tailwind removed for a small reset: 7.6 to 5.0 KB gzipped, layout and type unchanged (every element measured on 6 pages at 1440 and 375 px).
+- **Images** — 800 and 1400 px copies with srcset (`scripts/sizes.mjs`): Art door 588 to 283 KB of images, Data door 401 to 136 KB.
+- **Transitions** — page change starts in 0.46 s (was 0.72 s).
+- **Supply chain** — corrected to 15 checks (was 17); three verified Tableau screenshots and a "What it found" section.
+- **Dead code** — removed placeholder SVG figures and their generator, old board thumbnails, the art-optimizer script for a drive that no longer exists, the stale design-sync export, an unused scroll helper, and content fields no page reads.
+
 ### v5.0 — Three doors — 2026-10-07
 - **Landing** — three full-height doors (black-and-white covers that colour on hover, widen, and drift with the pointer), letters rising on load, a scroll-reactive ribbon.
 - **Door pages** — `/systems/`, `/art/`, `/data/`: title and pitch, counted stats, "How I work" (four standards per craft, each backed by a project), every piece of work, contact band.

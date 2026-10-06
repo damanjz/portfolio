@@ -1,25 +1,14 @@
 /**
- * SINGLE SOURCE OF TRUTH for all site content.
- *
- * Everything the visitor reads lives here so copy can be tweaked without
- * touching components. Fields marked `PLACEHOLDER` are best guesses derived
- * from the GitHub profile @damanjz (which has no bio/name/location set) —
- * swap them for the real thing.
+ * SINGLE SOURCE OF TRUTH for all site content. Everything the visitor reads
+ * lives here; components only lay it out.
  */
 
 export const site = {
   handle: "damanjz",
   name: "Daman Reddy",
-  // Folio line, mono, uppercase — the whole positioning in three words.
   role: "Systems developer · 3D environment artist · BI and data analyst",
-  // 00 — THESIS. The only italic on the page is the em phrase.
-  thesisLead: "A 3D artist who builds hardened software —",
-  thesisEm: "the same mind, both crafts.",
-  intro:
-    "I'm Daman — a creative technologist in Hyderabad. I trained as a 3D environment artist, then taught myself to engineer local-first, security-hardened software. Composition on one side, threat models on the other; it's the same eye running both.",
   location: "Hyderabad, IN",
   status: "Open to work",
-  replies: "replies in ~24h",
   email: "daman.w3d@gmail.com", // public work contact
   // Title < 60 chars (Google truncates ~60); keywords front-loaded.
   metaTitle: "Daman Reddy — Systems, 3D Environments, BI and Data",
@@ -34,16 +23,10 @@ export const socials = [
   { label: "Email", handle: site.email, href: `mailto:${site.email}` },
 ] as const;
 
-/**
- * The two kinds of work: systems fill the Work ledger (chapter 01);
- * craft is the archived art in the Plates band (chapter 02).
- */
+/** Two disciplines; trackOf() maps them (plus the analytics category) onto the three doors. */
 export type DisciplineId = "systems" | "craft";
 
-/**
- * Use-case categories drive the secondary filter. One primary category per
- * project. Grouped by discipline so the chip row can react to the active lens.
- */
+/** One category per project, shown as a label on cards and case studies. */
 export const categories = [
   // craft
   { id: "environment", label: "Environment", discipline: "craft" },
@@ -78,40 +61,33 @@ export type Reel = {
 export type Project = {
   slug: string;
   name: string;
-  num: string; // ledger number — P.01 … (systems) / PL.01 … (plates)
   tagline: string;
-  discipline: DisciplineId; // systems fill the Work ledger; craft = plates
+  discipline: DisciplineId;
   category: CategoryId;
-  description: string; // short — used on the ledger row
-  stack: string[]; // mono stack list on the row + spec sheet
+  stack: string[];
   status: "public" | "private" | "wip" | "live";
   href?: string;
   hrefLabel?: string; // e.g. "view source", "view on ArtStation"
   metric?: { label: string; value: string };
   year: string;
   // ---- detail-page fields ----
-  summary: string; // one-line hero subtitle on the detail page
+  summary: string; // case-study intro
   youtube?: string; // full-length demo — YouTube video id, loaded on click only
   reels?: Reel[]; // locally-hosted video reels — no external request, played on click
-  gallery: Shot[]; // figures — FIG.01, FIG.02 …
-  sections: { heading: string; body: string }[]; // numbered chapters
-  decisions?: { choice: string; reason: string }[]; // the decisions ledger table
-  facts: { label: string; value: string }[]; // spec sheet sidebar
+  gallery: Shot[];
+  sections: { heading: string; body: string }[];
+  decisions?: { choice: string; reason: string }[];
+  facts: { label: string; value: string }[];
   specAccent?: string; // which spec label gets the accent (e.g. "NETWORK")
-  /** art pieces: their own 4-stage board DAG (vision → implementation →
-   *  problems faced → output). Drafted from the image; Daman to edit. */
-  artDag?: { vision: string; implementation: string; problems: string; output: string };
 };
 
 export const projects: Project[] = [
   {
     slug: "protec",
     name: "protec",
-    num: "P.01",
     tagline: "A password manager that never phones home.",
     discipline: "systems",
     category: "security",
-    description: "Rust core, encrypted local vault, Windows Hello unlock — and a browser extension that autofills with no server in the middle.",
     stack: ["Rust", "Tauri", "Svelte", "WebExt", "Windows Hello"],
     status: "public",
     href: "https://github.com/damanjz/protec",
@@ -119,11 +95,7 @@ export const projects: Project[] = [
     year: "Jun 2026", // repo created 2026-06-20
     summary:
       "A password manager that never phones home — Rust core, encrypted local vault, zero cloud dependency.",
-    gallery: [
-      { src: "/shots/protec/vault.svg", alt: "protec vault list", caption: "The vault — entries stay encrypted on disk, revealed one at a time." },
-      { src: "/shots/protec/unlock.svg", alt: "protec Windows Hello unlock", caption: "Unlock with Windows Hello — the master key never touches a server." },
-      { src: "/shots/protec/extension.svg", alt: "protec browser extension autofill", caption: "The browser extension autofills over a scheme-matched, sender-verified channel." },
-    ],
+    gallery: [],
     sections: [
       {
         heading: "Problem",
@@ -157,22 +129,16 @@ export const projects: Project[] = [
   {
     slug: "n8n-automation",
     name: "n8n-automation",
-    num: "P.02",
     tagline: "Self-hosted AI support triage on local Ollama.",
     discipline: "systems",
     category: "automation",
-    description: "Self-hosted AI support triage on local Ollama.",
     stack: ["n8n", "Ollama", "Eval-gated", "Docker"],
     status: "private",
     metric: { label: "routing", value: "88%" },
     year: "2026",
     summary:
       "A self-hosted support-triage pipeline: a local Ollama model routes tickets and drafts KB-grounded replies for human approval — every prompt change gated by an eval corpus.",
-    gallery: [
-      { src: "/shots/n8n-automation/dashboard.svg", alt: "triage dashboard", caption: "A live dashboard — tickets, categories, and the pending-drafts queue at a glance." },
-      { src: "/shots/n8n-automation/canvas.svg", alt: "n8n workflow canvas", caption: "The intake → triage → draft pipeline on the n8n canvas." },
-      { src: "/shots/n8n-automation/eval.svg", alt: "eval corpus results", caption: "The eval corpus — routing changes ship only when the numbers beat the baseline." },
-    ],
+    gallery: [],
     sections: [
       {
         heading: "Problem",
@@ -205,11 +171,9 @@ export const projects: Project[] = [
   {
     slug: "volt-techwear-store",
     name: "volt-techwear-store",
-    num: "P.03",
     tagline: "Techwear commerce, end to end.",
     discipline: "systems",
     category: "commerce",
-    description: "A Next.js 15 storefront where membership identity, clearance-gated access, and secure Server Action checkout are one system, not a pretty front end over nothing.",
     stack: ["Next.js 15", "Prisma", "Postgres", "NextAuth"],
     status: "public",
     href: "https://github.com/damanjz/volt-techwear-store",
@@ -220,8 +184,6 @@ export const projects: Project[] = [
     gallery: [
       { src: "/shots/volt-techwear-store/shop.webp", alt: "VOLT archive page: product grid of techwear with category filters", caption: "The archive — category filters, search and sort over the full catalogue." },
       { src: "/shots/volt-techwear-store/home.webp", alt: "VOLT home page: DEFY LIMITS hero with the current drop", caption: "The storefront — industrial techwear aesthetic, built to feel like a product, not a demo." },
-      { src: "/shots/volt-techwear-store/product.svg", alt: "product page", caption: "A product page with clearance-gated availability." },
-      { src: "/shots/volt-techwear-store/checkout.svg", alt: "secure checkout", caption: "Checkout runs through secure Server Actions, not a client-trusted flow." },
     ],
     sections: [
       {
@@ -254,11 +216,9 @@ export const projects: Project[] = [
   {
     slug: "flux-player",
     name: "flux-player",
-    num: "P.04",
     tagline: "A native video player that starts instantly.",
     discipline: "systems",
     category: "multimedia",
-    description: "A Python + PySide6 desktop player — a deliberate homage to Windows Media Player 12, built native with Qt instead of wrapping a web view.",
     stack: ["Python", "PySide6"],
     status: "public",
     href: "https://github.com/damanjz/flux-player",
@@ -266,10 +226,7 @@ export const projects: Project[] = [
     year: "Mar 2026", // repo created 2026-03-10
     summary:
       "A sleek Windows video player in Python + PySide6 — a deliberate homage to Windows Media Player 12. Native desktop, no web wrapper.",
-    gallery: [
-      { src: "/shots/flux-player/player.svg", alt: "flux-player playing", caption: "Playback — the WMP12 silhouette, rebuilt with a modern toolkit." },
-      { src: "/shots/flux-player/library.svg", alt: "flux-player library", caption: "The library view — native widgets, no browser in sight." },
-    ],
+    gallery: [],
     sections: [
       {
         heading: "Homage",
@@ -300,12 +257,9 @@ export const projects: Project[] = [
   {
     slug: "noctra",
     name: "NOCTRA",
-    num: "P.05",
     tagline: "A full-stack street-luxury app — and the call to pause it.",
     discipline: "systems",
     category: "commerce",
-    description:
-      "A premium Indian street-luxury mobile app taken deep into a full-stack build — then paused on a business call.",
     stack: ["React Native", "Expo", "Express", "Prisma", "Postgres", "Redis", "Razorpay"],
     status: "wip",
     href: "https://github.com/damanjz/NOCTRA",
@@ -349,12 +303,9 @@ export const projects: Project[] = [
   {
     slug: "umbra",
     name: "umbra",
-    num: "P.06",
     tagline: "A storefront built from scratch — no framework, real WebGL.",
     discipline: "systems",
     category: "commerce",
-    description:
-      "\"Shadow of style.\" A complete athletic-wear storefront hand-built in vanilla HTML/CSS/JS, with a custom mouse-reactive WebGL shader hero.",
     stack: ["Vanilla JS", "WebGL", "HTML", "CSS"],
     status: "live",
     href: "https://umbrav.vercel.app",
@@ -398,11 +349,9 @@ export const projects: Project[] = [
   {
     slug: "finance-bi",
     name: "finance-bi",
-    num: "P.07",
     tagline: "Five years of personal finance, four questions, one honest report.",
     discipline: "systems",
     category: "analytics",
-    description: "Synthetic bank, card, payroll and investment exports modelled in DuckDB, reconciled by 15 checks, and shown as a generated Power BI report.",
     stack: ["Python", "DuckDB", "SQL", "DAX", "Power BI"],
     status: "public",
     href: "https://github.com/damanjz/personal-finance-bi",
@@ -448,11 +397,9 @@ export const projects: Project[] = [
   {
     slug: "hr-analytics",
     name: "hr-analytics",
-    num: "P.08",
     tagline: "Who leaves, why, and who's next.",
     discipline: "systems",
     category: "analytics",
-    description: "Four years of synthetic HR records, a tested DuckDB model, a flight-risk model held to a fairness check, and a Tableau workbench generated from code.",
     stack: ["Python", "DuckDB", "SQL", "scikit-learn", "Tableau"],
     status: "live",
     href: "https://public.tableau.com/app/profile/daman.reddy/viz/HRAnalyticsWorkbench/Workbench",
@@ -502,11 +449,9 @@ export const projects: Project[] = [
   {
     slug: "hospital-operations",
     name: "hospital-operations",
-    num: "P.09",
     tagline: "Where a hospital's beds, waits and readmissions go wrong, hour by hour.",
     discipline: "systems",
     category: "analytics",
-    description: "A three-year simulation of a 256-bed Hyderabad hospital, modelled in DuckDB, with a readmission model that beats the LACE score and a Power BI report generated from code.",
     stack: ["Python", "DuckDB", "SQL", "scikit-learn", "Power BI"],
     status: "public",
     href: "https://github.com/damanjz/hospital-operations-bi",
@@ -557,18 +502,20 @@ export const projects: Project[] = [
   {
     slug: "supply-chain",
     name: "supply-chain",
-    num: "P.10",
     tagline: "Which shelves run empty next, and which supplier is behind it.",
     discipline: "systems",
     category: "analytics",
-    description: "A three-year simulation of an Indian FMCG distributor, modelled in DuckDB, with a stockout model that beats the reorder-point rule and a Tableau workbook where the map is the navigation.",
     stack: ["Python", "DuckDB", "SQL", "scikit-learn", "Tableau"],
     status: "wip",
     metric: { label: "stockout AUC", value: "0.840 vs rule 0.699" },
     year: "Oct 2026",
     summary:
       "Three years of a synthetic Indian FMCG distributor: on-time-in-full, lead time, inventory and supplier performance in DuckDB, a 14-day stockout model that beats the reorder-point rule, and a Tableau workbook generated from code.",
-    gallery: [],
+    gallery: [
+      { src: "/shots/supply-chain/network.webp", alt: "Tableau dashboard: map of four warehouses and delivery lanes with OTIF, lead time, inventory turns, carrying cost and stockout risk", caption: "The whole network: click a warehouse or a lane on the map and every number follows." },
+      { src: "/shots/supply-chain/kolkata.webp", alt: "The dashboard set to the Kolkata warehouse, OTIF 59.0%", caption: "Kolkata: on time and in full 59.0% against 83 to 87% at the other three warehouses." },
+      { src: "/shots/supply-chain/diwali-2024.webp", alt: "The dashboard filtered to Snacks, FY 2024-25, as of 28 October 2024", caption: "Snacks going into Diwali 2024, as of 28 October: the watch list and the supplier behind it." },
+    ],
     sections: [
       {
         heading: "Problem",
@@ -580,7 +527,11 @@ export const projects: Project[] = [
       },
       {
         heading: "Measurement",
-        body: "17 checks gate the build, including an exact day-to-day stock balance. The 14-day stockout model (gradient boosting) reaches ROC AUC 0.840 against 0.699 for the reorder-point rule; flagging the same share of products as the rule, it catches 65.6% of stockouts against 59.5%. Dashboard numbers were checked against DuckDB in three filtered views.",
+        body: "15 checks gate the build, including an exact day-to-day stock balance, and each one is proven by breaking the data on purpose; two full rebuilds produce identical files. The 14-day stockout model (gradient boosting) reaches ROC AUC 0.840 against 0.699 for the reorder-point rule; flagging the same share of products as the rule, it catches 65.6% of stockouts against 59.5%. Dashboard numbers were checked against DuckDB in three filtered views.",
+      },
+      {
+        heading: "What it found",
+        body: "Kolkata delivers on time and in full 59.0% of the time against 83 to 87% at the other warehouses, held back by dispatch waits and monsoon lanes. One snacks supplier fell from 75% to 40% on time after July 2024, with the highest defect rate. A festive pre-build cut snacks out-of-stock days from 4.2% to 1.6% for about 16% more stock from September to November.",
       },
     ],
     decisions: [
@@ -595,6 +546,7 @@ export const projects: Project[] = [
       { label: "MODEL", value: "GRADIENT BOOSTING" },
       { label: "AUC", value: "0.840 VS RULE 0.699" },
       { label: "OTIF", value: "80.2%" },
+      { label: "CHECKS", value: "15 / 15 PASS" },
       { label: "STATUS", value: "IN DEVELOPMENT" },
     ],
     specAccent: "AUC",
@@ -602,12 +554,9 @@ export const projects: Project[] = [
   {
     slug: "umbraixs",
     name: "Umbraixs",
-    num: "PL.01",
     tagline: "A semi-stylized medieval village that reads in motion.",
     discipline: "craft",
     category: "environment",
-    description:
-      "A composition-driven Unreal Engine 5 environment — round stone towers, red-tiled roofs, lanterns and ivy under a soft pink-and-blue sky. My MA Animation technical showcase.",
     stack: ["Unreal Engine 5.6", "Blender", "Substance", "Lumen", "Nanite"],
     status: "live",
     href: "https://www.artstation.com/damanpsd",
@@ -654,22 +603,13 @@ export const projects: Project[] = [
       { label: "PERFORMANCE", value: "~100 FPS (TARGET 60)" },
       { label: "RUNTIME", value: "~10 MIN PIECE" },
     ],
-    artDag: {
-      vision: "A medieval village that tells its own story with no characters — round stone towers, red-tiled roofs, lanterns on wooden beams, under a soft pink-and-blue sky. Genshin's Mondstadt, BOTW, and Ghibli as the north star; a semi-stylized look for more grip on lighting and mood.",
-      implementation: "Built in Unreal 5.6 — Lumen for lighting, Nanite for foliage. Blueprint actors for the buildings, splines driving the castle walls and the flowing river. Assets sourced then reworked through material/shader edits so they read as one authored world. A plug-and-play day-night cycle + a randomized weather system, tuned so emissive stylized materials respond together.",
-      problems: "Water reflectivity broke on every pan (overlapping materials, one with emission) until tracked down. A GPU driver update broke DX12 and crashed Unreal at random. Blueprint pivot drift scrambled whole classes — fixed by resetting pivots and re-adding actors at their original transform.",
-      output: "A ~10-minute real-time technical showcase running ~100fps against a 60fps target (profiled with stat fps / stat gpu; LODs, culling, Nanite overrides). Rendered to a shot bank, cut in After Effects + Premiere. My MA Animation final piece.",
-    },
   },
   {
     slug: "cinematic-car",
     name: "Cinematic Car Render",
-    num: "PL.02",
     tagline: "Studio product lighting — deep blacks, warm rim, colored gels.",
     discipline: "craft",
     category: "product-render",
-    description:
-      "A moody Blender studio render — a sports car lit with dramatic rim light and red/blue gels against near-black, focused on form, reflection, and restraint.",
     stack: ["Blender", "Cycles", "Compositing"],
     status: "live",
     href: "https://www.artstation.com/damanpsd",
@@ -698,22 +638,13 @@ export const projects: Project[] = [
       { label: "FOCUS", value: "STUDIO LIGHTING" },
       { label: "LOOK", value: "CINEMATIC · LOW-KEY" },
     ],
-    artDag: {
-      vision: "Make a sports car read through light alone — a dark studio, deep blacks, and a car described almost entirely by its silhouette. A restraint exercise: value and form first, detail last.",
-      implementation: "Blender + Cycles. Near-black environment, a warm rim to draw the silhouette, and red/blue gels to shape the panels. A handful of carefully placed lights do all the describing; compositing balances the passes.",
-      problems: "The tension is always readability vs. mood — pushed too dark and the form disappears, too bright and it's a plain product shot. Dialing the rim intensity and gel placement so the car stays legible while most of the body sits in shadow was the whole battle.",
-      output: "A pair of cinematic studio renders where the form reads purely through light — the same composition-and-value instinct as the environment work, turned inward on a single hero object.",
-    },
   },
   {
     slug: "stylized-studies",
     name: "Stylized Studies",
-    num: "PL.03",
     tagline: "Toon-shaded and procedural experiments in Blender.",
     discipline: "craft",
     category: "stylized",
-    description:
-      "A run of stylized and procedural Blender work — clean cel-shaded objects and node-driven generators (castles, medieval cities, flocks) that build scenes from rules.",
     stack: ["Blender", "Geometry Nodes", "NPR / Toon"],
     status: "live",
     href: "https://www.artstation.com/damanpsd",
@@ -741,22 +672,13 @@ export const projects: Project[] = [
       { label: "RANGE", value: "TOON / NPR · PROCEDURAL" },
       { label: "GENERATORS", value: "CASTLE · CITY · FLOCK" },
     ],
-    artDag: {
-      vision: "Two experiments under one roof: a clean cel-shaded illustrative look (toon/NPR), and procedural scenes generated from rules rather than placed by hand. The through-line is the artist-engineer overlap — art you can parameterize.",
-      implementation: "Blender throughout. NPR side: flat toon fills + inked outlines for a deliberately drawn read. Procedural side: Geometry Nodes generators — a castle generator, a medieval building/city generator, a flock system — so a whole layout falls out of parameters.",
-      problems: "Procedural generators fight you on variation vs. control — too random and it's noise, too rigid and every output looks the same. Tuning the node graphs so the generators produce believable variety without hand-fixing each result was the real work.",
-      output: "A set of reusable generators + cel-shaded pieces — proof the same systems instinct behind the software work applies to art: build the tool, then let the tool make the output.",
-    },
   },
   {
     slug: "product-placement-dev",
     name: "Product Placement Dev",
-    num: "PL.04",
     tagline: "Studio looks-dev for a set of signature electric guitars.",
     discipline: "craft",
     category: "product-render",
-    description:
-      "Product-placement / looks-development for a set of signature-graphic electric guitars — lighting, texturing, and compositing built around a vertical social deliverable.",
     stack: ["Blender", "Cycles", "Compositing"],
     status: "live",
     href: "https://www.artstation.com/artwork/8Bo3O6",
@@ -796,24 +718,13 @@ export const projects: Project[] = [
       { label: "SHIPPED", value: "INSTAGRAM" },
     ],
     specAccent: "FORMAT",
-    artDag: {
-      vision: "Treat a set of signature-graphic electric guitars as a product-placement piece, not a modeling one — sell the object the way an ad would, with the final vertical social cut in mind from the first frame.",
-      implementation: "Blender + Cycles. Low-key near-black studio, guitars on wall mounts, described by rim light so silhouette + finish artwork read first. Texturing carries the graphic body wraps and hardware (EMG pickups, tune-o-matic bridges, logo decals); compositing ties the passes; framed 9:16.",
-      problems: "Graphic wraps have to survive dramatic lighting — push the rim too hard and the artwork blows out, too soft and the finish goes flat. Balancing readable finish detail against the moody low-key look, per finish, was the recurring fight.",
-      output: "A rim-lit lineup + hardware/body/headstock passes, cut into short 9:16 reels and posted to Instagram — built for the deliverable end-to-end.",
-    },
   },
-  // ── PL.05–PL.09 · new ArtStation plates (self-hosted; copy drafted from the
-  //    image, no invented claims — Daman to approve/edit) ──────────────────────
   {
     slug: "procedural-clouds",
     name: "Procedural Clouds",
-    num: "PL.05",
     tagline: "Golden-hour volumetric clouds, generated not painted.",
     discipline: "craft",
     category: "environment",
-    description:
-      "A pair of soft cumulus clouds at golden hour, built as volumetrics against a graded dusk sky — warm rim light on the tops, cool shadow underneath.",
     stack: ["Blender", "Volumetrics"],
     status: "live",
     href: "https://www.artstation.com/damanpsd",
@@ -834,22 +745,13 @@ export const projects: Project[] = [
       { label: "TOOL", value: "BLENDER · VOLUMES" },
       { label: "SUBJECT", value: "CUMULUS · GOLDEN HOUR" },
     ],
-    artDag: {
-      vision: "Believable golden-hour clouds that read as real volume, not painted cards — warm light raking the tops, cool shadow underneath, floating in a smoothly graded dusk sky.",
-      implementation: "Built as volumetrics in Blender so light genuinely travels through the cloud. A graded sky behind, warm key from the low sun, and density shaped so the two cumulus forms feel soft but solid.",
-      problems: "Volumetric scattering is a fight between look and render cost — enough density and step detail to be believable without the render time exploding, and keeping the warm/cool split from muddying into flat grey.",
-      output: "A calm two-cloud golden-hour study — a small, focused proof of volumetric lighting that carries the same describe-it-with-rules instinct as the rest of the craft work.",
-    },
   },
   {
     slug: "cityscape",
     name: "Cityscape",
-    num: "PL.06",
     tagline: "A dense procedural city, rendered in clay.",
     discipline: "craft",
     category: "environment",
-    description:
-      "An aerial view over a dense downtown of towers and rooftops — antennas, HVAC, setbacks and all — rendered in untextured greyscale clay so the scale and geometry read.",
     stack: ["Blender", "Procedural"],
     status: "live",
     href: "https://www.artstation.com/damanpsd",
@@ -871,22 +773,13 @@ export const projects: Project[] = [
       { label: "RENDER", value: "GREYSCALE CLAY" },
       { label: "SUBJECT", value: "DENSE CITY" },
     ],
-    artDag: {
-      vision: "Test whether a dense downtown holds on scale and geometry alone — no colour, no texture, just massing. An aerial view where the rhythm of towers, setbacks and rooftop clutter has to carry the frame.",
-      implementation: "A procedural approach in Blender — enough buildings, each with believable rooftop detail (HVAC, antennas, setbacks), that hand-placement isn't viable. Rendered as untextured greyscale clay to put all the weight on form.",
-      problems: "Density without repetition is the hard part — a procedural city reads as fake the moment the eye catches the same building twice. Getting believable variety across the block while keeping it performant to render was the challenge.",
-      output: "An aerial clay render of a convincing dense city — an environment/scale exercise proving the massing works before any texturing pass.",
-    },
   },
   {
     slug: "highway-stop",
     name: "Highway Night Stop",
-    num: "PL.07",
     tagline: "A nocturnal roadside scene, lit by sodium and neon.",
     discipline: "craft",
     category: "environment",
-    description:
-      "A roadside stop at night — crash barriers curving into fog, a receding line of streetlights, and a neon-trimmed fuel canopy glowing red and blue at the edge of frame.",
     stack: ["Blender", "Lighting"],
     status: "live",
     href: "https://www.artstation.com/damanpsd",
@@ -908,22 +801,13 @@ export const projects: Project[] = [
       { label: "STUDY", value: "NIGHT LIGHTING · FOG" },
       { label: "SUBJECT", value: "ROADSIDE STOP" },
     ],
-    artDag: {
-      vision: "A lonely roadside stop at night that runs entirely on atmosphere — fog, falloff, and a few warm pools of streetlight, with one hit of red-and-blue neon to pull the eye.",
-      implementation: "Blender. Near-monochrome palette; crash barrier and a receding line of lamps as leading lines into depth; the neon-trimmed fuel canopy as the lit anchor. Volumetric fog carries the mood and the light falloff.",
-      problems: "Fog + many light sources is a noise/performance trap — enough atmospheric depth without the render going grainy or the scene flattening. Keeping the near-monochrome from going muddy so the single neon accent still lands was the balance.",
-      output: "A moody nocturnal environment — a composition-and-lighting study where mood does all the work and one accent carries the frame.",
-    },
   },
   {
     slug: "interior-study",
     name: "Interior Study",
-    num: "PL.08",
     tagline: "A warm evening living room, lit by nested frames.",
     discipline: "craft",
     category: "environment",
-    description:
-      "A modern living room at night — a sectional and coffee table on patterned flooring, warmed by a stack of nested square light fixtures and a single standing lamp.",
     stack: ["Blender", "Interior Lighting"],
     status: "live",
     href: "https://www.artstation.com/damanpsd",
@@ -945,12 +829,6 @@ export const projects: Project[] = [
       { label: "STUDY", value: "EVENING · LOW-KEY" },
       { label: "SUBJECT", value: "LIVING ROOM" },
     ],
-    artDag: {
-      vision: "A modern living room after dark where the light is the subject, not the furniture — a warm, low-key evening mood set by nested square ceiling fixtures and a single standing lamp.",
-      implementation: "Blender interior lighting. Nested light-frame fixtures + one warm lamp as the key; fill deliberately falls off into the corners. Plainly furnished on purpose so materials — sofa fabric, marble table, patterned floor — carry the realism under indirect light.",
-      problems: "Interior lighting lives or dies on the fill — too much and the mood flattens, too little and it reads underexposed and noisy. Getting materials to hold up under almost entirely warm, indirect light (no bright key to hide behind) was the test.",
-      output: "A warm evening interior — a lighting-and-materials study proving a room can be carried by mood and indirect light alone.",
-    },
   },
 ];
 
@@ -1061,7 +939,7 @@ export function getTrack(id: string): Track | undefined {
 /** A track's work, pieces with a real image first (the lead card runs wide). */
 export function projectsIn(id: TrackId): Project[] {
   const own = projects.filter((p) => trackOf(p) === id);
-  const hasImage = (p: Project) => realShots(p).length > 0 || (p.reels?.length ?? 0) > 0;
+  const hasImage = (p: Project) => p.gallery.length > 0 || (p.reels?.length ?? 0) > 0;
   return [...own.filter(hasImage), ...own.filter((p) => !hasImage(p))];
 }
 
@@ -1074,11 +952,6 @@ export function displayName(name: string): string {
 export function fitOf(text: string): number {
   const longest = Math.max(...text.split(" ").map((w) => w.length));
   return Math.max(longest * 0.76, 4.5);
-}
-
-/** Real images only: the hatched SVG placeholders stay out of this design. */
-export function realShots(p: Project): Shot[] {
-  return p.gallery.filter((s) => !s.src.endsWith(".svg"));
 }
 
 /**

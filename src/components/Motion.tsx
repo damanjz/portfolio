@@ -3,16 +3,17 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Lenis from "lenis";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 /**
- * The site's one motion layer, mounted once in the root layout.
- * - Lenis momentum scroll, driven by GSAP's ticker so ScrollTrigger stays in sync.
- * - Per route: reveals (.split, [data-fade], .hero .frame), scroll-scrubbed
- *   colour reveals ([data-colorize]), card parallax ([data-parallax]),
- *   count-ups ([data-count]), velocity-reactive ribbons ([data-ribbon]) and
- *   magnetic buttons ([data-magnetic]).
+ * The site's one motion layer, mounted once in the root layout. No animation
+ * library: Lenis for momentum scroll, IntersectionObserver for reveals, and one
+ * shared requestAnimationFrame loop that only touches elements on screen.
+ * - .split / [data-fade]: add `.in` when scrolled into view (CSS does the motion)
+ * - [data-count]: count up to its own text, keeping its format (02, 88%, 0.658)
+ * - [data-colorize]: image drifts and comes to colour as it crosses the screen
+ * - [data-parallax]: image drifts inside its frame
+ * - [data-ribbon]: marquee that speeds up and reverses with scroll velocity
+ * - [data-magnetic]: button leans toward the pointer
  * Nothing pins or hijacks scroll. Reduced motion skips all of it.
  */
 
@@ -24,25 +25,19 @@ declare global {
 
 let lenis: Lenis | null = null;
 
-function reduced() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
+const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
 export default function Motion() {
   const pathname = usePathname();
 
   // global: smooth scroll
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
     if (reduced()) return;
-    lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 1 });
+    lenis = new Lenis({ lerp: 0.085, autoRaf: true });
     window.__lenis = lenis;
-    lenis.on("scroll", ScrollTrigger.update);
-    const tick = (t: number) => lenis?.raf(t * 1000);
-    gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
     return () => {
-      gsap.ticker.remove(tick);
       lenis?.destroy();
       lenis = null;
       window.__lenis = undefined;
@@ -55,158 +50,139 @@ export default function Motion() {
     else window.scrollTo(0, 0);
 
     const rm = reduced();
-    const cleanups: (() => void)[] = [];
-    const ctx = gsap.context(() => {});
+    const off: (() => void)[] = [];
+    let raf = 0;
 
     const start = window.setTimeout(() => {
-      // reveals
-      const targets = document.querySelectorAll<HTMLElement>(
-        ".split:not(.door .split), [data-fade]",
-      );
+      // reveals and count-ups share one observer
+      const counts = new Map<Element, () => void>();
+      document.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => {
+        const final = el.dataset.count ?? el.textContent ?? "";
+        const m = final.match(/^(\D*)(\d+(?:\.\d+)?)(.*)$/);
+        if (!m || rm) return;
+        const [, pre, num, post] = m;
+        const dec = num.includes(".") ? num.split(".")[1].length : 0;
+        const width = dec ? 0 : num.length;
+        const target = parseFloat(num);
+        const fmt = (v: number) => pre + (dec ? v.toFixed(dec) : String(Math.round(v)).padStart(width, "0")) + post;
+        el.textContent = fmt(0);
+        counts.set(el, () => {
+          const t0 = performance.now();
+          const step = (now: number) => {
+            const t = clamp01((now - t0) / 1600);
+            el.textContent = t < 1 ? fmt(target * easeOut(t)) : final;
+            if (t < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        });
+      });
+
+      const reveal = document.querySelectorAll<HTMLElement>(".split:not(.door .split), [data-fade]");
       if (rm) {
-        targets.forEach((el) => el.classList.add("in"));
+        reveal.forEach((el) => el.classList.add("in"));
       } else {
         const io = new IntersectionObserver(
           (entries) =>
             entries.forEach((e) => {
-              if (e.isIntersecting) {
-                e.target.classList.add("in");
-                io.unobserve(e.target);
-              }
+              if (!e.isIntersecting) return;
+              e.target.classList.add("in");
+              counts.get(e.target)?.();
+              io.unobserve(e.target);
             }),
           { threshold: 0.15, rootMargin: "0px 0px -6% 0px" },
         );
-        targets.forEach((el) => io.observe(el));
-        cleanups.push(() => io.disconnect());
+        reveal.forEach((el) => io.observe(el));
+        counts.forEach((_, el) => io.observe(el));
+        off.push(() => io.disconnect());
       }
-
-      // count-ups: keep the target's own format (leading zeros, %, decimals)
-      document.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => {
-        const final = el.dataset.count ?? el.textContent ?? "";
-        const m = final.match(/^(\D*)(\d+(?:\.\d+)?)(.*)$/);
-        if (!m || rm) {
-          el.textContent = final;
-          return;
-        }
-        const [, pre, num, post] = m;
-        const decimals = num.includes(".") ? num.split(".")[1].length : 0;
-        const width = decimals ? 0 : num.length;
-        const target = parseFloat(num);
-        const fmt = (v: number) => {
-          const s = decimals ? v.toFixed(decimals) : String(Math.round(v)).padStart(width, "0");
-          return `${pre}${s}${post}`;
-        };
-        el.textContent = fmt(0);
-        const state = { v: 0 };
-        ctx.add(() =>
-          gsap.to(state, {
-            v: target,
-            duration: 1.6,
-            ease: "power3.out",
-            onUpdate: () => (el.textContent = fmt(state.v)),
-            onComplete: () => (el.textContent = final),
-            scrollTrigger: { trigger: el, start: "top 88%", once: true },
-          }),
-        );
-      });
-
       if (rm) return;
 
-      ctx.add(() => {
-        // big image: parallax across the viewport, colour arrives as it centres
-        gsap.utils.toArray<HTMLElement>("[data-colorize]").forEach((box) => {
-          const img = box.querySelector("img");
-          if (!img) return;
-          gsap.fromTo(
-            img,
-            { yPercent: -9 },
-            { yPercent: 0, ease: "none", scrollTrigger: { trigger: box, start: "top bottom", end: "bottom top", scrub: true } },
-          );
-          gsap.fromTo(
-            img,
-            { filter: "grayscale(1) contrast(1.05)" },
-            { filter: "grayscale(0) contrast(1)", ease: "none", scrollTrigger: { trigger: box, start: "top 80%", end: "top 15%", scrub: true } },
-          );
-          gsap.fromTo(
-            box,
-            { clipPath: "inset(6% 4% 6% 4% round 8px)" },
-            { clipPath: "inset(0% 0% 0% 0% round 8px)", ease: "none", scrollTrigger: { trigger: box, start: "top bottom", end: "top 30%", scrub: true } },
-          );
-        });
-
-        // card images drift inside their frames
-        gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((box) => {
-          const img = box.querySelector("img");
-          if (!img) return;
-          gsap.fromTo(
-            img,
-            { yPercent: -5 },
-            { yPercent: 5, ease: "none", scrollTrigger: { trigger: box, start: "top bottom", end: "bottom top", scrub: true } },
-          );
-        });
+      // scroll-linked work: only for elements currently on screen
+      type Item = { box: HTMLElement; img: HTMLElement; kind: "colorize" | "parallax" };
+      const items: Item[] = [];
+      document.querySelectorAll<HTMLElement>("[data-colorize], [data-parallax]").forEach((box) => {
+        const img = box.querySelector("img");
+        if (img) items.push({ box, img, kind: box.hasAttribute("data-colorize") ? "colorize" : "parallax" });
       });
+      const ribbons = [...document.querySelectorAll<HTMLElement>("[data-ribbon]")].map((el) => ({ el, x: 0, half: el.scrollWidth / 2 }));
+      const live = new Set<Element>();
+      const vis = new IntersectionObserver((entries) => entries.forEach((e) => (e.isIntersecting ? live.add(e.target) : live.delete(e.target))));
+      items.forEach((i) => vis.observe(i.box));
+      ribbons.forEach((r) => vis.observe(r.el));
+      off.push(() => vis.disconnect());
 
-      // ribbons: constant drift, sped up and reversed by scroll velocity
-      const tracks = document.querySelectorAll<HTMLElement>("[data-ribbon]");
-      if (tracks.length) {
-        const state = [...tracks].map(() => ({ x: 0, half: 0 }));
-        const measure = () => tracks.forEach((t, i) => (state[i].half = t.scrollWidth / 2));
-        measure();
-        let dir = 1;
-        let boost = 0;
-        const onScroll = () => {
-          const v = lenis?.velocity ?? 0;
-          if (Math.abs(v) > 0.1) dir = v > 0 ? 1 : -1;
-          boost = Math.min(Math.abs(v) * 0.9, 14);
-        };
-        lenis?.on("scroll", onScroll);
-        const loop = (_t: number, dt: number) => {
-          const step = (0.045 + boost * 0.02) * dt * dir;
-          boost *= 0.92;
-          tracks.forEach((t, i) => {
-            const s = state[i];
-            if (!s.half) return;
-            s.x -= step;
-            if (s.x <= -s.half) s.x += s.half;
-            if (s.x > 0) s.x -= s.half;
-            t.style.transform = `translate3d(${s.x}px,0,0)`;
-          });
-        };
-        gsap.ticker.add(loop);
-        window.addEventListener("resize", measure);
-        cleanups.push(() => {
-          gsap.ticker.remove(loop);
-          lenis?.off("scroll", onScroll);
-          window.removeEventListener("resize", measure);
-        });
-      }
+      const paint = (i: Item) => {
+        const vh = window.innerHeight;
+        const r = i.box.getBoundingClientRect();
+        const through = clamp01((vh - r.top) / (vh + r.height)); // 0 entering, 1 leaving
+        if (i.kind === "parallax") {
+          i.img.style.transform = `translate3d(0,${(through - 0.5) * 10}%,0)`;
+          return;
+        }
+        i.img.style.transform = `translate3d(0,${(through - 1) * 9}%,0)`;
+        const colour = clamp01((vh * 0.8 - r.top) / (vh * 0.65));
+        i.img.style.filter = `grayscale(${1 - colour}) contrast(${1.05 - colour * 0.05})`;
+        const open = clamp01((vh - r.top) / (vh * 0.7));
+        const y = 6 * (1 - open), x = 4 * (1 - open);
+        i.box.style.clipPath = `inset(${y}% ${x}% ${y}% ${x}% round 8px)`;
+      };
+      items.forEach(paint); // correct first frame before any scroll
 
-      // magnetic buttons (pointer devices only)
+      let dir = 1, boost = 0, last = performance.now();
+      const onScroll = () => {
+        const v = lenis?.velocity ?? 0;
+        if (Math.abs(v) > 0.1) dir = v > 0 ? 1 : -1;
+        boost = Math.min(Math.abs(v) * 0.9, 14);
+      };
+      lenis?.on("scroll", onScroll);
+      off.push(() => lenis?.off("scroll", onScroll));
+
+      const loop = (now: number) => {
+        const dt = Math.min(now - last, 64);
+        last = now;
+        for (const i of items) if (live.has(i.box)) paint(i);
+        const step = (0.045 + boost * 0.02) * dt * dir;
+        boost *= 0.92;
+        for (const r of ribbons) {
+          if (!live.has(r.el) || !r.half) continue;
+          r.x -= step;
+          if (r.x <= -r.half) r.x += r.half;
+          if (r.x > 0) r.x -= r.half;
+          r.el.style.transform = `translate3d(${r.x}px,0,0)`;
+        }
+        raf = requestAnimationFrame(loop);
+      };
+      raf = requestAnimationFrame(loop);
+      const measure = () => ribbons.forEach((r) => (r.half = r.el.scrollWidth / 2));
+      window.addEventListener("resize", measure);
+      off.push(() => window.removeEventListener("resize", measure));
+
+      // magnetic buttons (pointer devices only); CSS transition does the easing
       if (window.matchMedia("(hover: hover)").matches) {
         document.querySelectorAll<HTMLElement>("[data-magnetic]").forEach((el) => {
           const move = (e: PointerEvent) => {
             const r = el.getBoundingClientRect();
-            const x = (e.clientX - (r.left + r.width / 2)) * 0.32;
-            const y = (e.clientY - (r.top + r.height / 2)) * 0.32;
-            gsap.to(el, { x, y, duration: 0.5, ease: "power3.out" });
+            el.style.transition = "transform .45s cubic-bezier(.16,1,.3,1), background .35s, color .35s, border-color .35s";
+            el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * 0.32}px,${(e.clientY - r.top - r.height / 2) * 0.32}px)`;
           };
-          const leave = () => gsap.to(el, { x: 0, y: 0, duration: 0.9, ease: "elastic.out(1, 0.4)" });
+          const leave = () => {
+            el.style.transition = "transform .9s cubic-bezier(.2,1.8,.4,1), background .35s, color .35s, border-color .35s";
+            el.style.transform = "";
+          };
           el.addEventListener("pointermove", move);
           el.addEventListener("pointerleave", leave);
-          cleanups.push(() => {
+          off.push(() => {
             el.removeEventListener("pointermove", move);
             el.removeEventListener("pointerleave", leave);
           });
         });
       }
-
-      ScrollTrigger.refresh();
     }, 30);
 
     return () => {
       window.clearTimeout(start);
-      cleanups.forEach((f) => f());
-      ctx.revert();
+      cancelAnimationFrame(raf);
+      off.forEach((f) => f());
     };
   }, [pathname]);
 

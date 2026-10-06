@@ -67,7 +67,7 @@ export default function Doors() {
             onPointerLeave={settle}
           >
             <span className="img" style={{ transition: "transform 0.8s cubic-bezier(.16,1,.3,1)" }}>
-              <img src={asset(t.cover)} alt="" style={t.coverPos ? { objectPosition: t.coverPos } : undefined} />
+              <img src={asset(t.cover)} alt="" fetchPriority="high" style={t.coverPos ? { objectPosition: t.coverPos } : undefined} />
             </span>
             <span className="top">
               <span className="num">{t.num}</span> &middot; {String(projectsIn(t.id).length).padStart(2, "0")} works

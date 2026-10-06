@@ -56,7 +56,7 @@ export function TransitionLayer() {
       window.__lenis?.stop();
       router.prefetch(href);
       timers.current.push(
-        window.setTimeout(() => router.push(href, { scroll: false }), 720),
+        window.setTimeout(() => router.push(href, { scroll: false }), 460),
         // safety net: never leave the panel stuck if the route never changes
         window.setTimeout(() => {
           if (phase.current !== "covering") return;
@@ -78,11 +78,11 @@ export function TransitionLayer() {
         phase.current = "leaving";
         setState("leave");
         window.__lenis?.start();
-      }, 120),
+      }, 60),
       window.setTimeout(() => {
         phase.current = "idle";
         setState("");
-      }, 1150),
+      }, 760),
     );
   }, [pathname]);
 

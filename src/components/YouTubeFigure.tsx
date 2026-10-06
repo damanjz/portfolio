@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { asset } from "@/lib/asset";
+import { asset, srcSet } from "@/lib/asset";
 
 /** YouTube that loads nothing from Google until the visitor clicks play:
  *  until then it's a local poster. */
@@ -30,7 +30,7 @@ export default function YouTubeFigure({
           />
         ) : (
           <button onClick={() => setPlaying(true)} aria-label={`Play ${title}`} data-cursor="Play" style={{ position: "absolute", inset: 0 }}>
-            <img src={asset(poster)} alt={title} />
+            <img src={asset(poster)} srcSet={srcSet(poster)} sizes="(max-width: 760px) 100vw, 96vw" alt={title} loading="lazy" decoding="async" />
             <span className="play">
               <span>&#9654; Play the full piece</span>
               <small>Loads YouTube on click</small>

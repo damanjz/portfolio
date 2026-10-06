@@ -1,11 +1,11 @@
-import { categoryLabel, realShots, displayName, fitOf, type Project } from "@/content";
-import { asset } from "@/lib/asset";
+import { categoryLabel, displayName, fitOf, type Project } from "@/content";
+import { asset, srcSet } from "@/lib/asset";
 import { TLink } from "./Transition";
 
 /** One project on a door page: black-and-white cover that colours on hover,
  *  or a typographic tile when no real image exists yet. */
 export default function WorkCard({ p, n, wide }: { p: Project; n: number; wide?: boolean }) {
-  const cover = realShots(p)[0] ?? (p.reels?.[0] ? { src: p.reels[0].poster, alt: p.name } : undefined);
+  const cover = p.gallery[0] ?? (p.reels?.[0] ? { src: p.reels[0].poster, alt: p.name } : undefined);
   return (
     <TLink
       href={`/projects/${p.slug}/`}
@@ -16,7 +16,7 @@ export default function WorkCard({ p, n, wide }: { p: Project; n: number; wide?:
     >
       <div className="img" data-parallax={cover ? "" : undefined}>
         {cover ? (
-          <img src={asset(cover.src)} alt={cover.alt} loading="lazy" />
+          <img src={asset(cover.src)} srcSet={srcSet(cover.src)} sizes={wide ? "(max-width: 760px) 100vw, 96vw" : "(max-width: 760px) 100vw, 48vw"} alt={cover.alt} loading="lazy" decoding="async" />
         ) : (
           <div className="type" style={{ ["--fit" as string]: fitOf(displayName(p.name)) }}>
             <span className="tag">
