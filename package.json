@@ -2,10 +2,13 @@
   "name": "daman-portfolio",
   "version": "0.1.0",
   "private": true,
-  "description": "Daman's portfolio — a creative-technologist site built as a pannable flow-board (Next.js, static export → GitHub Pages).",
+  "description": "Daman Reddy portfolio: three doors for systems, 3D environments, and BI and data (Next.js, static export to GitHub Pages).",
   "homepage": "https://damanjz.github.io/portfolio/",
-  "repository": { "type": "git", "url": "https://github.com/damanjz/portfolio.git" },
-  "author": "Daman (https://github.com/damanjz)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/damanjz/portfolio.git"
+  },
+  "author": "Daman Reddy (https://github.com/damanjz)",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
@@ -14,6 +17,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.26",
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4"

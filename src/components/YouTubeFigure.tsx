@@ -3,12 +3,8 @@
 import { useState } from "react";
 import { asset } from "@/lib/asset";
 
-/**
- * A YouTube figure that honors the colophon ("this site ships no analytics"):
- * nothing loads from Google until the visitor clicks play — until then it's a
- * local poster with a typeset play control. On click, the youtube-nocookie
- * embed swaps in and autoplays.
- */
+/** YouTube that loads nothing from Google until the visitor clicks play:
+ *  until then it's a local poster. */
 export default function YouTubeFigure({
   videoId,
   poster,
@@ -21,44 +17,29 @@ export default function YouTubeFigure({
   caption: string;
 }) {
   const [playing, setPlaying] = useState(false);
-
   return (
-    <div>
-      <div className="relative aspect-video overflow-hidden border border-hairline bg-raised">
+    <div className="fig" data-fade="">
+      <div className="frame wide">
         {playing ? (
           <iframe
-            className="absolute inset-0 h-full w-full"
             src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`}
             title={title}
-            // trimmed to what playback actually needs (dropped accelerometer /
-            // gyroscope / clipboard-write) + don't leak the full referrer URL.
             allow="autoplay; encrypted-media; picture-in-picture"
             referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
           />
         ) : (
-          <button
-            onClick={() => setPlaying(true)}
-            className="group absolute inset-0 block h-full w-full text-left"
-            aria-label={`Play ${title}`}
-          >
-            <img src={asset(poster)} alt={title} className="absolute inset-0 h-full w-full object-cover" />
-            {/* scrim + typeset play control */}
-            <span className="absolute inset-0 bg-[rgba(28,27,24,0.25)] transition-opacity duration-150 group-hover:opacity-60" />
-            <span className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-3 border border-paper bg-[rgba(28,27,24,0.75)] px-5 py-3">
-              <span className="mono text-sm text-paper">▶</span>
-              <span className="mono text-[11px] font-medium tracking-[0.1em] text-paper">
-                PLAY THE FULL TECH DEMO
-              </span>
-            </span>
-            <span className="mono absolute bottom-2.5 right-2.5 bg-[rgba(28,27,24,0.75)] px-2 py-1 text-[10px] text-paper">
-              LOADS YOUTUBE ON CLICK
+          <button onClick={() => setPlaying(true)} aria-label={`Play ${title}`} data-cursor="Play" style={{ position: "absolute", inset: 0 }}>
+            <img src={asset(poster)} alt={title} />
+            <span className="play">
+              <span>&#9654; Play the full piece</span>
+              <small>Loads YouTube on click</small>
             </span>
           </button>
         )}
       </div>
-      <div className="mono mt-2.5 text-[10px] tracking-[0.08em] text-faint">
-        {caption}
+      <div className="cap-line">
+        <span>{caption}</span>
       </div>
     </div>
   );

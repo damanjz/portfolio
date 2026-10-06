@@ -1,5 +1,5 @@
 import type { Project } from "@/content";
-import { seo, categoryLabel } from "@/content";
+import { seo, site, categoryLabel } from "@/content";
 
 /**
  * Per-project structured data — the machine-readable twin of each case study.
@@ -24,7 +24,7 @@ export function ProjectJsonLd({ p }: { p: Project }) {
       : { artMedium: p.stack.join(", ") }),
     ...(repo ? { codeRepository: repo } : {}),
     ...(p.href ? { sameAs: p.href } : {}),
-    author: { "@type": "Person", name: "Daman", url: seo.url },
+    author: { "@type": "Person", name: site.name, url: seo.url },
   };
   return (
     <script

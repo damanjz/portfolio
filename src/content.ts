@@ -9,9 +9,9 @@
 
 export const site = {
   handle: "damanjz",
-  name: "Daman", // PLACEHOLDER — confirm your preferred display name
+  name: "Daman Reddy",
   // Folio line, mono, uppercase — the whole positioning in three words.
-  role: "3D Art · Systems · Local-first",
+  role: "Systems developer · 3D environment artist · BI and data analyst",
   // 00 — THESIS. The only italic on the page is the em phrase.
   thesisLead: "A 3D artist who builds hardened software —",
   thesisEm: "the same mind, both crafts.",
@@ -22,10 +22,10 @@ export const site = {
   replies: "replies in ~24h",
   email: "daman.w3d@gmail.com", // public work contact
   // Title < 60 chars (Google truncates ~60); keywords front-loaded.
-  metaTitle: "Daman — 3D Environment Artist & Systems Engineer",
+  metaTitle: "Daman Reddy — Systems, 3D Environments, BI and Data",
   // Description < 160 chars (Google truncates ~155); primary keywords early.
   metaDescription:
-    "Daman is a creative technologist in Hyderabad: a 3D environment artist (Unreal, Blender) and self-taught systems engineer building local-first software.",
+    "Daman Reddy, Hyderabad: AI-assisted systems developer, 3D environment artist (Unreal, Blender) and BI and data analyst (SQL, Power BI, Tableau).",
 } as const;
 
 export const socials = [
@@ -218,7 +218,8 @@ export const projects: Project[] = [
     summary:
       "VOLT HQ — a full Next.js 15 techwear storefront: membership identity, dynamic clearance leveling, secure Server Action checkouts.",
     gallery: [
-      { src: "/shots/volt-techwear-store/storefront.svg", alt: "VOLT storefront", caption: "The storefront — industrial techwear aesthetic, built to feel like a product, not a demo." },
+      { src: "/shots/volt-techwear-store/shop.webp", alt: "VOLT archive page: product grid of techwear with category filters", caption: "The archive — category filters, search and sort over the full catalogue." },
+      { src: "/shots/volt-techwear-store/home.webp", alt: "VOLT home page: DEFY LIMITS hero with the current drop", caption: "The storefront — industrial techwear aesthetic, built to feel like a product, not a demo." },
       { src: "/shots/volt-techwear-store/product.svg", alt: "product page", caption: "A product page with clearance-gated availability." },
       { src: "/shots/volt-techwear-store/checkout.svg", alt: "secure checkout", caption: "Checkout runs through secure Server Actions, not a client-trusted flow." },
     ],
@@ -362,7 +363,9 @@ export const projects: Project[] = [
     year: "Feb 2026", // repo created 2026-02-25
     summary:
       "A full multi-page athletic-wear storefront built with no framework and no build step — 34 products, a scroll-driven hero, and a custom WebGL shader up top, all hand-written.",
-    gallery: [],
+    gallery: [
+      { src: "/shots/umbra/home.webp", alt: "Umbra home page: the giant UMBRA wordmark over the WebGL shader hero", caption: "The hero — a hand-written WebGL shader in the brand violet behind the wordmark." },
+    ],
     sections: [
       {
         heading: "Idea",
@@ -496,6 +499,106 @@ export const projects: Project[] = [
   /* ----------------------------------------------------------------------- */
   /*  CRAFT — 3D / art. Real renders from the project hub, optimized to WebP. */
   /* ----------------------------------------------------------------------- */
+  {
+    slug: "hospital-operations",
+    name: "hospital-operations",
+    num: "P.09",
+    tagline: "Where a hospital's beds, waits and readmissions go wrong, hour by hour.",
+    discipline: "systems",
+    category: "analytics",
+    description: "A three-year simulation of a 256-bed Hyderabad hospital, modelled in DuckDB, with a readmission model that beats the LACE score and a Power BI report generated from code.",
+    stack: ["Python", "DuckDB", "SQL", "scikit-learn", "Power BI"],
+    status: "public",
+    href: "https://github.com/damanjz/hospital-operations-bi",
+    hrefLabel: "view source",
+    metric: { label: "readmission AUC", value: "0.786 vs LACE 0.749" },
+    year: "Oct 2026",
+    summary:
+      "Three years of a synthetic 256-bed hospital in Hyderabad: patient flow, bed occupancy and 30-day readmissions in DuckDB, a readmission model that beats the clinical LACE score, and a Power BI report generated from code.",
+    gallery: [
+      { src: "/shots/hospital-operations/now.webp", alt: "Power BI page 'Now': every bed by bay at a chosen hour, ER queue by triage level and patients per nurse", caption: "Now: every bed in the hospital at a chosen hour, the ER queue by triage level, and staffing against target." },
+      { src: "/shots/hospital-operations/flow.webp", alt: "Power BI page 'Flow': ER arrivals and waits by weekday and hour, occupancy by month and waits by shift", caption: "Flow: arrivals and waits by weekday and hour; the evening wait falls once an extra evening doctor starts in April 2025." },
+      { src: "/shots/hospital-operations/readmissions.webp", alt: "Power BI page 'Readmissions': rates by diagnosis, age, length of stay and unit fullness, with a follow-up list", caption: "Readmissions: who comes back within 30 days, and a follow-up list ranked by the model's risk score." },
+    ],
+    sections: [
+      {
+        heading: "Problem",
+        body: "Hospital data answers narrow questions in separate systems: the ER board, the bed census, the discharge summaries. The questions that matter cut across them: where patients wait and why, how full the beds really run, and who is likely to be back within 30 days.",
+      },
+      {
+        heading: "Build",
+        body: "A seeded event simulation of a synthetic 256-bed multi-specialty hospital, April 2023 to March 2026: an ER doctor queue ordered by triage acuity, patients who leave without being seen, beds that need cleaning, ICU step-down, ward overflow into surgical beds, and readmissions that come back through the ER. About 168,000 ER visits land in nine raw exports. Plain SQL in DuckDB models flow, occupancy and readmissions, and the Power BI project (three pages: Now, Flow, Readmissions) is generated from code.",
+      },
+      {
+        heading: "Measurement",
+        body: "18 checks gate the build, each proven by breaking the data on purpose. 63 of 63 numbers on the report match DuckDB, and two full rebuilds produce identical files. The readmission model, tested out of time, reaches ROC AUC 0.786 against 0.749 for the LACE score; flagging the same share of patients as LACE, it catches 51.4% of readmissions against 47.4%.",
+      },
+      {
+        heading: "What it found",
+        body: "Evening arrivals waited a median 93 minutes for a doctor in FY 2024-25; after an extra evening doctor from April 2025 that fell to 32. Patients sent home from a unit 95% full or more came back 14.3% of the time, against 12.3% from a unit under 85% full.",
+      },
+    ],
+    decisions: [
+      { choice: "OUT-OF-TIME TEST", reason: "train on the past, test on a later year: no leakage from the future" },
+      { choice: "MODEL VS LACE", reason: "beat the score clinicians already use, like for like" },
+      { choice: "REPORT AS CODE", reason: "generated Power BI project: reviewable, rebuilt identically" },
+    ],
+    facts: [
+      { label: "TYPE", value: "BI CASE STUDY" },
+      { label: "DATA", value: "168K ER VISITS · SYNTHETIC" },
+      { label: "MODEL", value: "LOGISTIC REGRESSION" },
+      { label: "AUC", value: "0.786 VS LACE 0.749" },
+      { label: "CHECKS", value: "18 / 18 PASS" },
+      { label: "REPORT", value: "POWER BI · GENERATED" },
+      { label: "STATUS", value: "PUBLIC REPO" },
+    ],
+    specAccent: "AUC",
+  },
+  {
+    slug: "supply-chain",
+    name: "supply-chain",
+    num: "P.10",
+    tagline: "Which shelves run empty next, and which supplier is behind it.",
+    discipline: "systems",
+    category: "analytics",
+    description: "A three-year simulation of an Indian FMCG distributor, modelled in DuckDB, with a stockout model that beats the reorder-point rule and a Tableau workbook where the map is the navigation.",
+    stack: ["Python", "DuckDB", "SQL", "scikit-learn", "Tableau"],
+    status: "wip",
+    metric: { label: "stockout AUC", value: "0.840 vs rule 0.699" },
+    year: "Oct 2026",
+    summary:
+      "Three years of a synthetic Indian FMCG distributor: on-time-in-full, lead time, inventory and supplier performance in DuckDB, a 14-day stockout model that beats the reorder-point rule, and a Tableau workbook generated from code.",
+    gallery: [],
+    sections: [
+      {
+        heading: "Problem",
+        body: "A distributor's view of its network is split across order books, warehouse stock and supplier records. The questions that matter cross all three: which lanes deliver on time and in full, where stock runs out next, and which supplier is causing it.",
+      },
+      {
+        heading: "Build",
+        body: "A day-by-day simulation of a synthetic distributor, April 2023 to March 2026: 4 warehouses (Hyderabad, Mumbai, Delhi NCR, Kolkata), 40 suppliers, 200 products and 36 delivery cities, with Diwali demand, monsoon lane delays, a supplier that starts slipping in July 2024 and a festive pre-build from September 2025. Plain SQL in DuckDB models OTIF, lead time, inventory turns and carrying cost. The Tableau workbook is generated from code; clicking a warehouse or lane on the map sets the whole dashboard.",
+      },
+      {
+        heading: "Measurement",
+        body: "17 checks gate the build, including an exact day-to-day stock balance. The 14-day stockout model (gradient boosting) reaches ROC AUC 0.840 against 0.699 for the reorder-point rule; flagging the same share of products as the rule, it catches 65.6% of stockouts against 59.5%. Dashboard numbers were checked against DuckDB in three filtered views.",
+      },
+    ],
+    decisions: [
+      { choice: "OTIF PER ORDER LINE", reason: "one short line in a big order shouldn't hide which lines fail" },
+      { choice: "MAP AS NAVIGATION", reason: "click a warehouse or lane and everything follows" },
+      { choice: "MODEL VS RULE", reason: "beat the reorder-point rule planners already use" },
+    ],
+    facts: [
+      { label: "TYPE", value: "BI CASE STUDY" },
+      { label: "DATA", value: "3 YEARS · SYNTHETIC" },
+      { label: "NETWORK", value: "4 DCS · 40 SUPPLIERS · 200 SKUS" },
+      { label: "MODEL", value: "GRADIENT BOOSTING" },
+      { label: "AUC", value: "0.840 VS RULE 0.699" },
+      { label: "OTIF", value: "80.2%" },
+      { label: "STATUS", value: "IN DEVELOPMENT" },
+    ],
+    specAccent: "AUC",
+  },
   {
     slug: "umbraixs",
     name: "Umbraixs",
@@ -862,43 +965,182 @@ export function categoryLabel(id: CategoryId): string {
 }
 
 /**
- * PRINCIPLES — chapter 03. Four rules, R.1–R.4 (The Monograph copy).
+ * TRACKS — the three doors. Every project belongs to exactly one, derived
+ * from its discipline and category (craft = art, analytics = data, the rest
+ * = systems), so nothing is written twice.
  */
-export const principles = [
+export type TrackId = "systems" | "art" | "data";
+
+export type Track = {
+  id: TrackId;
+  num: string;
+  role: string; // the door label
+  word: string; // the giant word on the landing door ("|" = forced line break)
+  line1: string; // door-page hero, line 1
+  line2: string; // door-page hero, line 2
+  fit: number; // hero size: content width / fit (em), same scale as the approved v5 build
+  cover: string; // landing door image
+  coverPos?: string; // object-position when the subject is not centred
+  intro: string; // the one-paragraph pitch; introEm is accented
+  introEm: string;
+  stats: { value: string; label: string }[];
+  ribbon: string[];
+  outro: [string, string]; // footer headline, second line accented
+};
+
+export const tracks: Track[] = [
   {
-    tag: "R.1 — LOCAL-FIRST",
-    body: "Data lives on the user's disk. Sync is a feature, not a landlord.",
+    id: "systems",
+    num: "01",
+    role: "AI-assisted systems developer",
+    word: "Systems",
+    line1: "Systems",
+    line2: "Developer",
+    fit: 9.2,
+    cover: "/doors/systems.webp",
+    coverPos: "left top",
+    intro: "I ship complete software with AI as the co-pilot and my judgement at the wheel:",
+    introEm: "local-first, security-hardened, measured before it ships.",
+    stats: [
+      { value: "06", label: "projects shipped or in build" },
+      { value: "16", label: "security fixes from one audit" },
+      { value: "88%", label: "routing accuracy, AI triage" },
+    ],
+    ribbon: ["Rust", "TypeScript", "Next.js", "Python", "Tauri", "Ollama", "Postgres", "WebGL"],
+    outro: ["Let's build", "something"],
   },
   {
-    tag: "R.2 — MEASURED",
-    body: "If it isn't evaluated, it isn't done. Evals gate every prompt; numbers over vibes.",
+    id: "art",
+    num: "02",
+    role: "3D environment artist",
+    word: "Environ|ments",
+    line1: "Environment",
+    line2: "Artist",
+    fit: 8.3,
+    cover: "/art/umbraixs-path.webp",
+    intro: "I build places that tell a story on their own,",
+    introEm: "composed to read in motion, from stylized villages to sodium-lit roadsides.",
+    stats: [
+      { value: "08", label: "pieces" },
+      { value: "UE5", label: "and Blender" },
+      { value: "MA", label: "Animation" },
+    ],
+    ribbon: ["Unreal Engine 5", "Blender", "Substance", "Lumen", "Nanite", "Lighting", "Composition"],
+    outro: ["Let's build", "a world"],
   },
   {
-    tag: "R.3 — BUILD THE TOOL",
-    body: "When the right tool doesn't exist, that becomes the project.",
+    id: "data",
+    num: "03",
+    role: "BI and data analyst",
+    word: "Data",
+    line1: "Data",
+    line2: "Analyst",
+    fit: 7.6,
+    cover: "/doors/data.webp",
+    intro: "I turn messy records into reports people can act on,",
+    introEm: "with every number reconciled back to SQL before it ships.",
+    stats: [
+      { value: "04", label: "end-to-end BI builds" },
+      { value: "0.840", label: "best model ROC AUC, stockouts" },
+      { value: "63", label: "of 63 report numbers matched to SQL" },
+    ],
+    ribbon: ["SQL", "DuckDB", "Python", "Power BI", "DAX", "Tableau", "Modelling", "Reconciliation"],
+    outro: ["Let's find", "the signal"],
   },
-  {
-    tag: "R.4 — HARDENED",
-    body: "Threat-model first. Every dependency and surface earns its keep.",
-  },
-] as const;
+];
+
+export function trackOf(p: Project): TrackId {
+  if (p.discipline === "craft") return "art";
+  return p.category === "analytics" ? "data" : "systems";
+}
+
+export function getTrack(id: string): Track | undefined {
+  return tracks.find((t) => t.id === id);
+}
+
+/** A track's work, pieces with a real image first (the lead card runs wide). */
+export function projectsIn(id: TrackId): Project[] {
+  const own = projects.filter((p) => trackOf(p) === id);
+  const hasImage = (p: Project) => realShots(p).length > 0 || (p.reels?.length ?? 0) > 0;
+  return [...own.filter(hasImage), ...own.filter((p) => !hasImage(p))];
+}
+
+/** Repo-style names read as words in giant caps: "flux-player" -> "flux player". */
+export function displayName(name: string): string {
+  return name.replace(/-/g, " ");
+}
+
+/** Widest word in em for Archivo 900 caps (~0.76em a letter), so a title never clips. */
+export function fitOf(text: string): number {
+  const longest = Math.max(...text.split(" ").map((w) => w.length));
+  return Math.max(longest * 0.76, 4.5);
+}
+
+/** Real images only: the hatched SVG placeholders stay out of this design. */
+export function realShots(p: Project): Shot[] {
+  return p.gallery.filter((s) => !s.src.endsWith(".svg"));
+}
 
 /**
- * STACK — chapter 04. Four ledger columns (The Monograph grouping).
+ * HOW I WORK — the standards behind each craft, four per door. Every line is
+ * backed by a project on that door.
  */
-export const stackGroups = [
-  { label: "ENGINEERING", items: ["Rust", "Python", "Tauri", "PySide6"] },
-  { label: "WEB", items: ["TypeScript", "Next.js 15", "Svelte", "Prisma · Postgres"] },
-  { label: "OPS", items: ["Docker", "n8n", "Ollama", "GitHub Actions"] },
-  { label: "3D", items: ["Unreal Engine 5", "Blender", "Substance Painter"] },
-] as const;
-
-/**
- * PLATES — chapter 02, the site's single inversion. The art archive bound in
- * as glossy plates on umber stock. Each plate links to its case study.
- */
-export const platesIntro =
-  "Before engineering, an animation degree. The archive stays — evidence of a trained eye, not a second career.";
+export const ethics: Record<TrackId, { title: string; body: string }[]> = {
+  systems: [
+    {
+      title: "Local-first",
+      body: "Data lives on the user's disk. Sync is a feature, not a landlord, so nothing I build needs my server to keep working.",
+    },
+    {
+      title: "Measured, then shipped",
+      body: "If it isn't evaluated, it isn't done. The AI triage only moved to model routing after it beat the rules baseline on a 40-case eval set: 88% against 70%.",
+    },
+    {
+      title: "Threat-model first",
+      body: "Every dependency and open surface has to earn its place. Protec went through a six-area security audit and shipped 16 hardening fixes.",
+    },
+    {
+      title: "AI speeds it up, I own it",
+      body: "I build with AI tools and keep the decisions, the review and the testing. If it ships, I can explain why it works and how it fails.",
+    },
+  ],
+  art: [
+    {
+      title: "Composition first",
+      body: "Value grouping and light anchors do the work before any detail goes in. A frame has to read at a glance, in grey, before it earns colour.",
+    },
+    {
+      title: "Blockout to beauty",
+      body: "Spaces are blocked out and checked in motion before they're dressed. Detail is placed where the eye lands, not sprayed everywhere.",
+    },
+    {
+      title: "Performance is part of the art",
+      body: "A scene that stutters doesn't read. Umbraixs was profiled to about 100 fps against a 60 fps target, with Lumen and Nanite doing the heavy lifting.",
+    },
+    {
+      title: "Built for where it lands",
+      body: "Framing, passes and cuts are planned for the final format, like the guitar looks-dev framed 9:16 and cut into reels from the start.",
+    },
+  ],
+  data: [
+    {
+      title: "Every number reconciles",
+      body: "No report ships until its headline numbers match an independent SQL calculation. Power BI and Tableau are checked against DuckDB, value for value.",
+    },
+    {
+      title: "Break it on purpose",
+      body: "A check only counts if it has been seen to fail. Each one is proven by corrupting the data deliberately and watching the build stop.",
+    },
+    {
+      title: "Fair by design",
+      body: "Sensitive attributes like gender, age and region never become model features, and the fairness table shows what the model does anyway.",
+    },
+    {
+      title: "Reports as code",
+      body: "Dashboards are generated from code, not clicked together: reviewable, versioned, and rebuilt identically every time.",
+    },
+  ],
+};
 
 export const seo = {
   url: "https://damanjz.github.io/portfolio", // update if a custom domain lands

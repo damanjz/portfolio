@@ -1,8 +1,22 @@
 # Changelog — Daman Portfolio
 
-All notable changes to the portfolio. v4 ("the flow-board") replaced v3 ("The
-Monograph") as the live site. Dates are when the work shipped to `main`
+All notable changes to the portfolio. v5 ("three doors") replaced v4 ("the flow-board") as the live site. Dates are when the work shipped to `main`
 (auto-deploys to [damanjz.github.io/portfolio](https://damanjz.github.io/portfolio/)).
+
+---
+
+## v5 — Three Doors
+
+The site splits into three crafts, each with its own door: AI-assisted systems developer, 3D environment artist, BI and data analyst. Warm grey, near-black, one orange; Archivo caps and Space Grotesk.
+
+### v5.0 — Three doors — 2026-10-07
+- **Landing** — three full-height doors (black-and-white covers that colour on hover, widen, and drift with the pointer), letters rising on load, a scroll-reactive ribbon.
+- **Door pages** — `/systems/`, `/art/`, `/data/`: title and pitch, counted stats, "How I work" (four standards per craft, each backed by a project), every piece of work, contact band.
+- **Case studies** — restyled; next-in-craft link; image lightbox; local reels and click-to-load YouTube kept.
+- **Motion** — Lenis smooth scroll, GSAP scroll reveals, orange page-transition panel, labelled cursor, magnetic buttons. Reduced motion respected throughout.
+- **Content** — name Daman Reddy; two more BI case studies (`hospital-operations`, `supply-chain`, the latter in development); real VOLT and Umbra screenshots; covers from real work (Protec source, Umbraixs, the hospital bed grid); placeholder SVG figures no longer shown.
+- **Removed** — the board, `/read`, and the light/dark toggle.
+- **Proof** — 27 static pages build; checked at 1440, 900, 768 and 375 px: no horizontal overflow, no broken images, no clipped headings; navigation tested under the `/portfolio` base path; no external asset requests.
 
 ---
 

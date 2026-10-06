@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
-import { Source_Serif_4, IBM_Plex_Mono } from "next/font/google";
+import { Archivo, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { site, seo } from "@/content";
 import { StructuredData } from "./structured-data";
+import Motion from "@/components/Motion";
+import Cursor from "@/components/Cursor";
+import { TransitionLayer } from "@/components/Transition";
 
-// Two self-hosted families (via next/font — no runtime request to Google):
-// serif for names/titles, mono for the board's structural voice.
-const serif = Source_Serif_4({
-  variable: "--font-source-serif",
+// Two families, self-hosted by next/font at build time (no runtime request
+// to Google): Archivo for the giant caps, Space Grotesk for everything else.
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  weight: ["800", "900"],
   display: "swap",
 });
 
-const mono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
+const grotesk = Space_Grotesk({
+  variable: "--font-grotesk",
   subsets: ["latin"],
   weight: ["400", "500"],
   display: "swap",
@@ -25,24 +27,27 @@ export const metadata: Metadata = {
   metadataBase: new URL(seo.url),
   title: site.metaTitle,
   description: site.metaDescription,
-  authors: [{ name: "Daman", url: seo.url }],
-  creator: "Daman",
+  authors: [{ name: site.name, url: seo.url }],
+  creator: site.name,
   keywords: [
-    "creative technologist",
+    "Daman Reddy",
+    "AI-assisted systems developer",
     "3D environment artist",
+    "BI analyst",
+    "data analyst",
     "Unreal Engine",
     "Blender",
-    "systems engineer",
+    "Power BI",
+    "Tableau",
+    "SQL",
     "Rust",
-    "local-first software",
     "Hyderabad",
-    "Daman",
   ],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "/",
-    siteName: `${site.handle}.dev`,
+    siteName: site.name,
     title: site.metaTitle,
     description: site.metaDescription,
     locale: "en_US",
@@ -57,27 +62,15 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${serif.variable} ${mono.variable} h-full antialiased`}
-      suppressHydrationWarning
-    >
-      <head>
-        {/* No-flash theme: apply the persisted / system theme before paint. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "(function(){try{var t=localStorage.getItem('theme');if(t){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();",
-          }}
-        />
-      </head>
-      <body className="min-h-full">
+    <html lang="en" className={`${archivo.variable} ${grotesk.variable}`}>
+      <body>
         <StructuredData />
         {children}
+        <Motion />
+        <Cursor />
+        <TransitionLayer />
       </body>
     </html>
   );
