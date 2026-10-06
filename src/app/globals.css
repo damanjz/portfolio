@@ -216,7 +216,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .cs-facts .k { color: var(--muted); font-size: 12px; letter-spacing: 0.06em; }
 .cs-facts span:last-child { text-align: right; font-weight: 500; }
 .cs-facts .hot { color: var(--acc); }
-.cs-aside .pill { margin-top: 20px; }
+.cs-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
 .cs-dec { border-top: 1.5px solid var(--ink); }
 .cs-dec div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .cs-dec b { font-family: var(--font-archivo), sans-serif; font-weight: 800; text-transform: uppercase; font-size: 15px; }

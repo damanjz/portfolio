@@ -120,11 +120,18 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
               </div>
             ))}
           </div>
-          {p.href && (
-            <a className="pill on" href={p.href} target="_blank" rel="noopener noreferrer" data-magnetic>
-              {p.hrefLabel ? p.hrefLabel.charAt(0).toUpperCase() + p.hrefLabel.slice(1) : "View on GitHub"} &#8599;
-            </a>
-          )}
+          <div className="cs-links">
+            {p.href && (
+              <a className="pill on" href={p.href} target="_blank" rel="noopener noreferrer" data-magnetic>
+                {p.hrefLabel ? p.hrefLabel.charAt(0).toUpperCase() + p.hrefLabel.slice(1) : "View on GitHub"} &#8599;
+              </a>
+            )}
+            {p.caseStudy && (
+              <a className="pill" href={asset(p.caseStudy)} target="_blank" rel="noopener" data-magnetic>
+                Read the case study (PDF) &#8599;
+              </a>
+            )}
+          </div>
         </aside>
       </section>
 

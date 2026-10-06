@@ -69,6 +69,7 @@ export type Project = {
   href?: string;
   hrefLabel?: string; // e.g. "view source", "view on ArtStation"
   metric?: { label: string; value: string };
+  caseStudy?: string; // PDF under /public, linked from the case-study page
   year: string;
   // ---- detail-page fields ----
   summary: string; // case-study intro
@@ -356,6 +357,7 @@ export const projects: Project[] = [
     status: "public",
     href: "https://github.com/damanjz/personal-finance-bi",
     hrefLabel: "view source",
+    caseStudy: "/case-studies/finance-bi.pdf",
     metric: { label: "checks", value: "15 reconciled" },
     year: "Oct 2026",
     summary:
@@ -404,6 +406,7 @@ export const projects: Project[] = [
     status: "live",
     href: "https://public.tableau.com/app/profile/daman.reddy/viz/HRAnalyticsWorkbench/Workbench",
     hrefLabel: "open the live workbench",
+    caseStudy: "/case-studies/hr-analytics.pdf",
     metric: { label: "flight risk", value: "AUC 0.658" },
     year: "Oct 2026",
     summary:
@@ -456,6 +459,7 @@ export const projects: Project[] = [
     status: "public",
     href: "https://github.com/damanjz/hospital-operations-bi",
     hrefLabel: "view source",
+    caseStudy: "/case-studies/hospital-operations.pdf",
     metric: { label: "readmission AUC", value: "0.786 vs LACE 0.749" },
     year: "Oct 2026",
     summary:
@@ -509,6 +513,7 @@ export const projects: Project[] = [
     status: "live",
     href: "https://public.tableau.com/app/profile/daman.reddy/viz/SupplyChainNetwork_17913286536000/Network",
     hrefLabel: "open the live dashboard",
+    caseStudy: "/case-studies/supply-chain.pdf",
     metric: { label: "stockout AUC", value: "0.840 vs rule 0.699" },
     year: "Oct 2026",
     summary:
