@@ -12,6 +12,13 @@ The whole site is one pannable 2D board; every project is drawn as its real
 production DAG (idea → decisions → production → shipped). Dual theme: **Terminal**
 (light) / **Nocturne** (dark).
 
+### v4.15 — Analytics: finance-bi + hr-analytics — 2026-10-06
+- **Two BI case studies added** — `finance-bi` (P.07: DuckDB model, 15 reconciliation checks, generated Power BI report) and `hr-analytics` (P.08: people analytics, fair flight-risk model, generated Tableau workbench, live on Tableau Public). Each gets a full DAG row on the board, a detail page, and a `/read` entry.
+- **New category** — `Analytics` under systems, a fifth filter chip.
+- **First real software screenshots** — six WebP shots from the actual reports (1440–1956 px, 74–118 KB each), not placeholder SVGs.
+- **Board** — the two new rows sit under NOCTRA at the existing section pitch; the whole craft block (art hub, pipeline, plates) moved down 614 px as one piece, so its arrangement is unchanged. Measured: zero card overlaps with every card open; row clearances 33 and 65 px (existing rows 12–49 px).
+- **llms.txt** — both projects listed.
+
 ### v4.14 — OG image + favicon — 2026-08-08
 - **OG image** (`public/og.png`, 1200×630) — the "origin node on the board": name, role, and wires fanning to project chips over the dot-grid, in the Nocturne palette. This is the preview card shown when the site is shared on social platforms.
 - **Favicon** (`app/icon.svg`) — a serif "D" node in the accent colour, traced from the Source Serif 4 glyph so it renders crisply at any size independent of webfonts.
