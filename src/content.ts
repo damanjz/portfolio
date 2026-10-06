@@ -54,6 +54,7 @@ export const categories = [
   { id: "automation", label: "Automation", discipline: "systems" },
   { id: "commerce", label: "Commerce", discipline: "systems" },
   { id: "multimedia", label: "Multimedia", discipline: "systems" },
+  { id: "analytics", label: "Analytics", discipline: "systems" },
 ] as const;
 
 export type CategoryId = (typeof categories)[number]["id"];
@@ -390,6 +391,106 @@ export const projects: Project[] = [
       { label: "STATUS", value: "LIVE" },
     ],
     specAccent: "HERO",
+  },
+  {
+    slug: "finance-bi",
+    name: "finance-bi",
+    num: "P.07",
+    tagline: "Five years of personal finance, four questions, one honest report.",
+    discipline: "systems",
+    category: "analytics",
+    description: "Synthetic bank, card, payroll and investment exports modelled in DuckDB, reconciled by 15 checks, and shown as a generated Power BI report.",
+    stack: ["Python", "DuckDB", "SQL", "DAX", "Power BI"],
+    status: "public",
+    href: "https://github.com/damanjz/personal-finance-bi",
+    hrefLabel: "view source",
+    metric: { label: "checks", value: "15 reconciled" },
+    year: "Oct 2026",
+    summary:
+      "An end-to-end BI build: realistic personal-finance exports, a tested SQL model in DuckDB, and a four-question Power BI report generated from code.",
+    gallery: [
+      { src: "/shots/finance-bi/where.webp", alt: "Power BI page 'Where does it go?': Sankey from gross pay to tax, provident fund, fixed costs, discretionary spend, investments and cash", caption: "Where does it go? Gross pay traced through tax and EPF to every destination." },
+      { src: "/shots/finance-bi/track.webp", alt: "Power BI page 'Am I on track?': trailing 12-month savings rate and debt to income", caption: "Am I on track? Savings rate as a trailing 12-month line, so one car purchase no longer flattens the chart." },
+      { src: "/shots/finance-bi/stop.webp", alt: "Power BI page 'When can I stop?': FIRE projection with sliders for return, inflation and withdrawal rate", caption: "When can I stop? Live what-if sliders recompute the FIRE age in DAX." },
+    ],
+    sections: [
+      {
+        heading: "Problem",
+        body: "Personal finance data is scattered across a bank statement, a credit card, payslips, fund confirmations, a provident-fund passbook and loan schedules. Each answers a narrow question; none answers the ones that matter: where the money goes, what it built, whether things are improving, and when work becomes optional.",
+      },
+      {
+        heading: "Build",
+        body: "A seeded generator writes the exports a Hyderabad software engineer would have over 60 months, mess included: UPI references, card bills that pay last month's spending, bonus months, a broken fixed deposit. Plain SQL in DuckDB types them into one ledger, sorts 2,818 transactions with regex rules kept as data, builds loan amortisation with a recursive CTE, and produces report-ready marts. The Power BI project (model and pages) is generated from the schema, not clicked together.",
+      },
+      {
+        heading: "Measurement",
+        body: "The export is blocked unless 15 reconciliation checks pass: bank balances chain line by line, salary credits match payslips, EMIs match the schedule, the cashflow identity holds every month. The checks were tested by corrupting the data six different ways; each was caught. Every headline measure was queried from the running Power BI model and matched DuckDB exactly.",
+      },
+    ],
+    decisions: [
+      { choice: "SYNTHETIC, NOT TOY", reason: "publishable, but messy enough to need real cleaning" },
+      { choice: "REPORT AS CODE", reason: "generated TMDL + PBIR: reviewable, reproducible" },
+      { choice: "ACCRUAL SPEND", reason: "card spend counts when it happens, not when it's paid" },
+    ],
+    facts: [
+      { label: "TYPE", value: "BI CASE STUDY" },
+      { label: "DATA", value: "60 MONTHS · SYNTHETIC" },
+      { label: "MODEL", value: "DUCKDB · PLAIN SQL" },
+      { label: "CHECKS", value: "15 / 15 PASS" },
+      { label: "REPORT", value: "POWER BI · GENERATED" },
+      { label: "STATUS", value: "PUBLIC REPO" },
+    ],
+    specAccent: "CHECKS",
+  },
+  {
+    slug: "hr-analytics",
+    name: "hr-analytics",
+    num: "P.08",
+    tagline: "Who leaves, why, and who's next.",
+    discipline: "systems",
+    category: "analytics",
+    description: "Four years of synthetic HR records, a tested DuckDB model, a flight-risk model held to a fairness check, and a Tableau workbench generated from code.",
+    stack: ["Python", "DuckDB", "SQL", "scikit-learn", "Tableau"],
+    status: "live",
+    href: "https://public.tableau.com/app/profile/daman.reddy/viz/HRAnalyticsWorkbench/Workbench",
+    hrefLabel: "open the live workbench",
+    metric: { label: "flight risk", value: "AUC 0.658" },
+    year: "Oct 2026",
+    summary:
+      "A people-analytics build for a 2,500-person IT services firm: attrition, hiring, engagement and pay equity, plus a flight-risk score that never sees gender.",
+    gallery: [
+      { src: "/shots/hr-analytics/workbench.webp", alt: "HR analytics workbench: filters, five KPIs, six views, the highest flight risks and the levers behind them", caption: "The whole firm: filters, five headline numbers, six views and the at-risk drill." },
+      { src: "/shots/hr-analytics/filtered.webp", alt: "The workbench filtered to the Data and Analytics department", caption: "One department: every number, chart and the drill table follow the filter." },
+      { src: "/shots/hr-analytics/bengaluru.webp", alt: "The workbench filtered to Bengaluru in FY 2024-25", caption: "Bengaluru, FY 2024-25: rolling attrition and eNPS narrow to the year chosen." },
+    ],
+    sections: [
+      {
+        heading: "Problem",
+        body: "HR data lives in separate systems: people and job changes in the HRIS, pay in payroll, requisitions in the ATS, anonymous scores in the survey tool. Leadership's questions cut across all of them: how fast are we losing people, which leavers hurt, are we paying fairly, and who is likely to go next?",
+      },
+      {
+        heading: "Build",
+        body: "A seeded generator simulates the firm month by month, with planted effects to find: resignations driven by pay against market, slow raises, long commutes and bench time; women paid 3.5% less for the same job. DuckDB builds a point-in-time monthly snapshot of every employee with ASOF joins, so nothing leaks from the future. A scikit-learn model trained on 2022-23 and tested on 2024 onwards scores everyone on the books and lists the levers HR could change. The Tableau workbook is written as XML by Python, matched to the file Tableau itself saves.",
+      },
+      {
+        heading: "Measurement",
+        body: "15 checks gate the export, each proven by breaking the data on purpose. Tableau's numbers match an independent DuckDB calculation for the whole firm and three filtered views, 20 values out of 20. The model reaches ROC AUC 0.658; its top 10% of scores catch 20.4% of leavers. Gender, age, region and university are never features, and the fairness table shows why women are still flagged more: they are paid less. Pay equity recovers the planted gap: 74.9% raw, 97.7% like for like.",
+      },
+    ],
+    decisions: [
+      { choice: "OUT-OF-TIME TEST", reason: "the model is judged on years it never saw" },
+      { choice: "RISK AS A RANK", reason: "the model over-predicts calm years; ranks stay honest" },
+      { choice: "WORKBOOK AS CODE", reason: "Tableau's own save as the spec; the XML rebuilds byte for byte" },
+    ],
+    facts: [
+      { label: "TYPE", value: "PEOPLE ANALYTICS" },
+      { label: "DATA", value: "4,238 PEOPLE · 48 MONTHS" },
+      { label: "MODEL", value: "GRADIENT BOOSTING" },
+      { label: "AUC", value: "0.658 OUT-OF-TIME" },
+      { label: "DASHBOARD", value: "TABLEAU PUBLIC · LIVE" },
+      { label: "STATUS", value: "PUBLIC REPO" },
+    ],
+    specAccent: "AUC",
   },
 
   /* ----------------------------------------------------------------------- */
