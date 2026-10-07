@@ -1,11 +1,12 @@
-import { categoryLabel, displayName, fitOf, type Project } from "@/content";
+import { categoryLabel, coverOf, displayName, fitOf, type Project } from "@/content";
 import { asset, srcSet } from "@/lib/asset";
 import { TLink } from "./Transition";
+import DataCard from "./DataCard";
 
-/** One project on a door page: black-and-white cover that colours on hover,
- *  or a typographic tile when no real image exists yet. */
+/** One project on a door page: a data project's pipeline card, a black-and-white
+ *  cover that colours on hover, or a typographic tile when no real image exists yet. */
 export default function WorkCard({ p, n, wide }: { p: Project; n: number; wide?: boolean }) {
-  const cover = p.gallery[0] ?? (p.reels?.[0] ? { src: p.reels[0].poster, alt: p.name } : undefined);
+  const cover = coverOf(p);
   return (
     <TLink
       href={`/projects/${p.slug}/`}
@@ -14,8 +15,10 @@ export default function WorkCard({ p, n, wide }: { p: Project; n: number; wide?:
       data-fade=""
       data-cursor="View"
     >
-      <div className="img" data-parallax={cover ? "" : undefined}>
-        {cover ? (
+      <div className="img" data-parallax={cover && !p.pipeline ? "" : undefined}>
+        {p.pipeline ? (
+          <DataCard name={p.name} year={p.year} pipe={p.pipeline} />
+        ) : cover ? (
           <img src={asset(cover.src)} srcSet={srcSet(cover.src)} sizes={wide ? "(max-width: 760px) 100vw, 96vw" : "(max-width: 760px) 100vw, 48vw"} alt={cover.alt} loading="lazy" decoding="async" />
         ) : (
           <div className="type" style={{ ["--fit" as string]: fitOf(displayName(p.name)) }}>

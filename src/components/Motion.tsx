@@ -79,7 +79,7 @@ export default function Motion() {
         });
       });
 
-      const reveal = document.querySelectorAll<HTMLElement>(".split:not(.door .split), [data-fade]");
+      const reveal = document.querySelectorAll<HTMLElement>(".split, [data-fade]");
       if (rm) {
         reveal.forEach((el) => el.classList.add("in"));
       } else {

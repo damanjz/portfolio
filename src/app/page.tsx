@@ -1,6 +1,6 @@
-import Doors from "@/components/Doors";
+import Dossier from "@/components/Dossier";
 
-/** Landing: three doors, one per craft. */
+/** Landing: who on the left, every work on the right. */
 export default function Home() {
-  return <Doors />;
+  return <Dossier />;
 }

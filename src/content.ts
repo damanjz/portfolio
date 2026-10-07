@@ -9,6 +9,9 @@ export const site = {
   role: "Systems developer · 3D environment artist · BI and data analyst",
   location: "Hyderabad, IN",
   status: "Open to work",
+  // landing intro
+  lede: ["3D artist turned", "systems builder."],
+  bio: "I ship local-first software with AI as the co-pilot, build worlds in Unreal and Blender, and turn messy records into reports people can act on.",
   email: "daman.w3d@gmail.com", // public work contact
   // Title < 60 chars (Google truncates ~60); keywords front-loaded.
   metaTitle: "Daman Reddy — Systems, 3D Environments, BI and Data",
@@ -82,6 +85,16 @@ export type Project = {
   decisions?: { choice: string; reason: string }[];
   facts: { label: string; value: string }[];
   specAccent?: string; // which spec label gets the accent (e.g. "NETWORK")
+  pipeline?: Pipeline; // data projects: drawn as a pipeline card instead of a screenshot
+};
+
+/** A data project's card: data in, the model (hero), the report out, four numbers. */
+export type Pipeline = {
+  mark: "bars" | "people" | "cross" | "network";
+  status: string;
+  live?: boolean;
+  flow: [{ name: string; note: string }, { name: string; note: string }, { name: string; note: string }];
+  stats: { value: string; label: string }[];
 };
 
 export const projects: Project[] = [
@@ -326,6 +339,21 @@ export const projects: Project[] = [
     hrefLabel: "view source",
     caseStudy: "/case-studies/finance-bi.pdf",
     metric: { label: "checks", value: "15 reconciled" },
+    pipeline: {
+      mark: "bars",
+      status: "Public repo",
+      flow: [
+        { name: "Raw records", note: "60 months · synthetic" },
+        { name: "DuckDB model", note: "plain SQL · 4 questions" },
+        { name: "Power BI", note: "generated from code" },
+      ],
+      stats: [
+        { value: "15/15", label: "checks pass" },
+        { value: "60", label: "months of data" },
+        { value: "33.2%", label: "savings rate found" },
+        { value: "4", label: "report pages" },
+      ],
+    },
     year: "Oct 2026",
     summary:
       "An end-to-end BI build: realistic personal-finance exports, a tested SQL model in DuckDB, and a four-question Power BI report generated from code.",
@@ -376,6 +404,22 @@ export const projects: Project[] = [
     repo: "https://github.com/damanjz/hr-analytics",
     caseStudy: "/case-studies/hr-analytics.pdf",
     metric: { label: "flight risk", value: "AUC 0.658" },
+    pipeline: {
+      mark: "people",
+      status: "Live on Tableau",
+      live: true,
+      flow: [
+        { name: "People data", note: "4,238 people · 48 months" },
+        { name: "Flight-risk model", note: "gradient boosting · out-of-time" },
+        { name: "Tableau", note: "Public · live workbench" },
+      ],
+      stats: [
+        { value: "0.658", label: "AUC, flight risk" },
+        { value: "20/20", label: "values match DuckDB" },
+        { value: "15", label: "checks gate export" },
+        { value: "97.7%", label: "pay ratio, like for like" },
+      ],
+    },
     year: "Oct 2026",
     summary:
       "A people-analytics build for a 2,500-person IT services firm: attrition, hiring, engagement and pay equity, plus a flight-risk score that never sees gender.",
@@ -429,6 +473,21 @@ export const projects: Project[] = [
     hrefLabel: "view source",
     caseStudy: "/case-studies/hospital-operations.pdf",
     metric: { label: "readmission AUC", value: "0.786 vs LACE 0.749" },
+    pipeline: {
+      mark: "cross",
+      status: "Public repo",
+      flow: [
+        { name: "ER visits", note: "168K · synthetic" },
+        { name: "Readmission model", note: "logistic regression vs LACE" },
+        { name: "Power BI", note: "Now · Flow · Readmissions" },
+      ],
+      stats: [
+        { value: "0.786", label: "AUC, readmissions" },
+        { value: "0.749", label: "LACE baseline" },
+        { value: "18/18", label: "checks pass" },
+        { value: "3", label: "report pages" },
+      ],
+    },
     year: "Oct 2026",
     summary:
       "Three years of a synthetic 256-bed hospital in Hyderabad: patient flow, bed occupancy and 30-day readmissions in DuckDB, a readmission model that beats the clinical LACE score, and a Power BI report generated from code.",
@@ -484,6 +543,22 @@ export const projects: Project[] = [
     repo: "https://github.com/damanjz/supply-chain-bi",
     caseStudy: "/case-studies/supply-chain.pdf",
     metric: { label: "stockout AUC", value: "0.840 vs rule 0.699" },
+    pipeline: {
+      mark: "network",
+      status: "Live on Tableau",
+      live: true,
+      flow: [
+        { name: "Network", note: "4 DCs · 40 suppliers · 200 SKUs" },
+        { name: "Stockout model", note: "gradient boosting vs rule" },
+        { name: "Tableau", note: "map as navigation · live" },
+      ],
+      stats: [
+        { value: "0.840", label: "AUC vs rule 0.699" },
+        { value: "80.2%", label: "OTIF, order lines" },
+        { value: "59.0%", label: "Kolkata on time in full" },
+        { value: "15/15", label: "checks pass" },
+      ],
+    },
     year: "Oct 2026",
     summary:
       "Three years of a synthetic Indian FMCG distributor: on-time-in-full, lead time, inventory and supplier performance in DuckDB, a 14-day stockout model that beats the reorder-point rule, and a Tableau workbook generated from code.",
@@ -920,6 +995,11 @@ export function projectsIn(id: TrackId): Project[] {
   const own = projects.filter((p) => trackOf(p) === id);
   const hasImage = (p: Project) => p.gallery.length > 0 || (p.reels?.length ?? 0) > 0;
   return [...own.filter(hasImage), ...own.filter((p) => !hasImage(p))];
+}
+
+/** The image that stands for a project: first screenshot, else the first reel's poster. */
+export function coverOf(p: Project): Shot | undefined {
+  return p.gallery[0] ?? (p.reels?.[0] ? { src: p.reels[0].poster, alt: p.name, caption: "" } : undefined);
 }
 
 /** Repo-style names read as words in giant caps: "flux-player" -> "flux player". */
