@@ -1,7 +1,7 @@
 import { tracks, type TrackId } from "@/content";
 import { TLink } from "./Transition";
 
-/** Sticky header for door and case-study pages: back link + door switcher. */
+/** Sticky header for craft and case-study pages: back link + craft switcher. */
 export default function Bar({
   backHref,
   backLabel,
@@ -15,7 +15,7 @@ export default function Bar({
 }) {
   return (
     <header className="bar">
-      <TLink href={backHref} label={backLabel} className="back">
+      <TLink href={backHref} label={backLabel} className="back" aria-label={backText}>
         <span className="arr" aria-hidden="true">&larr;</span>
         <span className="txt">{backText}</span>
       </TLink>
@@ -28,7 +28,7 @@ export default function Bar({
             className={`pill ${t.id === active ? "on" : ""}`}
             aria-current={t.id === active ? "page" : undefined}
           >
-            {t.id === "art" ? "Environments" : t.word}
+            {t.word.replace("|", "")}
           </TLink>
         ))}
       </nav>

@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 /**
  * Orange dot that trails the pointer and grows into a labelled disc over
- * anything with data-cursor="Label" (work cards, doors). Pointer devices only.
+ * anything with data-cursor="Label" (work cards, tiles, crafts). Pointer devices only.
  */
 export default function Cursor() {
   const ref = useRef<HTMLDivElement>(null);

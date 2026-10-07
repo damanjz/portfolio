@@ -65,6 +65,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${archivo.variable} ${grotesk.variable}`}>
+      <head>
+        <noscript>
+          <style>{"[data-fade],.split .ch,.wcolwrap{opacity:1!important;transform:none!important;filter:none!important}.me::after{transform:none!important}"}</style>
+        </noscript>
+      </head>
       <body>
         <StructuredData />
         {children}

@@ -8,7 +8,7 @@ import DataCard from "./DataCard";
 import { TLink } from "./Transition";
 
 type Line = { key: string; title: string; rest: string };
-const idle: Line = { key: "idle", title: `${String(tracks.reduce((n, t) => n + projectsIn(t.id).length, 0))} works`, rest: " across three crafts. Hover anything." };
+const idle: Line = { key: "idle", title: `${String(tracks.reduce((n, t) => n + projectsIn(t.id).length, 0))} works`, rest: " across three crafts." };
 
 /** Interleave the crafts, then deal into columns with a rotating offset so no
  *  column fills with one craft. */
@@ -39,11 +39,11 @@ function Tile({ p, copy }: { p: Project; copy?: boolean }) {
       {p.pipeline ? (
         <DataCard name={p.name} year={p.year} pipe={p.pipeline} />
       ) : cover ? (
-        <img src={asset(cover.src)} srcSet={srcSet(cover.src)} sizes="(max-width: 900px) 50vw, 20vw" alt={copy ? "" : cover.alt} loading="lazy" decoding="async" draggable={false} />
+        <img src={asset(cover.src)} srcSet={srcSet(cover.src)} sizes="(max-width: 520px) 50vw, (max-width: 900px) 33vw, 20vw" alt={copy ? "" : cover.alt} loading="lazy" decoding="async" draggable={false} />
       ) : null}
       <span className="lab">
         {displayName(p.name)}
-        <span>{`${tracks.find((x) => x.id === t)!.word} · ${p.year}`}</span>
+        <span>{`${tracks.find((x) => x.id === t)!.word.replace("|", "")} · ${p.year}`}</span>
       </span>
     </TLink>
   );
@@ -57,18 +57,22 @@ function Tile({ p, copy }: { p: Project; copy?: boolean }) {
 export default function Dossier() {
   const [ready, setReady] = useState(false);
   const [ncols, setNcols] = useState(3);
+  const [reps, setReps] = useState(2);
   const [lit, setLit] = useState<TrackId | null>(null);
   const [rowOn, setRowOn] = useState<TrackId | null>(null);
   const [lines, setLines] = useState<{ old?: Line; cur: Line; n: number }>({ cur: idle, n: 0 });
-  const [clock, setClock] = useState("");
   const wall = useRef<HTMLElement>(null);
   const me = useRef<HTMLElement>(null);
   const target = useRef(1);
+  const [paused, setPaused] = useState(false);
+  const pausedRef = useRef(false);
+  const posRef = useRef<number[]>([]);
+  const halt = useRef(false); // keyboard focus stops the wall at once, no ease
   const cols = useMemo(() => deal(ncols), [ncols]);
 
   const say = (l: Line) => setLines((s) => (s.cur.key === l.key ? s : { old: s.cur, cur: l, n: s.n + 1 }));
 
-  // intro once fonts are in; two columns on phones; Hyderabad time
+  // intro once fonts are in; two columns on phones
   useEffect(() => {
     let alive = true;
     document.fonts.ready.then(() => alive && requestAnimationFrame(() => setReady(true)));
@@ -76,14 +80,9 @@ export default function Dossier() {
     const fit = () => setNcols(mq.matches ? 2 : 3);
     fit();
     mq.addEventListener("change", fit);
-    const fmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" });
-    const tick = () => setClock(`${fmt.format(new Date())} IST`);
-    tick();
-    const id = window.setInterval(tick, 30000);
     return () => {
       alive = false;
       mq.removeEventListener("change", fit);
-      window.clearInterval(id);
     };
   }, []);
 
@@ -94,7 +93,8 @@ export default function Dossier() {
     me.current.querySelectorAll(".split, [data-fade]").forEach((el) => el.classList.add("in"));
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     // stats count up from zero, keeping their format (16, 0.840); words (UE5) stay as they are
-    me.current.querySelectorAll<HTMLElement>("[data-v]").forEach((el) => {
+    const rafs: number[] = [];
+    me.current.querySelectorAll<HTMLElement>("[data-v]").forEach((el, i) => {
       const v = el.dataset.v!;
       if (!/^\d+(\.\d+)?$/.test(v)) return;
       const dec = (v.split(".")[1] ?? "").length;
@@ -103,10 +103,11 @@ export default function Dossier() {
       const step = (t: number) => {
         const k = Math.min(1, Math.max(0, (t - t0) / 1600));
         el.textContent = k < 1 ? (end * (1 - Math.pow(1 - k, 3))).toFixed(dec).padStart(dec ? 0 : v.length, "0") : v;
-        if (k < 1) requestAnimationFrame(step);
+        if (k < 1) rafs[i] = requestAnimationFrame(step);
       };
-      requestAnimationFrame(step);
+      rafs[i] = requestAnimationFrame(step);
     });
+    return () => rafs.forEach((id) => cancelAnimationFrame(id));
   }, [ready]);
 
   // drift: one rAF loop, columns at different speeds and directions, eased toward a target speed
@@ -115,19 +116,39 @@ export default function Dossier() {
     const el = wall.current!;
     const colEls = [...el.querySelectorAll<HTMLElement>(".wcol")];
     const speed = [0.35, -0.28, 0.42];
-    const pos = colEls.map(() => 0);
+    const pos = (posRef.current = colEls.map(() => 0));
+    // one set = the distance from a tile to its first copy; read live, so resizes never leave a stale wrap point
+    const setH = (i: number) => {
+      const c = colEls[i], n = cols[i].length;
+      const t0 = c.children[0] as HTMLElement | undefined, t1 = c.children[n] as HTMLElement | undefined;
+      return t0 && t1 ? t1.offsetTop - t0.offsetTop : c.scrollHeight / reps;
+    };
+    // enough copies to cover the wall at its current height, re-checked whenever the wall resizes
+    const fill = () => {
+      const need = Math.max(...colEls.map((_, i) => Math.ceil(el.clientHeight / Math.max(setH(i), 1)) + 1));
+      if (need > reps) setReps(need);
+    };
+    fill();
+    const ro = new ResizeObserver(fill);
+    ro.observe(el);
     let gain = 1, last = performance.now(), raf = 0, onScreen = true;
     const io = new IntersectionObserver(([e]) => (onScreen = e.isIntersecting));
     io.observe(el);
     const loop = (t: number) => {
       const dt = Math.min(48, t - last) / 16.67;
       last = t;
-      gain += (target.current - gain) * 0.06;
-      if (onScreen)
+      const goal = pausedRef.current ? 0 : target.current;
+      if (halt.current) {
+        gain = 0;
+        halt.current = false;
+      }
+      gain += (goal - gain) * 0.06;
+      if (goal === 0 && gain < 0.003) gain = 0; // stop means stopped, not creeping
+      if (onScreen && gain !== 0)
         colEls.forEach((c, i) => {
-          const half = c.scrollHeight / 2;
-          pos[i] = (pos[i] - speed[i % 3] * gain * dt) % half;
-          if (pos[i] > 0) pos[i] -= half;
+          const h = setH(i);
+          pos[i] = (pos[i] - speed[i % 3] * gain * dt) % h;
+          if (pos[i] > 0) pos[i] -= h;
           c.style.transform = `translate3d(0,${pos[i]}px,0)`;
         });
       raf = requestAnimationFrame(loop);
@@ -136,11 +157,24 @@ export default function Dossier() {
     return () => {
       cancelAnimationFrame(raf);
       io.disconnect();
+      ro.disconnect();
     };
-  }, [ncols]);
+  }, [ncols, reps, cols]);
 
-  const overTile = (e: React.PointerEvent) => {
-    const el = (e.target as Element).closest<HTMLElement>(".tile");
+  // pointer and keyboard share these: a craft lights its work, a work lights its craft
+  const enterCraft = (id: TrackId, word: string, n: number) => {
+    setLit(id);
+    setRowOn(id);
+    target.current = 0.25;
+    say({ key: id, title: word, rest: ` · ${n} works, lit on the wall.` });
+  };
+  const leaveCraft = () => {
+    setLit(null);
+    setRowOn(null);
+    target.current = 1;
+  };
+  const showTile = (from: EventTarget) => {
+    const el = (from as Element).closest<HTMLElement>(".tile");
     if (!el) return;
     const p = projectsIn(el.dataset.t as TrackId).find((x) => x.slug === el.dataset.s);
     if (!p) return;
@@ -149,14 +183,25 @@ export default function Dossier() {
   };
 
   return (
-    <div className={`dossier ${ready ? "ready" : ""}`}>
+    <main className={`dossier ${ready ? "ready" : ""}`}>
       <section ref={me} className="me">
-        <div className="me-top" data-fade="">
+        {/* contact sits at the top, outside any reveal: visible at every window size, even without JS */}
+        <header className="me-top">
           <span className="name">
             {site.name} <span>/ Hyderabad</span>
           </span>
-          <span className="clock">{clock}</span>
-        </div>
+          <nav aria-label="Contact">
+            <a className="pill status" href={`mailto:${site.email}`} data-magnetic>
+              <span className="dot" /> {site.status}
+            </a>
+            <TLink href="/resume/" label="Resume" className="pill" data-magnetic>
+              Resume
+            </TLink>
+            <a className="pill on" href={`mailto:${site.email}`} data-magnetic>
+              Email me
+            </a>
+          </nav>
+        </header>
         <Split as="h1" text={`${site.name.split(" ")[0]}|${site.name.split(" ").slice(1).join(" ")}`} className="cap" />
         <p className="lede" data-fade="" style={{ ["--d" as string]: "350ms" }}>
           {`${site.lede[0]} `}
@@ -165,7 +210,7 @@ export default function Dossier() {
         <p className="bio" data-fade="" style={{ ["--d" as string]: "450ms" }}>
           {site.bio}
         </p>
-        <div className="now" data-fade="" style={{ ["--d" as string]: "550ms" }} aria-live="polite">
+        <div className="now" data-fade="" style={{ ["--d" as string]: "550ms" }} aria-hidden="true">
           {lines.old ? (
             <div key={`o${lines.n}`} className="old">
               <b>{lines.old.title}</b>
@@ -177,7 +222,7 @@ export default function Dossier() {
             <span>{lines.cur.rest}</span>
           </div>
         </div>
-        <nav className="crafts" data-fade="" style={{ ["--d" as string]: "650ms" }}>
+        <nav className="crafts" aria-label="Crafts" data-fade="" style={{ ["--d" as string]: "650ms" }}>
           {tracks.map((t) => {
             const n = projectsIn(t.id).length;
             const stat = t.stats[1];
@@ -188,17 +233,10 @@ export default function Dossier() {
                 label={t.word.replace("|", "")}
                 className={`craft ${rowOn === t.id ? "on" : ""}`}
                 data-cursor="Enter"
-                onPointerEnter={() => {
-                  setLit(t.id);
-                  setRowOn(t.id);
-                  target.current = 0.25;
-                  say({ key: t.id, title: t.word.replace("|", ""), rest: ` · ${n} works, lit on the wall.` });
-                }}
-                onPointerLeave={() => {
-                  setLit(null);
-                  setRowOn(null);
-                  target.current = 1;
-                }}
+                onPointerEnter={() => enterCraft(t.id, t.word.replace("|", ""), n)}
+                onPointerLeave={leaveCraft}
+                onFocus={() => enterCraft(t.id, t.word.replace("|", ""), n)}
+                onBlur={leaveCraft}
               >
                 <span className="n">{t.num}</span>
                 <span className="w">
@@ -213,22 +251,11 @@ export default function Dossier() {
             );
           })}
         </nav>
-        <div className="cta" data-fade="" style={{ ["--d" as string]: "800ms" }}>
-          <a className="pill on" href={`mailto:${site.email}`} data-magnetic>
-            Email me
-          </a>
-          <TLink href="/resume/" label="Resume" className="pill" data-magnetic>
-            Resume
-          </TLink>
-          <a className="pill" href={`mailto:${site.email}`} data-magnetic>
-            <span className="dot" /> {site.status}
-          </a>
-        </div>
       </section>
 
       <section
         ref={wall}
-        className={`wall ${lit ? "f" : ""}`}
+        className="wall"
         data-lit={lit ?? undefined}
         aria-label="All work"
         onPointerEnter={() => (target.current = 0.08)}
@@ -236,21 +263,52 @@ export default function Dossier() {
           target.current = 1;
           setRowOn(null);
         }}
-        onPointerOver={overTile}
+        onPointerOver={(e) => showTile(e.target)}
+        onFocus={(e) => {
+          const tile = (e.target as Element).closest<HTMLElement>(".tile");
+          if (!tile) return;
+          target.current = 0;
+          halt.current = true;
+          showTile(tile);
+          // the wall clips instead of scrolling, so move the tile's column to show it
+          const col = tile.parentElement as HTMLElement, i = [...wall.current!.querySelectorAll(".wcol")].indexOf(col);
+          const pos = posRef.current;
+          if (i < 0 || pos[i] === undefined) return;
+          const top = tile.offsetTop + pos[i], wallH = wall.current!.clientHeight;
+          if (top < 16 || top + tile.offsetHeight > wallH - 16) {
+            pos[i] = Math.min(0, 16 - tile.offsetTop); // stays in the wrap range, so the loop never swaps it for its copy
+            col.style.transform = `translate3d(0,${pos[i]}px,0)`;
+          }
+        }}
+        onBlur={() => {
+          target.current = 1;
+          setRowOn(null);
+        }}
       >
         {cols.map((c, i) => (
           <div key={`${ncols}-${i}`} className="wcolwrap" style={{ ["--c" as string]: i }}>
             <div className="wcol">
-              {c.map((p) => (
-                <Tile key={p.slug} p={p} />
-              ))}
-              {c.map((p) => (
-                <Tile key={`${p.slug}-copy`} p={p} copy />
-              ))}
+              {Array.from({ length: reps }, (_, k) => c.map((p) => <Tile key={`${p.slug}-${k}`} p={p} copy={k > 0} />))}
             </div>
           </div>
         ))}
+        <button
+          type="button"
+          className="wall-pause"
+          aria-pressed={paused}
+          aria-label="Pause the moving wall"
+          onClick={() => {
+            pausedRef.current = !paused;
+            setPaused(!paused);
+          }}
+        >
+          {paused ? (
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg>
+          ) : (
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 5.5h3v13h-3zM13.5 5.5h3v13h-3z" fill="currentColor" /></svg>
+          )}
+        </button>
       </section>
-    </div>
+    </main>
   );
 }

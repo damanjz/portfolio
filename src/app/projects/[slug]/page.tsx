@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { projects, getProject, categoryLabel, site, trackOf, getTrack, projectsIn, displayName, fitOf } from "@/content";
+import { projects, getProject, categoryLabel, site, trackOf, getTrack, projectsIn, displayName, fitOf, coverOf } from "@/content";
 import { asset, srcSet } from "@/lib/asset";
 import Bar from "@/components/Bar";
 import Split from "@/components/Split";
@@ -42,11 +42,11 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
   const idx = peers.findIndex((x) => x.slug === p.slug);
   const next = peers[(idx + 1) % peers.length];
   const shots = p.gallery;
-  const cover = shots[0] ?? (p.reels?.[0] ? { src: p.reels[0].poster, alt: p.name, caption: "" } : undefined);
+  const cover = coverOf(p);
   const rest = shots[0] ? shots.slice(1) : shots;
   const title = displayName(p.name);
   const nextTitle = displayName(next.name);
-  const doorName = track.id === "art" ? "Environments" : track.word;
+  const doorName = track.word.replace("|", "");
 
   return (
     <>

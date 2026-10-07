@@ -90,7 +90,7 @@ export type Project = {
 
 /** A pipeline card: what goes in, the core (orange), what comes out, four numbers. */
 export type Pipeline = {
-  mark: "bars" | "people" | "cross" | "network" | "lock" | "play";
+  mark: "bars" | "people" | "cross" | "network" | "lock" | "play" | "leak";
   status: string;
   live?: boolean;
   flow: [{ name: string; note: string }, { name: string; note: string }, { name: string; note: string }];
@@ -488,9 +488,6 @@ export const projects: Project[] = [
     specAccent: "AUC",
   },
 
-  /* ----------------------------------------------------------------------- */
-  /*  CRAFT — 3D / art. Real renders from the project hub, optimized to WebP. */
-  /* ----------------------------------------------------------------------- */
   {
     slug: "hospital-operations",
     name: "hospital-operations",
@@ -633,6 +630,81 @@ export const projects: Project[] = [
     ],
     specAccent: "AUC",
   },
+  {
+    slug: "saas-revenue-leak",
+    name: "saas-revenue-leak",
+    tagline: "Five revenue leaks, planted and sealed away. The analytics had to find them blind.",
+    discipline: "systems",
+    category: "analytics",
+    stack: ["Python", "DuckDB", "dbt", "XGBoost", "Power BI"],
+    status: "public",
+    href: "https://github.com/damanjz/saas-revenue-leak-bi",
+    hrefLabel: "view source",
+    caseStudy: "/case-studies/saas-revenue-leak.pdf",
+    metric: { label: "leaks found", value: "5 of 5, blind" },
+    pipeline: {
+      mark: "leak",
+      status: "Public repo",
+      flow: [
+        { name: "Simulated SaaS", note: "1,107 accounts · 5 sealed leaks" },
+        { name: "Leak monitor", note: "6 detectors · dbt star schema" },
+        { name: "Power BI", note: "4 pages · generated from code" },
+      ],
+      stats: [
+        { value: "5/5", label: "planted leaks found" },
+        { value: "19/20", label: "across four worlds" },
+        { value: "0.73", label: "churn AUC, out of time" },
+        { value: "69/69", label: "numbers match DuckDB" },
+      ],
+    },
+    year: "Oct 2026",
+    summary:
+      "A B2B SaaS revenue engine built so it can be graded: five revenue leaks were planted in a simulated business and sealed away, and the warehouse, the anomaly monitor and the churn model had to find them blind.",
+    gallery: [
+      { src: "/shots/saas-revenue-leak/revenue.webp", alt: "Power BI Revenue page: ARR $20.6M, MRR growth 108.3%, NRR 85.1%, MRR over time, monthly MRR movements, retention and MRR lost by segment", caption: "Revenue: $1.72M MRR at Sep 2026, up 108% in a year, with what was added and what leaked each month." },
+      { src: "/shots/saas-revenue-leak/cohorts.webp", alt: "Power BI Cohorts page: a cohort grid of customers still paying by signup month and months since signup", caption: "Cohorts: the April and May 2025 signups fall away faster than the rest." },
+      { src: "/shots/saas-revenue-leak/accounts.webp", alt: "Power BI Accounts page: high-risk accounts, model risk against health score, a call list by expected loss and the latest leak alerts", caption: "Accounts: a call list ranked by expected loss, beside the leak monitor's latest alerts." },
+      { src: "/shots/saas-revenue-leak/account.webp", alt: "Power BI Account page for one enterprise account: MRR, churn probability, usage, health score, billing ledger and support tickets", caption: "Account: one customer end to end, with the reasons the model flags it." },
+    ],
+    sections: [
+      {
+        heading: "Problem",
+        body: "Revenue analytics is rarely checked against the truth, because nobody knows the truth. This build plants it: five revenue leaks were written into a simulated business and sealed away before any analysis, so the warehouse, the anomaly monitor and the churn model are graded against an answer key, not judged by how they look.",
+      },
+      {
+        heading: "Build",
+        body: "A day-by-day simulation of a B2B SaaS company from October 2024 to September 2026: 1,107 accounts across SMB, Mid-Market and Enterprise, with 13 kinds of dirty data mixed in. dbt on DuckDB builds a Kimball star schema with SCD Type 2 and enforced contracts. A six-detector leak monitor and a churn model (scikit-learn, XGBoost) sit on top, and the Power BI report (Revenue, Cohorts, Accounts, Account) is generated entirely from code.",
+      },
+      {
+        heading: "Measurement",
+        body: "105 dbt nodes build with tests and contracts, and 13 of 13 injected data-problem types are caught (39,161 dirty rows). 14 of 14 deliberate breakages are caught. 69 of 69 Power BI figures match DuckDB, 3,391 of 3,391 text lines are measured to fit, and two runs from scratch give 90 of 90 byte-identical files.",
+      },
+      {
+        heading: "What it found",
+        body: "The monitor found 5 of 5 planted leaks on the main run and 19 of 20 across four simulated worlds. False alarms fell from 10 to 3 once the detectors were rebuilt as Poisson, binomial and two-proportion tests, with both versions rerun on three unseen worlds. Tested out of time, the churn model reaches ROC AUC 0.73: the riskiest 10% churn at 2.9x the base rate, and 44% of churns are flagged in the 60 days before, a median 41 days ahead.",
+      },
+    ],
+    decisions: [
+      { choice: "SEALED ANSWER KEY", reason: "grade the analytics, don't just build them" },
+      { choice: "STATISTICAL DETECTORS", reason: "false alarms 10 to 3, checked on unseen worlds" },
+      { choice: "REPORT AS CODE", reason: "TMDL + PBIR, rebuilt byte-identical" },
+    ],
+    facts: [
+      { label: "TYPE", value: "BI CASE STUDY" },
+      { label: "DATA", value: "1,107 ACCOUNTS · 24 MONTHS · SYNTHETIC" },
+      { label: "WAREHOUSE", value: "DBT · DUCKDB · STAR SCHEMA" },
+      { label: "LEAKS", value: "5 / 5 FOUND · 19 / 20 ACROSS 4 WORLDS" },
+      { label: "AUC", value: "0.73 OUT-OF-TIME" },
+      { label: "CHECKS", value: "69 / 69 NUMBERS MATCH" },
+      { label: "REPORT", value: "POWER BI · GENERATED" },
+      { label: "STATUS", value: "PUBLIC REPO" },
+    ],
+    specAccent: "LEAKS",
+  },
+
+  /* ----------------------------------------------------------------------- */
+  /*  CRAFT — 3D / art. Real renders from the project hub, optimized to WebP. */
+  /* ----------------------------------------------------------------------- */
   {
     slug: "umbraixs",
     name: "Umbraixs",
@@ -940,8 +1012,6 @@ export type Track = {
   line2: string; // door-page hero, line 2
   fit: number; // hero size: content width / fit (em), same scale as the approved v5 build
   cover: string; // landing door image
-  coverPos?: string; // object-position when the subject is not centred
-  coverDim?: boolean; // busy, high-contrast covers (text, code) sit darker behind the labels
   intro: string; // the one-paragraph pitch; introEm is accented
   introEm: string;
   stats: { value: string; label: string }[];
@@ -959,8 +1029,6 @@ export const tracks: Track[] = [
     line2: "Developer",
     fit: 9.2,
     cover: "/doors/systems.webp",
-    coverPos: "left top",
-    coverDim: true,
     intro: "I ship complete software with AI as the co-pilot and my judgement at the wheel:",
     introEm: "local-first, security-hardened, measured before it ships.",
     stats: [
@@ -1002,9 +1070,9 @@ export const tracks: Track[] = [
     intro: "I turn messy records into reports people can act on,",
     introEm: "with every number reconciled back to SQL before it ships.",
     stats: [
-      { value: "04", label: "end-to-end BI builds" },
+      { value: "05", label: "end-to-end BI builds" },
       { value: "0.840", label: "best model ROC AUC, stockouts" },
-      { value: "63", label: "of 63 report numbers matched to SQL" },
+      { value: "63", label: "of 63 hospital report numbers matched to SQL" },
     ],
     ribbon: ["SQL", "DuckDB", "Python", "Power BI", "DAX", "Tableau", "Modelling", "Reconciliation"],
     outro: ["Let's find", "the signal"],

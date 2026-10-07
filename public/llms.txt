@@ -10,11 +10,10 @@ Site: https://damanjz.github.io/portfolio/
 Contact: daman.w3d@gmail.com · GitHub @damanjz · ArtStation @damanpsd
 Status: Open to work (replies in ~24h)
 
-## Principles
-- Local-first: data lives on the user's disk; sync is a feature, not a landlord.
-- Measured: if it isn't evaluated, it isn't done — evals gate every prompt.
-- Build the tool: when the right tool doesn't exist, that becomes the project.
-- Hardened: threat-model first; every dependency and surface earns its keep.
+## How I work (same as the site)
+- Systems: Local-first. Measured, then shipped. Threat-model first. AI speeds it up, I own it.
+- 3D environments: Composition first. Blockout to beauty. Performance is part of the art. Built for where it lands.
+- Data: Every number reconciles. Break it on purpose. Fair by design. Reports as code.
 
 ## AI-assisted systems development (https://damanjz.github.io/portfolio/systems/)
 - [protec](https://damanjz.github.io/portfolio/projects/protec/): A password manager that never phones home — Rust core, encrypted local vault, Windows Hello unlock, browser extension over native messaging. 16 hardening fixes from a six-agent audit. Public: https://github.com/damanjz/protec
@@ -29,6 +28,7 @@ Status: Open to work (replies in ~24h)
 
 - [hospital-operations](https://damanjz.github.io/portfolio/projects/hospital-operations/): Three years of a synthetic 256-bed Hyderabad hospital: patient flow, bed occupancy and 30-day readmissions in DuckDB (18 checks), a readmission model at ROC AUC 0.786 vs 0.749 for the LACE score, and a Power BI report generated from code whose 63 numbers match SQL. Public: https://github.com/damanjz/hospital-operations-bi
 - [supply-chain](https://damanjz.github.io/portfolio/projects/supply-chain/): Three years of a synthetic Indian FMCG distributor: OTIF, lead time, inventory and supplier performance in DuckDB (15 checks), a 14-day stockout model at ROC AUC 0.840 vs 0.699 for the reorder-point rule, and a Tableau workbook generated from code. Live: https://public.tableau.com/app/profile/daman.reddy/viz/SupplyChainNetwork_17913286536000/Network · Public: https://github.com/damanjz/supply-chain-bi
+- [saas-revenue-leak](https://damanjz.github.io/portfolio/projects/saas-revenue-leak/): A B2B SaaS revenue engine graded against a sealed answer key: five revenue leaks planted in a simulated business (1,107 accounts, Oct 2024 to Sep 2026); the dbt/DuckDB warehouse, a six-detector leak monitor and a churn model found 5 of 5 on the main run, 19 of 20 across four worlds; churn AUC 0.73 out of time; Power BI generated from code, 69 of 69 numbers match DuckDB. Public: https://github.com/damanjz/saas-revenue-leak-bi
 
 ## 3D environment art (https://damanjz.github.io/portfolio/art/)
 - [Umbraixs](https://damanjz.github.io/portfolio/projects/umbraixs/): A semi-stylized medieval-village environment in Unreal Engine 5.6 (Lumen, Nanite) — ~100 fps against a 60 fps target. MA Animation technical showcase.

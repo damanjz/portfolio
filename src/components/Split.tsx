@@ -24,7 +24,7 @@ export default function Split({
   return (
     <Tag
       className={`split ${className}`}
-      aria-label={text.replace(/\|/g, "")}
+      aria-label={text.replace(/\|/g, " ")}
       style={{ ...style, ["--d" as string]: `${delay}ms` }}
     >
       {lines.map((line, li) => (

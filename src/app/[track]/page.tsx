@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   };
 }
 
-/** One door: a calm opening (title and pitch, no imagery), the numbers,
+/** One craft: a calm opening (title and pitch, no imagery), the numbers,
  *  how the work is done, then every piece of work and the contact band. */
 export default async function TrackPage({ params }: { params: Promise<Params> }) {
   const t = getTrack((await params).track);
@@ -38,7 +38,7 @@ export default async function TrackPage({ params }: { params: Promise<Params> })
 
   return (
     <>
-      <Bar backHref="/" backLabel={site.name} backText="All doors" active={t.id} />
+      <Bar backHref="/" backLabel={site.name} backText="All work" active={t.id} />
 
       <section className="hero" style={{ ["--fit" as string]: t.fit }}>
         <span className="lbl" data-fade="">

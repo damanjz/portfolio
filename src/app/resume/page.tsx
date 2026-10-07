@@ -79,7 +79,7 @@ export default function ResumePage() {
 
   return (
     <>
-      <Bar backHref="/" backLabel={site.name} backText="All doors" />
+      <Bar backHref="/" backLabel={site.name} backText="All work" />
 
       <section className="rs-hero">
         <span className="lbl" data-fade="">Resume</span>
@@ -121,7 +121,7 @@ export default function ResumePage() {
                   <Split as="h2" text={s.heading} className="cap" />
                   {door && (
                     <TLink href={door[0]} label={door[1]} className="rs-door">
-                      {`Open the ${door[1]} door →`}
+                      {`All ${door[1]} work →`}
                     </TLink>
                   )}
                 </div>
@@ -165,7 +165,7 @@ export default function ResumePage() {
                         )}
                         {link && (
                           <TLink href={link[1]} label={link[2]} className="rs-link" data-cursor="View">
-                            {link[1].startsWith("/projects/") ? `View ${link[2]} →` : `Open the ${link[2]} door →`}
+                            {link[1].startsWith("/projects/") ? `View ${link[2]} →` : `All ${link[2]} work →`}
                           </TLink>
                         )}
                       </article>

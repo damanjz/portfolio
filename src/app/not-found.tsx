@@ -13,18 +13,18 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <div className="nf">
-      <header className="topbar" style={{ opacity: 1 }}>
+      <header className="me-top nf-top">
         <span className="name">
           {site.name} <span>/ Hyderabad</span>
         </span>
       </header>
       <main>
         <span className="lbl">Error 404</span>
-        <Split as="h1" text="No door|here" className="cap" />
+        <Split as="h1" text="Nothing|here" className="cap" />
         <p data-fade="">The page you followed was moved, renamed or never existed.</p>
         <div>
           <TLink href="/" label={site.name} className="pill on" data-magnetic>
-            &larr; Back to the doors
+            &larr; Back to all work
           </TLink>
         </div>
       </main>

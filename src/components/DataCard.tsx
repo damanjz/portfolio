@@ -21,6 +21,7 @@ const marks: Record<Pipeline["mark"], React.ReactNode> = {
     </>
   ),
   play: <path d="M8 5.5v13l10.5-6.5z" />,
+  leak: <path d="M12 3.5c3.2 4.4 6 7.6 6 10.9a6 6 0 0 1-12 0c0-3.3 2.8-6.5 6-10.9zM9.5 15a2.5 2.5 0 0 0 2.5 2.5" />,
   network: (
     <>
       <circle cx="5" cy="6" r="2.2" />
