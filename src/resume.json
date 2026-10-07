@@ -21,7 +21,7 @@
  },
  {
   "k": "p",
-  "t": "Creative technologist working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK) and a 15-month 3D Generalist internship at Blur'd LLP. In 2026 built four BI case studies in SQL, Python, Power BI and Tableau, each backed by 15 to 18 automated data checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
+  "t": "Creative technologist working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK) and a 15-month 3D Generalist internship at Blur'd LLP. In 2026 built five BI case studies in SQL, Python, Power BI and Tableau, each gated by automated data checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
  },
  {
   "k": "h",
@@ -53,12 +53,12 @@
  },
  {
   "k": "entry",
-  "l": "Product and Brand Lead, Datatree Systems (family business)",
+  "l": "Product and Brand Lead, Datatree Systems",
   "r": "Jul 2026 – Present"
  },
  {
   "k": "b",
-  "t": "Helping grow the family business by launching GrafiLabs, a new AI service that creates flyers and social posts for small retailers."
+  "t": "Building GrafiLabs, a new AI service that creates flyers and social posts for small retailers."
  },
  {
   "k": "b",
@@ -80,6 +80,19 @@
  {
   "k": "h",
   "t": "Data Analytics Projects"
+ },
+ {
+  "k": "entry",
+  "l": "SaaS Revenue Leak BI: Python, dbt, DuckDB, XGBoost, Power BI",
+  "r": "Oct 2026"
+ },
+ {
+  "k": "b",
+  "t": "Simulated a B2B SaaS business (1,107 accounts, Oct 2024 to Sep 2026) with five revenue leaks planted and sealed away; a six-detector monitor found 5 of 5 blind on the main run and 19 of 20 across four simulated worlds."
+ },
+ {
+  "k": "b",
+  "t": "dbt star schema on DuckDB caught 13 of 13 injected data-problem types; churn model ROC AUC 0.73 out of time; Power BI generated from code, 69 of 69 numbers matching DuckDB."
  },
  {
   "k": "entry",
@@ -222,7 +235,7 @@
  },
  {
   "k": "b",
-  "t": "Flux Player (Python, PySide6 native video player); NOCTRA (React Native, Express, Prisma, Razorpay UPI); Umbra (vanilla JS storefront, custom WebGL shader, zero dependencies); portfolio site (Next.js, 16 case studies)."
+  "t": "Flux Player (Python, PySide6 native video player); NOCTRA (React Native, Express, Prisma, Razorpay UPI); Umbra (vanilla JS storefront, custom WebGL shader, zero dependencies); portfolio site (Next.js, 18 case studies)."
  },
  {
   "k": "h",
