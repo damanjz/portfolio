@@ -209,7 +209,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 @keyframes pipe-flow { to { transform: translateX(250%); } }
 /* thumbnail size (the landing wall): names and numbers only, the small print would be unreadable */
-@container (max-width: 420px) {
+@container (max-width: 480px) {
   .pipe .node span { display: none; }
   .pipe .node, .pipe .node.model { min-height: calc(11 * var(--u)); }
   .pipe .node b { font-size: calc(3.6 * var(--u)); }
@@ -221,7 +221,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 
 /* ---------- door + case-study header ---------- */
-.bar { position: sticky; top: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px var(--gut); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.bar { position: sticky; top: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px var(--gut); background: var(--bg); /* solid: content scrolling under the bar must not show through */ }
 .bar .back { display: inline-flex; align-items: center; gap: 10px; font-weight: 500; font-size: 15px; }
 .bar .back .arr { display: inline-grid; place-items: center; width: 34px; height: 34px; border: 1.5px solid var(--ink); border-radius: 50%; transition: background 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease); }
 .bar .back:hover .arr { background: var(--acc); border-color: var(--acc); color: #fff; }
@@ -265,6 +265,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .card .img { position: relative; border-radius: var(--radius); overflow: hidden; aspect-ratio: 16 / 10; background: #d0d0cb; }
 .card.wide { grid-column: 1 / -1; }
 .card.wide .img { aspect-ratio: 21 / 9; }
+@media (min-width: 1100px) {
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 16px; }
+  .card.wide { grid-column: auto; }
+  .card.wide .img { aspect-ratio: 16 / 10; }
+}
 .card .img img { position: absolute; inset: -8% 0; width: 100%; height: 116%; object-fit: cover; object-position: top; filter: grayscale(1); transition: filter 0.9s var(--ease), scale 1.4s var(--ease); }
 .card:hover .img img { filter: none; scale: 1.05; }
 .card .type { position: absolute; inset: 0; display: flex; align-items: flex-end; padding: clamp(16px, 2vw, 28px); background: var(--ink); color: var(--bg); transition: background 0.6s var(--ease); container-type: inline-size; }
@@ -336,6 +341,18 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .fig:hover .play { background: rgb(0 0 0 / 0.1); }
 .play span { display: inline-flex; align-items: center; gap: 10px; background: var(--acc); color: #fff; border-radius: 999px; padding: 12px 22px; font-weight: 500; font-size: 15px; transition: transform 0.5s var(--ease); }
 .fig:hover .play span { transform: scale(1.06); }
+
+/* desktop: images stay full width but shorter; the rest three to a row */
+@media (min-width: 1100px) {
+  .cs-cover { aspect-ratio: 21 / 9; }
+  /* six tracks: three per row; a short last row fills the width (two share it, one alone runs wide and short) */
+  .figs { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .figs .fig, .figs .fig:first-child { grid-column: span 2; }
+  .figs .fig:first-child .frame { aspect-ratio: 16 / 10; }
+  .figs .fig:nth-child(3n + 1):nth-last-child(2), .figs .fig:nth-child(3n + 2):last-child { grid-column: span 3; }
+  .figs .fig:nth-child(3n + 1):last-child { grid-column: 1 / -1; }
+  .figs .fig:nth-child(3n + 1):last-child .frame { aspect-ratio: 21 / 9; }
+}
 .play small { position: absolute; right: 12px; bottom: 12px; font-size: 12px; color: #fff; background: rgb(0 0 0 / 0.55); padding: 4px 10px; border-radius: 999px; }
 
 .lightbox { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; background: rgb(20 20 20 / 0.94); color: var(--on-dark); padding: 16px var(--gut) 20px; }

@@ -19,7 +19,7 @@ export default function WorkCard({ p, n, wide }: { p: Project; n: number; wide?:
         {p.pipeline ? (
           <DataCard name={p.name} year={p.year} pipe={p.pipeline} />
         ) : cover ? (
-          <img src={asset(cover.src)} srcSet={srcSet(cover.src)} sizes={wide ? "(max-width: 760px) 100vw, 96vw" : "(max-width: 760px) 100vw, 48vw"} alt={cover.alt} loading="lazy" decoding="async" />
+          <img src={asset(cover.src)} srcSet={srcSet(cover.src)} sizes={wide ? "(max-width: 760px) 100vw, (max-width: 1100px) 96vw, 32vw" : "(max-width: 760px) 100vw, (max-width: 1100px) 48vw, 32vw"} alt={cover.alt} loading="lazy" decoding="async" />
         ) : (
           <div className="type" style={{ ["--fit" as string]: fitOf(displayName(p.name)) }}>
             <span className="tag">
