@@ -9,6 +9,20 @@ All notable changes to the portfolio. v6 ("dossier") is the live site; v5 ("thre
 
 The landing becomes a dossier: who on the left, every work on the right. The three craft pages stay.
 
+### v6.5 — Seven pipeline cards — 2026-10-07
+- **Pipeline cards** each get their own layout and colour: ledger (Finance BI, emerald), spotlight (HR Analytics, violet), rail (Hospital Operations, rose), network (Supply Chain, amber), split (SaaS Revenue Leak, orange), stack (Protec, blue), transport (Flux Player, teal). Black and white until hovered; the lines pulse on hover only. Homepage tiles show names and numbers only.
+- **Fix** — arriving on the landing from another page measured the wall before layout and rendered thousands of tile copies (8,407 on a phone). The wall now waits for real tile heights, re-checks while it runs, and caps the copies.
+
+### v6.4 — Fuller, smaller galleries — 2026-10-07
+- **Galleries** show four small images per row on desktop; a short last row shares the width.
+- **22 more images**: model and pipeline cards for the four BI case studies, four charts for SaaS Revenue Leak, and screenshots of Protec, Flux Player, AI Calendar and VOLT captured locally with demo data.
+
+### v6.3 — Smaller images, lint, resume — 2026-10-07
+- **Craft pages** show three cards per row from 1100 px; project covers are 21:9.
+- **Header bar** is solid, so content no longer shows through it while scrolling.
+- **Lint** runs again: Next 16 presets imported directly, the unused `@eslint/eslintrc` removed; `npm run lint` passes clean.
+- **Resume page and PDF**: Datatree Systems listed as a standalone role; SaaS Revenue Leak added and linked; five BI case studies.
+
 ### v6.2 — Fifth BI build and a full scan — 2026-10-07
 - **Added** `saas-revenue-leak` (BI piece 5): five revenue leaks planted and sealed, found 5 of 5 blind; pipeline card, project page, case-study PDF. The Data page now counts five builds.
 - **Contact** buttons move to the top row of the landing, visible at any window height.
