@@ -124,8 +124,11 @@ export default function Dossier() {
       return t0 && t1 ? t1.offsetTop - t0.offsetTop : c.scrollHeight / reps;
     };
     // enough copies to cover the wall at its current height, re-checked whenever the wall resizes
+    // tiles are at least ~100 px tall; anything less means layout isn't ready yet (e.g. mid page transition)
+    const ready = () => colEls.every((_, i) => setH(i) > 100);
     const fill = () => {
-      const need = Math.max(...colEls.map((_, i) => Math.ceil(el.clientHeight / Math.max(setH(i), 1)) + 1));
+      if (!ready()) return;
+      const need = Math.min(8, Math.max(...colEls.map((_, i) => Math.ceil(el.clientHeight / setH(i)) + 1)));
       if (need > reps) setReps(need);
     };
     fill();
@@ -134,9 +137,11 @@ export default function Dossier() {
     let gain = 1, last = performance.now(), raf = 0, onScreen = true;
     const io = new IntersectionObserver(([e]) => (onScreen = e.isIntersecting));
     io.observe(el);
+    let frames = 0;
     const loop = (t: number) => {
       const dt = Math.min(48, t - last) / 16.67;
       last = t;
+      if (++frames % 30 === 0) fill(); // catches layout that settles without a resize (page transitions)
       const goal = pausedRef.current ? 0 : target.current;
       if (halt.current) {
         gain = 0;
@@ -147,6 +152,7 @@ export default function Dossier() {
       if (onScreen && gain !== 0)
         colEls.forEach((c, i) => {
           const h = setH(i);
+          if (h <= 100) return; // not laid out yet
           pos[i] = (pos[i] - speed[i % 3] * gain * dt) % h;
           if (pos[i] > 0) pos[i] -= h;
           c.style.transform = `translate3d(0,${pos[i]}px,0)`;

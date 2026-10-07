@@ -88,9 +88,13 @@ export type Project = {
   pipeline?: Pipeline; // drawn as a pipeline card instead of a screenshot
 };
 
-/** A pipeline card: what goes in, the core (orange), what comes out, four numbers. */
+/** A pipeline card: what goes in, the core, what comes out, four numbers (the first leads).
+ *  Each card has its own layout and colour so no two look alike. */
 export type Pipeline = {
   mark: "bars" | "people" | "cross" | "network" | "lock" | "play" | "leak";
+  layout: "ledger" | "spotlight" | "rail" | "network" | "split" | "stack" | "transport";
+  accent: string;
+  onAccent?: string; // text on the accent when the accent is light
   status: string;
   live?: boolean;
   flow: [{ name: string; note: string }, { name: string; note: string }, { name: string; note: string }];
@@ -110,6 +114,8 @@ export const projects: Project[] = [
     metric: { label: "audit", value: "16 hardening fixes" },
     pipeline: {
       mark: "lock",
+      layout: "stack",
+      accent: "#3b82f6",
       status: "Public repo",
       flow: [
         { name: "Browser extension", note: "native messaging · no port" },
@@ -267,6 +273,9 @@ export const projects: Project[] = [
     metric: { label: "runtime", value: "native" },
     pipeline: {
       mark: "play",
+      layout: "transport",
+      accent: "#14b8a6",
+      onAccent: "#04201d",
       status: "Public repo",
       flow: [
         { name: "Your videos", note: "local files · playlist" },
@@ -381,6 +390,9 @@ export const projects: Project[] = [
     metric: { label: "checks", value: "15 reconciled" },
     pipeline: {
       mark: "bars",
+      layout: "ledger",
+      accent: "#10b981",
+      onAccent: "#06281d",
       status: "Public repo",
       flow: [
         { name: "Raw records", note: "60 months · synthetic" },
@@ -388,9 +400,9 @@ export const projects: Project[] = [
         { name: "Power BI", note: "generated from code" },
       ],
       stats: [
+        { value: "33.2%", label: "savings rate found" },
         { value: "15/15", label: "checks pass" },
         { value: "60", label: "months of data" },
-        { value: "33.2%", label: "savings rate found" },
         { value: "4", label: "report pages" },
       ],
     },
@@ -448,6 +460,8 @@ export const projects: Project[] = [
     metric: { label: "flight risk", value: "AUC 0.658" },
     pipeline: {
       mark: "people",
+      layout: "spotlight",
+      accent: "#8b5cf6",
       status: "Live on Tableau",
       live: true,
       flow: [
@@ -516,6 +530,8 @@ export const projects: Project[] = [
     metric: { label: "readmission AUC", value: "0.786 vs LACE 0.749" },
     pipeline: {
       mark: "cross",
+      layout: "rail",
+      accent: "#f43f5e",
       status: "Public repo",
       flow: [
         { name: "ER visits", note: "168K · synthetic" },
@@ -588,6 +604,9 @@ export const projects: Project[] = [
     metric: { label: "stockout AUC", value: "0.840 vs rule 0.699" },
     pipeline: {
       mark: "network",
+      layout: "network",
+      accent: "#f59e0b",
+      onAccent: "#2a1a00",
       status: "Live on Tableau",
       live: true,
       flow: [
@@ -662,6 +681,8 @@ export const projects: Project[] = [
     metric: { label: "leaks found", value: "5 of 5, blind" },
     pipeline: {
       mark: "leak",
+      layout: "split",
+      accent: "#fe6608",
       status: "Public repo",
       flow: [
         { name: "Simulated SaaS", note: "1,107 accounts · 5 sealed leaks" },
