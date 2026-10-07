@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${base}/`, lastModified: now, changeFrequency: "monthly", priority: 1 },
     ...(["systems", "art", "data"] as const).map((t) => ({ url: `${base}/${t}/`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.9 })),
+    { url: `${base}/resume/`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
   ];
 
   const projectRoutes: MetadataRoute.Sitemap = projects.map((p) => ({

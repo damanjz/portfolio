@@ -48,6 +48,9 @@ export default function Doors() {
           <a className="pill hide-s" href={`mailto:${site.email}`} data-magnetic>
             <span className="dot" /> {site.status}
           </a>
+          <TLink href="/resume/" label="Resume" className="pill" data-magnetic>
+            Resume
+          </TLink>
           <a className="pill on" href={`mailto:${site.email}`} data-magnetic>
             Email me
           </a>
@@ -60,7 +63,7 @@ export default function Doors() {
             key={t.id}
             href={`/${t.id}/`}
             label={t.word.replace("|", "")}
-            className="door"
+            className={t.coverDim ? "door dim" : "door"}
             style={{ ["--n" as string]: n }}
             data-cursor="Enter"
             onPointerMove={drift}

@@ -100,6 +100,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .door img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.08) brightness(0.72); transform: scale(1.18); transition: filter 0.9s var(--ease), transform 1.6s var(--ease); }
 .ready .door img { transform: scale(1.04); }
 .door::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgb(0 0 0 / 0.45), rgb(0 0 0 / 0) 22%, rgb(0 0 0 / 0) 38%, rgb(0 0 0 / 0.8)); }
+.door.dim img { filter: grayscale(1) brightness(0.42); }
 .door .top, .door .bot { position: absolute; left: var(--pad); right: var(--pad); z-index: 2; }
 .door .top { top: var(--pad); font-size: 13px; letter-spacing: 0.02em; padding-right: 64px; }
 .door .top .num { color: var(--acc); }
@@ -119,6 +120,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .doors:hover .door { flex-grow: 0.8; }
   .doors .door:hover { flex-grow: 1.6; }
   .door:hover img { filter: none; transform: scale(1.08); }
+  .door.dim:hover img { filter: brightness(0.7); }
   .door:hover .go { transform: scale(1) rotate(0); }
 }
 @media (max-width: 760px) {
@@ -127,6 +129,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .door .role { font-size: 13px; margin-bottom: 6px; }
   .door .word { font-size: calc((100cqi - 2 * var(--pad)) / 5.25); }
   .door .go { width: 40px; height: 40px; transform: none; }
+  /* short, wide doors put the image right behind the labels: deeper shade keeps them legible */
+  .door::after { background: linear-gradient(180deg, rgb(0 0 0 / 0.6), rgb(0 0 0 / 0.35) 45%, rgb(0 0 0 / 0.85)); }
 }
 
 /* ---------- door + case-study header ---------- */
@@ -266,6 +270,54 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .stats .lbl { font-size: 12px; }
   .cs-meta { grid-template-columns: 1fr 1fr; }
   .cs-dec div { grid-template-columns: 1fr; gap: 6px; }
+}
+
+/* ---------- resume ---------- */
+.rs-hero { padding: 10vh var(--gut) 8vh; container-type: inline-size; }
+/* "DAMAN REDDY" is ~7.9em on one line: the name runs edge to edge at every width */
+.rs-name { font-size: calc(100cqi / 8.1); margin: 2vh 0 3vh; white-space: nowrap; }
+.rs-headline { font-size: clamp(20px, 2.2vw, 32px); line-height: 1.25; letter-spacing: -0.01em; max-width: 40ch; }
+.rs-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 5vh; }
+.rs-actions .lbl { margin-left: 8px; }
+.rs-stats { margin: 10vh var(--gut) 0; grid-template-columns: repeat(4, 1fr); }
+
+.rs-body { padding: 14vh 0 0; }
+.rs-sec { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.3fr); gap: 4vw; padding: 0 var(--gut) 14vh; }
+.rs-side { position: sticky; top: 92px; align-self: start; }
+.rs-num { display: block; font-family: var(--font-archivo), sans-serif; font-weight: 900; font-size: clamp(56px, 7vw, 120px); line-height: 0.85; color: var(--acc); letter-spacing: -0.03em; }
+.rs-side .cap { font-size: clamp(26px, 2.6vw, 42px); margin-top: 14px; }
+.rs-door { display: inline-block; margin-top: 18px; font-weight: 500; font-size: 15px; border-bottom: 1.5px solid currentColor; padding-bottom: 2px; transition: color 0.3s var(--ease); }
+.rs-door:hover { color: var(--acc); }
+.rs-p { font-size: clamp(19px, 1.6vw, 24px); line-height: 1.45; max-width: 60ch; }
+.rs-entry { position: relative; padding: 22px 0 26px; border-top: 1.5px solid var(--ink); }
+.rs-entry::before { content: ""; position: absolute; left: 0; top: -1.5px; height: 1.5px; width: 0; background: var(--acc); transition: width 0.7s var(--ease); }
+.rs-entry:hover::before { width: 100%; }
+.rs-entry-head { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; }
+.rs-entry h3 { font-family: var(--font-archivo), sans-serif; font-weight: 800; text-transform: uppercase; font-size: clamp(17px, 1.5vw, 22px); line-height: 1.15; letter-spacing: -0.01em; transition: color 0.35s var(--ease); }
+.rs-entry:hover h3 { color: var(--acc); }
+.rs-entry-head .lbl { white-space: nowrap; }
+.rs-stack { display: block; margin-top: 6px; font-size: 14px; color: var(--muted); letter-spacing: 0.01em; }
+.rs-entry ul { margin-top: 12px; display: grid; gap: 8px; }
+.rs-entry li { position: relative; padding-left: 20px; font-size: 16px; line-height: 1.55; color: #2e2e2c; max-width: 72ch; }
+.rs-entry li::before { content: ""; position: absolute; left: 2px; top: 0.62em; width: 7px; height: 7px; border-radius: 50%; background: var(--acc); }
+.rs-link { display: inline-block; margin-top: 14px; font-weight: 500; font-size: 14px; border: 1.5px solid var(--ink); border-radius: 999px; padding: 6px 14px; transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease); }
+.rs-link:hover { background: var(--acc); border-color: var(--acc); color: #fff; }
+
+/* skills: a black band, every tool a chip */
+.rs-sec.rs-dark { background: var(--dark); color: var(--on-dark); padding-top: 12vh; margin-bottom: 14vh; }
+.rs-dark .rs-side { top: 92px; }
+.rs-skills { display: grid; gap: 34px; }
+.rs-skills dt { font-family: var(--font-archivo), sans-serif; font-weight: 800; text-transform: uppercase; font-size: 15px; letter-spacing: 0.02em; color: var(--acc); margin-bottom: 12px; }
+.rs-skills dd { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1.5px solid #3a3a38; border-radius: 999px; padding: 6px 14px; font-size: 15px; transition: background 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease); }
+.chip:hover { background: var(--acc); border-color: var(--acc); color: #fff; }
+.rs-ribbon { margin-top: 0; }
+
+@media (max-width: 760px) {
+  .rs-sec { grid-template-columns: 1fr; gap: 20px; }
+  .rs-side { position: static; }
+  .rs-stats { grid-template-columns: 1fr 1fr; row-gap: 24px; }
+  .rs-entry-head { flex-direction: column; gap: 4px; }
 }
 
 /* ---------- cursor ---------- */

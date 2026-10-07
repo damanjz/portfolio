@@ -836,6 +836,7 @@ export type Track = {
   fit: number; // hero size: content width / fit (em), same scale as the approved v5 build
   cover: string; // landing door image
   coverPos?: string; // object-position when the subject is not centred
+  coverDim?: boolean; // busy, high-contrast covers (text, code) sit darker behind the labels
   intro: string; // the one-paragraph pitch; introEm is accented
   introEm: string;
   stats: { value: string; label: string }[];
@@ -854,6 +855,7 @@ export const tracks: Track[] = [
     fit: 9.2,
     cover: "/doors/systems.webp",
     coverPos: "left top",
+    coverDim: true,
     intro: "I ship complete software with AI as the co-pilot and my judgement at the wheel:",
     introEm: "local-first, security-hardened, measured before it ships.",
     stats: [

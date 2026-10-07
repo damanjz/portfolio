@@ -44,6 +44,7 @@ Status: Open to work (replies in ~24h)
 Engineering: Rust, Python, Tauri, PySide6. Web: TypeScript, Next.js 15, Svelte, Prisma/Postgres. Ops: Docker, n8n, Ollama, GitHub Actions. 3D: Unreal Engine 5, Blender, Substance Painter.
 
 ## Links
+- Resume: https://damanjz.github.io/portfolio/resume/ (PDF: https://damanjz.github.io/portfolio/resume/Daman-Reddy-Resume.pdf)
 - Systems: https://damanjz.github.io/portfolio/systems/
 - 3D environments: https://damanjz.github.io/portfolio/art/
 - BI and data: https://damanjz.github.io/portfolio/data/

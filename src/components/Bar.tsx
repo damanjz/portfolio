@@ -11,7 +11,7 @@ export default function Bar({
   backHref: string;
   backLabel: string;
   backText: string;
-  active: TrackId;
+  active?: TrackId;
 }) {
   return (
     <header className="bar">

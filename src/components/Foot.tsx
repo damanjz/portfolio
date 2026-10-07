@@ -1,5 +1,6 @@
 import { site, socials } from "@/content";
 import Split from "./Split";
+import { TLink } from "./Transition";
 
 /** Black closing band: giant call to action, contact pills, fine print. */
 export default function Foot({ outro }: { outro: readonly [string, string] }) {
@@ -14,6 +15,9 @@ export default function Foot({ outro }: { outro: readonly [string, string] }) {
           <a className="pill on" href={`mailto:${site.email}`} data-magnetic>
             {site.email}
           </a>
+          <TLink href="/resume/" label="Resume" className="pill" data-magnetic>
+            Resume
+          </TLink>
           {socials
             .filter((s) => !s.href.startsWith("mailto"))
             .map((s) => (

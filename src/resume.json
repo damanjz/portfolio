@@ -1,0 +1,287 @@
+[
+ {
+  "k": "name",
+  "t": "APURI DAMAN REDDY"
+ },
+ {
+  "k": "headline",
+  "t": "Data Analyst | AI-Assisted Software Developer | 3D Environment Artist"
+ },
+ {
+  "k": "contact",
+  "t": "Hyderabad, Telangana, India | daman.w3d@gmail.com"
+ },
+ {
+  "k": "contact",
+  "t": "linkedin.com/in/daman-reddy | damanjz.github.io/portfolio | github.com/damanjz"
+ },
+ {
+  "k": "h",
+  "t": "Summary"
+ },
+ {
+  "k": "p",
+  "t": "Creative technologist working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK) and a 15-month 3D Generalist internship at Blur'd LLP. In 2026 built four BI case studies in SQL, Python, Power BI and Tableau, each backed by 15 to 18 automated data checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
+ },
+ {
+  "k": "h",
+  "t": "Skills"
+ },
+ {
+  "k": "skill",
+  "l": "Data and BI",
+  "t": "SQL (DuckDB), Python (pandas, NumPy, scikit-learn), Power BI (DAX), Tableau, Excel, data modelling, ETL, data validation and reconciliation, web scraping, predictive modelling, data visualisation"
+ },
+ {
+  "k": "skill",
+  "l": "Software and AI",
+  "t": "Rust, TypeScript, JavaScript, Python, C, Next.js, React, Node.js, Express, Tauri, Svelte, PySide6, Prisma, PostgreSQL, Redis, REST APIs, Git, GitHub Actions, n8n, Ollama (local LLMs), LLM evaluation, Claude Code"
+ },
+ {
+  "k": "skill",
+  "l": "3D and Design",
+  "t": "Unreal Engine 5 (Lumen, Nanite, Blueprints), Blender (Geometry Nodes, Cycles), Substance Painter, Substance Designer, Adobe Photoshop, After Effects, Premiere Pro, CorelDRAW, WordPress (Elementor)"
+ },
+ {
+  "k": "skill",
+  "l": "Languages",
+  "t": "Telugu (native), English (C1, IELTS 7.0), Hindi (advanced), Japanese (elementary)"
+ },
+ {
+  "k": "h",
+  "t": "Experience"
+ },
+ {
+  "k": "entry",
+  "l": "Product and Brand Lead, Datatree Systems (family business)",
+  "r": "Jul 2026 – Present"
+ },
+ {
+  "k": "b",
+  "t": "Helping grow the family business by launching GrafiLabs, a new AI service that creates flyers and social posts for small retailers."
+ },
+ {
+  "k": "b",
+  "t": "Own the UI/UX and design language: brand guidelines, a 9-slide pitch deck and the Next.js 15 marketing site (12 industry pages, 48 sample creatives)."
+ },
+ {
+  "k": "b",
+  "t": "Research the market and target niches, and analyse pricing and AI running costs, to fit the product to its customers and support business decisions."
+ },
+ {
+  "k": "entry",
+  "l": "3D Generalist Intern, Blur'd LLP, Hyderabad, India",
+  "r": "Jan 2022 – Apr 2023"
+ },
+ {
+  "k": "b",
+  "t": "Produced 3D visualisation, signage, flyer and packaging designs for client advertising campaigns over 15 months, to brand guidelines; employer certificate cites \"exceptional skills and professionalism in 3D Design & Visualisation\"."
+ },
+ {
+  "k": "h",
+  "t": "Data Analytics Projects"
+ },
+ {
+  "k": "entry",
+  "l": "Hospital Operations BI: Python, DuckDB, SQL, Power BI",
+  "r": "Oct 2026"
+ },
+ {
+  "k": "b",
+  "t": "Simulated a 256-bed Hyderabad hospital over three years (168k ER visits) and modelled patient flow, bed occupancy (80.2%) and 30-day readmissions in DuckDB SQL."
+ },
+ {
+  "k": "b",
+  "t": "Built a readmission model (logistic regression, ROC AUC 0.786) that beat the clinical LACE score (0.749) on an out-of-time test; its top decile caught 34.9% of readmissions."
+ },
+ {
+  "k": "b",
+  "t": "Generated the Power BI report from code; 63 of 63 report numbers matched SQL and 18 of 18 checks caught injected errors."
+ },
+ {
+  "k": "entry",
+  "l": "HR Analytics: Python, DuckDB, scikit-learn, Tableau Public",
+  "r": "Oct 2026"
+ },
+ {
+  "k": "b",
+  "t": "Modelled attrition, hiring, eNPS and pay equity for a synthetic IT services firm (4,238 employees over 48 months) with point-in-time ASOF joins."
+ },
+ {
+  "k": "b",
+  "t": "Trained a flight-risk model (gradient boosting, out-of-time ROC AUC 0.658) whose top 10% of scores caught 20.4% of leavers; gender, age and region are never features."
+ },
+ {
+  "k": "b",
+  "t": "Published a live Tableau Public workbook generated from code; 20 of 20 values matched SQL."
+ },
+ {
+  "k": "entry",
+  "l": "Supply Chain Network BI: Python, DuckDB, SQL, Tableau",
+  "r": "Oct 2026"
+ },
+ {
+  "k": "b",
+  "t": "Simulated an FMCG distributor (4 warehouses, 40 suppliers, 200 products, 36 cities) and measured OTIF (80.2%), lead time, inventory turns and carrying cost."
+ },
+ {
+  "k": "b",
+  "t": "Built a 14-day stockout model (gradient boosting, ROC AUC 0.840 vs 0.699 for the reorder-point rule); at the same flag rate it caught 65.6% of stockouts vs 59.5%."
+ },
+ {
+  "k": "entry",
+  "l": "Personal Finance BI: Python, DuckDB, SQL, DAX, Power BI",
+  "r": "Oct 2026"
+ },
+ {
+  "k": "b",
+  "t": "Modelled 60 months of synthetic bank, card, payroll and investment exports into one ledger and categorised 2,818 transactions with rules kept as data."
+ },
+ {
+  "k": "b",
+  "t": "15 reconciliation checks gate the export; every Power BI headline measure matched DuckDB exactly."
+ },
+ {
+  "k": "h",
+  "t": "Client Projects"
+ },
+ {
+  "k": "entry",
+  "l": "Medical College Data Analysis (client): Python, pandas, BeautifulSoup, Excel",
+  "r": "Jul 2026"
+ },
+ {
+  "k": "b",
+  "t": "Collected public filings for 758 Indian medical colleges across two cycles into an Excel dataset (1,031-college registry); MBBS seats reconciled exactly to the published 129,602 and 96 of 96 delivery checks passed."
+ },
+ {
+  "k": "b",
+  "t": "Built comparison indicators for every college, such as faculty strength and teaching-hospital beds per MBBS seat, so the client could benchmark institutions against national norms."
+ },
+ {
+  "k": "entry",
+  "l": "St. Savio Education Trust website (client): WordPress, Elementor, Python, PHP",
+  "r": "Aug 2026"
+ },
+ {
+  "k": "b",
+  "t": "Built an 18-page NGO site (11 main and 7 programme pages) with GiveWP and Razorpay donations, generating page layouts by script and auditing them against the build spec; WCAG 2.1 AA target."
+ },
+ {
+  "k": "h",
+  "t": "Software Projects"
+ },
+ {
+  "k": "entry",
+  "l": "Protec, local-first password manager: Rust, Tauri, Svelte",
+  "r": "Jun 2026 – Jul 2026"
+ },
+ {
+  "k": "b",
+  "t": "Built an encrypted local vault (Argon2id, XChaCha20-Poly1305) with Windows Hello unlock and a browser extension that autofills over native messaging, with no open network ports."
+ },
+ {
+  "k": "b",
+  "t": "Ran a six-area security audit that shipped 16 hardening fixes; about 110 Rust tests; released v0.2.0 on GitHub."
+ },
+ {
+  "k": "entry",
+  "l": "AI Support Triage: n8n, Ollama (local LLM), PowerShell",
+  "r": "Jul 2026"
+ },
+ {
+  "k": "b",
+  "t": "Self-hosted an email support desk that routes tickets with a local LLM and drafts knowledge-base replies for human approval, at no recurring cost."
+ },
+ {
+  "k": "b",
+  "t": "Built a 40-case labelled evaluation set and promoted AI routing only after it scored 88% vs a 70% keyword baseline."
+ },
+ {
+  "k": "entry",
+  "l": "VOLT Techwear Store: Next.js 15, React, TypeScript, Prisma, PostgreSQL",
+  "r": "Mar 2026"
+ },
+ {
+  "k": "b",
+  "t": "Shipped a live storefront with NextAuth accounts, loyalty points, level-gated products, an admin area and a single-transaction server-side checkout."
+ },
+ {
+  "k": "entry",
+  "l": "AI Calendar: React, Node.js, Express",
+  "r": "Aug 2026"
+ },
+ {
+  "k": "b",
+  "t": "Built a calendar with a REST API that lets AI assistants check availability, detect conflicts and book events; 177 automated tests (about 91% coverage) run in GitHub Actions CI."
+ },
+ {
+  "k": "entry",
+  "l": "Additional builds",
+  "r": "Feb 2026 – Aug 2026"
+ },
+ {
+  "k": "b",
+  "t": "Flux Player (Python, PySide6 native video player); NOCTRA (React Native, Express, Prisma, Razorpay UPI); Umbra (vanilla JS storefront, custom WebGL shader, zero dependencies); portfolio site (Next.js, 16 case studies)."
+ },
+ {
+  "k": "h",
+  "t": "3D Art Projects"
+ },
+ {
+  "k": "entry",
+  "l": "Umbraixs, real-time environment: Unreal Engine 5.6 (MA final project)",
+  "r": "2025"
+ },
+ {
+  "k": "b",
+  "t": "Built a semi-stylised medieval village (~10-minute real-time piece) with Lumen, Nanite, day/night cycle and random weather; profiled to ~100 fps against a 60 fps target."
+ },
+ {
+  "k": "entry",
+  "l": "Blender Work: Geometry Nodes, Cycles",
+  "r": ""
+ },
+ {
+  "k": "b",
+  "t": "Geometry Nodes generators (castle, medieval city, flock), guitar product looks-dev cut to 9:16 reels, lighting studies; 26 artworks on ArtStation."
+ },
+ {
+  "k": "h",
+  "t": "Education"
+ },
+ {
+  "k": "entry",
+  "l": "MA Animation (Merit), University of Salford, Manchester, UK",
+  "r": "Sep 2024 – Sep 2025"
+ },
+ {
+  "k": "b",
+  "t": "Global Gold Excellence Scholarship (GBP 3,000)."
+ },
+ {
+  "k": "entry",
+  "l": "B.Sc. Multimedia and Animation, Loyola Academy, Hyderabad, India",
+  "r": "2020 – 2023"
+ },
+ {
+  "k": "b",
+  "t": "GPA 9.1/10; winner, Inter-College Photography Competition; co-authored dissertation on video editing."
+ },
+ {
+  "k": "h",
+  "t": "Certifications"
+ },
+ {
+  "k": "p",
+  "t": "IELTS Academic 7.0 (CEFR C1), Jul 2023 | C Programming (60 hours), TechLearn Solutions, Jan 2020 | NCC 'A' (Air Wing), 2016"
+ },
+ {
+  "k": "h",
+  "t": "Links"
+ },
+ {
+  "k": "p",
+  "t": "Portfolio: https://damanjz.github.io/portfolio/ | GitHub: https://github.com/damanjz | ArtStation: https://www.artstation.com/damanpsd | Tableau Public: https://public.tableau.com/app/profile/daman.reddy"
+ }
+]

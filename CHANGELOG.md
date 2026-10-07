@@ -9,6 +9,12 @@ All notable changes to the portfolio. v5 ("three doors") replaced v4 ("the flow-
 
 The site splits into three crafts, each with its own door: AI-assisted systems developer, 3D environment artist, BI and data analyst. Warm grey, near-black, one orange; Archivo caps and Space Grotesk.
 
+### v5.4 — Resume page — 2026-10-07
+- **`/resume/`** — the master resume as a page in the site style: name edge to edge, ribbon, count-up stats, numbered sticky sections, skills as chips on a black band. Every project links to its page and each project section to its door. Download PDF button.
+- **Source** — content comes from `src/resume.json`, exported by the ATS resume build script; the phone number is left off the public page and the web PDF.
+- **Resume button** next to Email me on the landing, and in every footer.
+- **Fixes** — pages always open at the top after a transition; the code cover on the Systems door sits darker so its labels stay legible.
+
 ### v5.3 — Systems door: real screens — 2026-10-07
 - **Added** `ai-calendar` (React web app + REST API that AI assistants book into; 177 tests).
 - **Removed** `umbra` and `noctra`; VOLT stays.
