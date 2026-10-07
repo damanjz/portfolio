@@ -46,8 +46,10 @@ export default function Motion() {
 
   // per route
   useEffect(() => {
-    if (lenis) lenis.scrollTo(0, { immediate: true });
-    else window.scrollTo(0, 0);
+    // new page starts at the top. force: the page transition pauses Lenis
+    // while the panel covers the screen, and a paused Lenis ignores scrollTo.
+    window.scrollTo(0, 0);
+    lenis?.scrollTo(0, { immediate: true, force: true });
 
     const rm = reduced();
     const off: (() => void)[] = [];
