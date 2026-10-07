@@ -129,6 +129,9 @@ export const projects: Project[] = [
     gallery: [
       { src: "/shots/protec/app.webp", alt: "Protec's vault with an entry open: username, revealed password, URL, notes and tags (demo data)", caption: "The vault, with demo entries: one secret revealed at a time, copied with a shortcut, cleared from the clipboard after." },
       { src: "/shots/protec/how-it-works.webp", alt: "Diagram: browser extension to desktop app over native messaging, Windows Hello unlock, Rust core encryption, vault file on disk", caption: "How it works: the extension talks to the app over native messaging, Windows Hello gates the unlock, and the Rust core encrypts a vault that never leaves the disk." },
+      { src: "/shots/protec/command-palette.webp", alt: "Protec command palette listing commands and fuzzy-matched vault entries", caption: "Ctrl+K command palette: run commands or jump to any entry. Demo entries on example.com." },
+      { src: "/shots/protec/generator.webp", alt: "Protec password generator dialog with length slider and character-class toggles", caption: "Password generator: length and character classes. The result shown is a fixed demo string from the stand-in backend." },
+      { src: "/shots/protec/terminal-green.webp", alt: "Protec main view in the Terminal Green theme with the GitHub entry revealed", caption: "Terminal Green theme with an entry revealed. Demo entry and password, not real credentials." },
     ],
     sections: [
       {
@@ -220,6 +223,9 @@ export const projects: Project[] = [
     gallery: [
       { src: "/shots/volt-techwear-store/shop.webp", alt: "VOLT archive page: product grid of techwear with category filters", caption: "The archive — category filters, search and sort over the full catalogue." },
       { src: "/shots/volt-techwear-store/home.webp", alt: "VOLT home page: DEFY LIMITS hero with the current drop", caption: "The storefront — industrial techwear aesthetic, built to feel like a product, not a demo." },
+      { src: "/shots/volt-techwear-store/product-detail.webp", alt: "VOLT product page for the Phantom Shell Windbreaker with size selector and Add to Loadout button", caption: "Product detail page: size picker, stock state and add-to-cart. Demo catalogue and prices from the local seed database." },
+      { src: "/shots/volt-techwear-store/cart-drawer.webp", alt: "VOLT cart drawer listing one Phantom Shell Windbreaker, size M, with coupon field and subtotal", caption: "Loadout drawer after adding an item: quantity controls, coupon field, subtotal. Demo data." },
+      { src: "/shots/volt-techwear-store/black-site.webp", alt: "VOLT Black Site page with locked classified product cards", caption: "Black Site: members-only drop with locked prototype cards for signed-out visitors. Demo data." },
     ],
     sections: [
       {
@@ -281,6 +287,8 @@ export const projects: Project[] = [
       { src: "/shots/flux-player/player.webp", alt: "Flux Player playing a portrait guitar reel, with the seek bar, transport controls and Now Playing list", caption: "Playback: the Windows Media Player 12 layout rebuilt in Qt, with the Now Playing list beside the video." },
       { src: "/shots/flux-player/player-2.webp", alt: "Flux Player paused on a close-up of guitar pickups and a painted body", caption: "Native controls: seek, speed, repeat and shuffle, no browser underneath." },
       { src: "/shots/flux-player/menu.webp", alt: "Flux Player with the Play menu open: play, stop, previous, next, playback speed, repeat, shuffle", caption: "Keyboard-first: every control has a shortcut in the Play menu." },
+      { src: "/shots/flux-player/speed-menu.webp", alt: "Flux Player with the Play menu and Playback Speed submenu open, 1.5x checked", caption: "Play menu with the playback speed submenu (1.5x selected) over a paused reel. Demo clips from the portfolio's own art reels." },
+      { src: "/shots/flux-player/context-menu.webp", alt: "Flux Player right-click menu over a paused guitar reel, shuffle on", caption: "Right-click menu on the video: play, stop, previous, next, fullscreen, open. Shuffle and repeat-all enabled." },
     ],
     sections: [
       {
@@ -327,6 +335,8 @@ export const projects: Project[] = [
       { src: "/shots/ai-calendar/month.webp", alt: "AI Calendar month view with work and personal events (demo data booked through the API)", caption: "Month view, with demo events that were booked through the API, the same way an assistant would." },
       { src: "/shots/ai-calendar/how-it-works.webp", alt: "Diagram: an AI assistant and people both use one REST API, which checks conflicts and writes to calendar providers", caption: "How it works: the assistant and the web app share one API, so the same conflict check guards every booking." },
       { src: "/shots/ai-calendar/booking.webp", alt: "The booking form: title, calendar, date, start and end, location, description, attendees", caption: "Booking by hand goes through the same endpoint and the same conflict rules." },
+      { src: "/shots/ai-calendar/conflict.webp", alt: "AI Calendar booking dialog warning that the new slot overlaps Data review", caption: "Conflict detection: booking 10:00 to 11:00 is flagged against an existing 10:30 event before anything is saved. Demo events." },
+      { src: "/shots/ai-calendar/week.webp", alt: "AI Calendar week view of 4 to 10 October 2026 with work and personal events", caption: "Week view with work and personal calendars colour-coded. Demo events." },
     ],
     sections: [
       {
@@ -391,6 +401,8 @@ export const projects: Project[] = [
       { src: "/shots/finance-bi/where.webp", alt: "Power BI page 'Where does it go?': Sankey from gross pay to tax, provident fund, fixed costs, discretionary spend, investments and cash", caption: "Where does it go? Gross pay traced through tax and EPF to every destination." },
       { src: "/shots/finance-bi/track.webp", alt: "Power BI page 'Am I on track?': trailing 12-month savings rate and debt to income", caption: "Am I on track? Savings rate as a trailing 12-month line, so one car purchase no longer flattens the chart." },
       { src: "/shots/finance-bi/stop.webp", alt: "Power BI page 'When can I stop?': FIRE projection with sliders for return, inflation and withdrawal rate", caption: "When can I stop? Live what-if sliders recompute the FIRE age in DAX." },
+      { src: "/shots/finance-bi/own.webp", alt: "Power BI report page 'What do I own?': net worth, assets, loans and change-in-period cards; stacked area of assets by class from 2022 to 2026; allocation bars for equity, fixed income, cash reserves and real estate.", caption: "Net worth grows to ₹44.0 L on ₹46.5 L of assets, with equity at 41.5% and fixed income at 39.2% of the mix." },
+      { src: "/shots/finance-bi/proving.webp", alt: "Pipeline diagram from generator through raw CSVs, DuckDB staging, model and marts, 13 exported tables and Power BI, followed by a table comparing five measures in Power BI and DuckDB, all identical.", caption: "15 checks gate the export, and five report measures, from savings rate (33.222%) to FIRE age 46, match DuckDB to the last digit." },
     ],
     sections: [
       {
@@ -457,6 +469,8 @@ export const projects: Project[] = [
       { src: "/shots/hr-analytics/workbench.webp", alt: "HR analytics workbench: filters, five KPIs, six views, the highest flight risks and the levers behind them", caption: "The whole firm: filters, five headline numbers, six views and the at-risk drill." },
       { src: "/shots/hr-analytics/filtered.webp", alt: "The workbench filtered to the Data and Analytics department", caption: "One department: every number, chart and the drill table follow the filter." },
       { src: "/shots/hr-analytics/bengaluru.webp", alt: "The workbench filtered to Bengaluru in FY 2024-25", caption: "Bengaluru, FY 2024-25: rolling attrition and eNPS narrow to the year chosen." },
+      { src: "/shots/hr-analytics/model.webp", alt: "Model comparison table (logistic regression vs gradient boosting: ROC AUC, precision-recall AUC, leavers caught in top 10%) above a bar chart of predicted vs actual six-month leaving rate by risk decile.", caption: "Gradient boosting reaches 0.658 ROC AUC on a future test period, and calibration drifts high at the top: 22.1% predicted against 14.5% actual." },
+      { src: "/shots/hr-analytics/proving.webp", alt: "Pipeline diagram ending in a generated Tableau workbook, above a table of attrition, voluntary share, days to hire, eNPS and pay ratio for four views.", caption: "15 checks gate the export, and all 20 dashboard values across four views match an independent DuckDB calculation." },
     ],
     sections: [
       {
@@ -522,6 +536,8 @@ export const projects: Project[] = [
       { src: "/shots/hospital-operations/now.webp", alt: "Power BI page 'Now': every bed by bay at a chosen hour, ER queue by triage level and patients per nurse", caption: "Now: every bed in the hospital at a chosen hour, the ER queue by triage level, and staffing against target." },
       { src: "/shots/hospital-operations/flow.webp", alt: "Power BI page 'Flow': ER arrivals and waits by weekday and hour, occupancy by month and waits by shift", caption: "Flow: arrivals and waits by weekday and hour; the evening wait falls once an extra evening doctor starts in April 2025." },
       { src: "/shots/hospital-operations/readmissions.webp", alt: "Power BI page 'Readmissions': rates by diagnosis, age, length of stay and unit fullness, with a follow-up list", caption: "Readmissions: who comes back within 30 days, and a follow-up list ranked by the model's risk score." },
+      { src: "/shots/hospital-operations/model.webp", alt: "Table comparing the LACE index, gradient boosting and logistic regression on ROC AUC, precision-recall AUC and readmissions caught, above a bar chart of predicted vs actual 30-day readmission rate by risk decile.", caption: "Logistic regression beats the LACE index (0.786 vs 0.749 ROC AUC) and stays calibrated: the top decile is predicted at 40.4% and comes back at 43.7%." },
+      { src: "/shots/hospital-operations/proving.webp", alt: "Pipeline diagram with 18 checks gating the export, above a table of seven checks and what each guarantees.", caption: "18 checks gate the export, from no bed holding two patients to the model never seeing sex, payer or age group." },
     ],
     sections: [
       {
@@ -593,6 +609,8 @@ export const projects: Project[] = [
       { src: "/shots/supply-chain/network.webp", alt: "Tableau dashboard: map of four warehouses and delivery lanes with OTIF, lead time, inventory turns, carrying cost and stockout risk", caption: "The whole network: click a warehouse or a lane on the map and every number follows." },
       { src: "/shots/supply-chain/kolkata.webp", alt: "The dashboard set to the Kolkata warehouse, OTIF 59.0%", caption: "Kolkata: on time and in full 59.0% against 83 to 87% at the other three warehouses." },
       { src: "/shots/supply-chain/diwali-2024.webp", alt: "The dashboard filtered to Snacks, FY 2024-25, as of 28 October 2024", caption: "Snacks going into Diwali 2024, as of 28 October: the watch list and the supplier behind it." },
+      { src: "/shots/supply-chain/model.webp", alt: "Table comparing the reorder-point rule, logistic regression and gradient boosting on ROC AUC, precision-recall AUC and stockouts caught, above a bar chart of predicted vs actual 14-day stockout rate by risk decile.", caption: "Gradient boosting beats the reorder-point rule (0.840 vs 0.699 ROC AUC), and its top decile is predicted at 42.3% and runs out 38.6% of the time." },
+      { src: "/shots/supply-chain/proving.webp", alt: "Pipeline diagram ending in a generated Tableau workbook, above a table of OTIF, days to deliver, turns, carrying cost and products at risk for three views.", caption: "15 checks gate the export, and dashboard numbers for three views, including Kolkata's 59.0% OTIF, match independent DuckDB queries." },
     ],
     sections: [
       {
@@ -665,6 +683,10 @@ export const projects: Project[] = [
       { src: "/shots/saas-revenue-leak/cohorts.webp", alt: "Power BI Cohorts page: a cohort grid of customers still paying by signup month and months since signup", caption: "Cohorts: the April and May 2025 signups fall away faster than the rest." },
       { src: "/shots/saas-revenue-leak/accounts.webp", alt: "Power BI Accounts page: high-risk accounts, model risk against health score, a call list by expected loss and the latest leak alerts", caption: "Accounts: a call list ranked by expected loss, beside the leak monitor's latest alerts." },
       { src: "/shots/saas-revenue-leak/account.webp", alt: "Power BI Account page for one enterprise account: MRR, churn probability, usage, health score, billing ledger and support tickets", caption: "Account: one customer end to end, with the reasons the model flags it." },
+      { src: "/shots/saas-revenue-leak/detection.webp", alt: "Timeline of five planted revenue leaks from Oct 2024 to Jul 2026, each with its active period and the first monitor alert, labelled in days.", caption: "The monitor caught all five planted leaks, from 3 days for duplicate webhooks to 394 days for a neglected account book." },
+      { src: "/shots/saas-revenue-leak/early-warning.webp", alt: "Paired bars by churn cause showing the share of churns flagged in the 60 days before, churn model vs rules-based health score.", caption: "Of 140 churns, the model flagged 44% in the 60 days before; the rules-based health score flagged 11%." },
+      { src: "/shots/saas-revenue-leak/data-quality.webp", alt: "Table of 13 injected data problems with counts injected and flagged and how each was handled, from duplicate webhooks to late CRM changes.", caption: "Each injected data problem was caught and handled, from 15 re-sent webhooks to 14,839 duplicate sessions." },
+      { src: "/shots/saas-revenue-leak/pipeline.webp", alt: "Flow diagram: simulate, raw landing and a sealed answer key, dbt on DuckDB, churn model, Power BI, and a scorecard that alone reads the answer key; checks listed underneath.", caption: "Five stages from simulator to scorecard, with 105 dbt nodes, 14 of 14 mutation breaks caught and 69 report numbers matched." },
     ],
     sections: [
       {

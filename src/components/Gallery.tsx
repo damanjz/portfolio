@@ -35,7 +35,7 @@ export default function Gallery({ shots, start = 1 }: { shots: Shot[]; start?: n
         {shots.map((s, i) => (
           <button key={s.src} className="fig" onClick={() => setOpen(i)} data-fade="" data-cursor="Expand">
             <div className="frame">
-              <img src={asset(s.src)} srcSet={srcSet(s.src)} sizes={i === 0 ? "(max-width: 760px) 100vw, (max-width: 1099px) 96vw, 48vw" : "(max-width: 760px) 100vw, (max-width: 1099px) 48vw, 48vw"} alt={s.alt} loading="lazy" decoding="async" />
+              <img src={asset(s.src)} srcSet={srcSet(s.src)} sizes={i === 0 ? "(max-width: 760px) 100vw, (max-width: 1099px) 96vw, 25vw" : "(max-width: 760px) 100vw, (max-width: 1099px) 48vw, 25vw"} alt={s.alt} loading="lazy" decoding="async" />
             </div>
             <div className="cap-line">
               <span className="n">{String(i + start).padStart(2, "0")}</span>
