@@ -85,12 +85,12 @@ export type Project = {
   decisions?: { choice: string; reason: string }[];
   facts: { label: string; value: string }[];
   specAccent?: string; // which spec label gets the accent (e.g. "NETWORK")
-  pipeline?: Pipeline; // data projects: drawn as a pipeline card instead of a screenshot
+  pipeline?: Pipeline; // drawn as a pipeline card instead of a screenshot
 };
 
-/** A data project's card: data in, the model (hero), the report out, four numbers. */
+/** A pipeline card: what goes in, the core (orange), what comes out, four numbers. */
 export type Pipeline = {
-  mark: "bars" | "people" | "cross" | "network";
+  mark: "bars" | "people" | "cross" | "network" | "lock" | "play";
   status: string;
   live?: boolean;
   flow: [{ name: string; note: string }, { name: string; note: string }, { name: string; note: string }];
@@ -108,6 +108,21 @@ export const projects: Project[] = [
     status: "public",
     href: "https://github.com/damanjz/protec",
     metric: { label: "audit", value: "16 hardening fixes" },
+    pipeline: {
+      mark: "lock",
+      status: "Public repo",
+      flow: [
+        { name: "Browser extension", note: "native messaging · no port" },
+        { name: "Rust core", note: "Argon2id · zeroize on drop" },
+        { name: "Vault on disk", note: "encrypted · never leaves" },
+      ],
+      stats: [
+        { value: "16", label: "hardening fixes shipped" },
+        { value: "0", label: "open ports" },
+        { value: "6", label: "agents in the audit" },
+        { value: "Hello", label: "Windows unlock" },
+      ],
+    },
     year: "Jun 2026", // repo created 2026-06-20
     summary:
       "A password manager that never phones home — Rust core, encrypted local vault, zero cloud dependency.",
@@ -244,6 +259,21 @@ export const projects: Project[] = [
     status: "public",
     href: "https://github.com/damanjz/flux-player",
     metric: { label: "runtime", value: "native" },
+    pipeline: {
+      mark: "play",
+      status: "Public repo",
+      flow: [
+        { name: "Your videos", note: "local files · playlist" },
+        { name: "Qt player", note: "Python · PySide6" },
+        { name: "Windows desktop", note: "native widgets · no webview" },
+      ],
+      stats: [
+        { value: "0", label: "web views" },
+        { value: "WMP 12", label: "layout homage" },
+        { value: "Qt", label: "native widgets" },
+        { value: "Python", label: "PySide6" },
+      ],
+    },
     year: "Mar 2026", // repo created 2026-03-10
     summary:
       "A sleek Windows video player in Python + PySide6 — a deliberate homage to Windows Media Player 12. Native desktop, no web wrapper.",

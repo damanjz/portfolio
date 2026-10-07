@@ -14,6 +14,13 @@ const marks: Record<Pipeline["mark"], React.ReactNode> = {
       <rect x="3" y="3" width="18" height="18" rx="4" />
     </>
   ),
+  lock: (
+    <>
+      <rect x="4" y="10.5" width="16" height="10.5" rx="2.5" />
+      <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3M12 15v2.5" />
+    </>
+  ),
+  play: <path d="M8 5.5v13l10.5-6.5z" />,
   network: (
     <>
       <circle cx="5" cy="6" r="2.2" />
@@ -25,8 +32,8 @@ const marks: Record<Pipeline["mark"], React.ReactNode> = {
 };
 
 /**
- * A data project drawn as its pipeline instead of a shrunken dashboard:
- * mark and name, data in, the model (orange), the report out, four numbers.
+ * A project drawn as its pipeline instead of a shrunken screenshot:
+ * mark and name, what goes in, the core (orange), what comes out, four numbers.
  * Sized in container units, so it is the same drawing at every card size.
  */
 export default function DataCard({ name, year, pipe }: { name: string; year: string; pipe: Pipeline }) {

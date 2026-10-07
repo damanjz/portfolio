@@ -62,6 +62,7 @@ export default function Dossier() {
   const [lines, setLines] = useState<{ old?: Line; cur: Line; n: number }>({ cur: idle, n: 0 });
   const [clock, setClock] = useState("");
   const wall = useRef<HTMLElement>(null);
+  const me = useRef<HTMLElement>(null);
   const target = useRef(1);
   const cols = useMemo(() => deal(ncols), [ncols]);
 
@@ -85,6 +86,28 @@ export default function Dossier() {
       window.clearInterval(id);
     };
   }, []);
+
+  // the left column is the whole first screen: reveal it on load, not on scroll
+  // (the scroll reveal ignores the bottom edge, where the buttons sit)
+  useEffect(() => {
+    if (!ready || !me.current) return;
+    me.current.querySelectorAll(".split, [data-fade]").forEach((el) => el.classList.add("in"));
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // stats count up from zero, keeping their format (16, 0.840); words (UE5) stay as they are
+    me.current.querySelectorAll<HTMLElement>("[data-v]").forEach((el) => {
+      const v = el.dataset.v!;
+      if (!/^\d+(\.\d+)?$/.test(v)) return;
+      const dec = (v.split(".")[1] ?? "").length;
+      const end = parseFloat(v);
+      const t0 = performance.now() + 500;
+      const step = (t: number) => {
+        const k = Math.min(1, Math.max(0, (t - t0) / 1600));
+        el.textContent = k < 1 ? (end * (1 - Math.pow(1 - k, 3))).toFixed(dec).padStart(dec ? 0 : v.length, "0") : v;
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }, [ready]);
 
   // drift: one rAF loop, columns at different speeds and directions, eased toward a target speed
   useEffect(() => {
@@ -127,7 +150,7 @@ export default function Dossier() {
 
   return (
     <div className={`dossier ${ready ? "ready" : ""}`}>
-      <section className="me">
+      <section ref={me} className="me">
         <div className="me-top" data-fade="">
           <span className="name">
             {site.name} <span>/ Hyderabad</span>
@@ -183,7 +206,7 @@ export default function Dossier() {
                   <span className="r">{`${t.role} · ${String(n).padStart(2, "0")} works`}</span>
                 </span>
                 <span className="s">
-                  <b data-count={/^\d/.test(stat.value) ? stat.value : undefined}>{stat.value}</b>
+                  <b data-v={stat.value}>{stat.value}</b>
                   {stat.label}
                 </span>
               </TLink>
