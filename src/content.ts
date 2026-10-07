@@ -71,6 +71,7 @@ export type Project = {
   hrefLabel?: string; // e.g. "view source", "view on ArtStation"
   metric?: { label: string; value: string };
   caseStudy?: string; // PDF under /public, linked from the case-study page
+  repo?: string; // source link when href points somewhere else (e.g. a live dashboard)
   year: string;
   // ---- detail-page fields ----
   summary: string; // case-study intro
@@ -372,6 +373,7 @@ export const projects: Project[] = [
     status: "live",
     href: "https://public.tableau.com/app/profile/daman.reddy/viz/HRAnalyticsWorkbench/Workbench",
     hrefLabel: "open the live workbench",
+    repo: "https://github.com/damanjz/hr-analytics",
     caseStudy: "/case-studies/hr-analytics.pdf",
     metric: { label: "flight risk", value: "AUC 0.658" },
     year: "Oct 2026",
@@ -479,6 +481,7 @@ export const projects: Project[] = [
     status: "live",
     href: "https://public.tableau.com/app/profile/daman.reddy/viz/SupplyChainNetwork_17913286536000/Network",
     hrefLabel: "open the live dashboard",
+    repo: "https://github.com/damanjz/supply-chain-bi",
     caseStudy: "/case-studies/supply-chain.pdf",
     metric: { label: "stockout AUC", value: "0.840 vs rule 0.699" },
     year: "Oct 2026",

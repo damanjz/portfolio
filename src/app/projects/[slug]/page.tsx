@@ -126,6 +126,11 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
                 {p.hrefLabel ? p.hrefLabel.charAt(0).toUpperCase() + p.hrefLabel.slice(1) : "View on GitHub"} &#8599;
               </a>
             )}
+            {p.repo && (
+              <a className="pill" href={p.repo} target="_blank" rel="noopener noreferrer" data-magnetic>
+                View source &#8599;
+              </a>
+            )}
             {p.caseStudy && (
               <a className="pill" href={asset(p.caseStudy)} target="_blank" rel="noopener" data-magnetic>
                 Read the case study (PDF) &#8599;
