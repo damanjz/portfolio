@@ -1,7 +1,26 @@
 # Changelog — Daman Portfolio
 
-All notable changes to the portfolio. v5 ("three doors") replaced v4 ("the flow-board") as the live site. Dates are when the work shipped to `main`
+All notable changes to the portfolio. v6 ("dossier") is the live site; v5 ("three doors") replaced v4 ("the flow-board") before it. Dates are when the work shipped to `main`
 (auto-deploys to [damanjz.github.io/portfolio](https://damanjz.github.io/portfolio/)).
+
+---
+
+## v6 — Dossier
+
+The landing becomes a dossier: who on the left, every work on the right. The three craft pages stay.
+
+### v6.2 — Fifth BI build and a full scan — 2026-10-07
+- **Added** `saas-revenue-leak` (BI piece 5): five revenue leaks planted and sealed, found 5 of 5 blind; pipeline card, project page, case-study PDF. The Data page now counts five builds.
+- **Contact** buttons move to the top row of the landing, visible at any window height.
+- **Fixes** from a full scan and two reviews: the wall fills any screen height and re-measures on resize; a pause control for the moving wall; keyboard focus does what hover does; screen-reader names corrected; readable without JavaScript; 404 restyled; leftover "doors" wording removed; new share image; cursor and resume line animate with transforms.
+
+### v6.1 — Pipeline cards for Protec and Flux Player — 2026-10-07
+- Protec and Flux Player use the pipeline card. Landing spacing scales with window height so nothing is cut off on short screens.
+
+### v6.0 — Dossier landing and pipeline cards — 2026-10-07
+- **Landing** — name, bio and the three crafts on the left; all projects on the right in drifting columns. Hovering a craft lights its work; hovering a work lights its craft and reads it out.
+- **Pipeline cards** — data projects are drawn as data in, the model in orange, the report out, and four measured numbers, instead of shrunken dashboards. Black and white until hovered.
+- **Removed** the three-door landing.
 
 ---
 

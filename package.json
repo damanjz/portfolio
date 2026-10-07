@@ -2,7 +2,7 @@
   "name": "daman-portfolio",
   "version": "0.1.0",
   "private": true,
-  "description": "Daman Reddy portfolio: three doors for systems, 3D environments, and BI and data (Next.js, static export to GitHub Pages).",
+  "description": "Daman Reddy portfolio: AI-assisted systems, 3D environments, and BI and data (Next.js, static export to GitHub Pages).",
   "homepage": "https://damanjz.github.io/portfolio/",
   "repository": {
     "type": "git",
