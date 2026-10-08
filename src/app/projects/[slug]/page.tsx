@@ -8,6 +8,7 @@ import Gallery from "@/components/Gallery";
 import YouTubeFigure from "@/components/YouTubeFigure";
 import VideoFigure from "@/components/VideoFigure";
 import Foot from "@/components/Foot";
+import DataCard from "@/components/DataCard";
 import { TLink } from "@/components/Transition";
 import { ProjectJsonLd } from "./project-jsonld";
 
@@ -79,6 +80,13 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
           </div>
         ))}
       </div>
+
+      {!cover && p.pipeline && (
+        // no screenshot yet: the project's pipeline card stands in as the cover
+        <div className="cs-cover cs-pipe" data-fade="">
+          <DataCard name={p.name} year={p.year} pipe={p.pipeline} />
+        </div>
+      )}
 
       {cover && (
         <div className="cs-cover" data-colorize="">
