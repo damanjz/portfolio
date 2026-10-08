@@ -83,8 +83,9 @@
  },
  {
   "k": "entry",
-  "l": "SaaS Revenue Leak BI: Python, dbt, DuckDB, XGBoost, Power BI",
-  "r": "Oct 2026"
+  "l": "SaaS Revenue Leak BI: Python, dbt, DuckDB, scikit-learn, Power BI",
+  "r": "Oct 2026",
+  "u": "https://github.com/damanjz/saas-revenue-leak-bi"
  },
  {
   "k": "b",
@@ -97,7 +98,8 @@
  {
   "k": "entry",
   "l": "Hospital Operations BI: Python, DuckDB, SQL, Power BI",
-  "r": "Oct 2026"
+  "r": "Oct 2026",
+  "u": "https://github.com/damanjz/hospital-operations-bi"
  },
  {
   "k": "b",
@@ -114,7 +116,8 @@
  {
   "k": "entry",
   "l": "HR Analytics: Python, DuckDB, scikit-learn, Tableau Public",
-  "r": "Oct 2026"
+  "r": "Oct 2026",
+  "u": "https://github.com/damanjz/hr-analytics"
  },
  {
   "k": "b",
@@ -131,7 +134,8 @@
  {
   "k": "entry",
   "l": "Supply Chain Network BI: Python, DuckDB, SQL, Tableau",
-  "r": "Oct 2026"
+  "r": "Oct 2026",
+  "u": "https://github.com/damanjz/supply-chain-bi"
  },
  {
   "k": "b",
@@ -144,7 +148,8 @@
  {
   "k": "entry",
   "l": "Personal Finance BI: Python, DuckDB, SQL, DAX, Power BI",
-  "r": "Oct 2026"
+  "r": "Oct 2026",
+  "u": "https://github.com/damanjz/personal-finance-bi"
  },
  {
   "k": "b",
@@ -160,7 +165,7 @@
  },
  {
   "k": "entry",
-  "l": "Medical College Data Analysis (client): Python, pandas, BeautifulSoup, Excel",
+  "l": "Medical College Data Analysis (freelance client): Python, pandas, BeautifulSoup, Excel",
   "r": "Jul 2026"
  },
  {
@@ -173,7 +178,7 @@
  },
  {
   "k": "entry",
-  "l": "St. Savio Education Trust website (client): WordPress, Elementor, Python, PHP",
+  "l": "St. Savio Education Trust website (freelance client): WordPress, Elementor, Python, PHP",
   "r": "Aug 2026"
  },
  {
@@ -187,11 +192,12 @@
  {
   "k": "entry",
   "l": "Protec, local-first password manager: Rust, Tauri, Svelte",
-  "r": "Jun 2026 – Jul 2026"
+  "r": "Jun 2026 – Jul 2026",
+  "u": "https://github.com/damanjz/protec"
  },
  {
   "k": "b",
-  "t": "Built an encrypted local vault (Argon2id, XChaCha20-Poly1305) with Windows Hello unlock and a browser extension that autofills over native messaging, with no open network ports."
+  "t": "Built an encrypted local vault (Argon2id, XChaCha20-Poly1305) with optional Windows Hello unlock and a browser extension that autofills over native messaging, with no open network ports."
  },
  {
   "k": "b",
@@ -200,7 +206,8 @@
  {
   "k": "entry",
   "l": "AI Support Triage: n8n, Ollama (local LLM), PowerShell",
-  "r": "Jul 2026"
+  "r": "Jul 2026",
+  "u": "https://github.com/damanjz/n8n-ai-triage"
  },
  {
   "k": "b",
@@ -213,7 +220,8 @@
  {
   "k": "entry",
   "l": "VOLT Techwear Store: Next.js 15, React, TypeScript, Prisma, PostgreSQL",
-  "r": "Mar 2026"
+  "r": "Mar 2026",
+  "u": "https://volt-techwear-store.vercel.app"
  },
  {
   "k": "b",
@@ -222,7 +230,8 @@
  {
   "k": "entry",
   "l": "AI Calendar: React, Node.js, Express",
-  "r": "Aug 2026"
+  "r": "Aug 2026",
+  "u": "https://github.com/damanjz/ai-calendar"
  },
  {
   "k": "b",
@@ -244,7 +253,8 @@
  {
   "k": "entry",
   "l": "Umbraixs, real-time environment: Unreal Engine 5.6 (MA final project)",
-  "r": "2025"
+  "r": "2025",
+  "u": "https://www.youtube.com/watch?v=BFrPzJXAXRU"
  },
  {
   "k": "b",
