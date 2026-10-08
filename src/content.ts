@@ -381,6 +381,73 @@ export const projects: Project[] = [
     specAccent: "TESTS",
   },
   {
+    slug: "obsidian-vault-mcp",
+    name: "obsidian-vault-mcp",
+    tagline: "A read-only MCP server that lets an AI assistant search an Obsidian vault.",
+    discipline: "systems",
+    category: "productivity",
+    stack: ["TypeScript", "MCP SDK", "zod", "Node", "node:test"],
+    status: "public",
+    href: "https://github.com/damanjz/obsidian-vault-mcp",
+    hrefLabel: "view source",
+    metric: { label: "tests", value: "49 · unit + end to end" },
+    pipeline: {
+      mark: "network",
+      layout: "stack",
+      accent: "#f43f5e",
+      status: "Public repo",
+      flow: [
+        { name: "AI assistant", note: "any MCP client · stdio" },
+        { name: "MCP server", note: "5 read-only tools" },
+        { name: "Markdown vault", note: "on disk · never written" },
+      ],
+      stats: [
+        { value: "49", label: "tests, unit + end to end" },
+        { value: "0", label: "write calls" },
+        { value: "87 ms", label: "to index 215 notes" },
+        { value: "5", label: "read-only tools" },
+      ],
+    },
+    year: "Oct 2026",
+    summary:
+      "A small Model Context Protocol server that lets an AI assistant search and read an Obsidian vault over stdio: full-text search, notes with frontmatter, tags, backlinks and outgoing links. It never writes and never touches the network.",
+    gallery: [],
+    sections: [
+      {
+        heading: "Problem",
+        body: "An Obsidian vault holds years of notes an AI assistant could use as context. Handing it over should not mean uploading it, or giving a model write access to files it only needs to read.",
+      },
+      {
+        heading: "Build",
+        body: "TypeScript over stdio, with two runtime dependencies: the official MCP SDK and zod. Five tools, all read-only: search, read_note, backlinks, outgoing_links and list_notes. Search ranks with BM25 over an in-memory index that re-reads only changed files. Links resolve the way Obsidian resolves them: wikilinks with aliases and headings, embeds, Markdown links, frontmatter tags and aliases.",
+      },
+      {
+        heading: "Hardening",
+        body: "The code only lists, stats, resolves and reads files, and a test fails if any other filesystem call or a network call appears. Path traversal, absolute paths outside the vault, NUL bytes and dot-folders such as .obsidian and .git are refused. Symlinks and junctions that resolve outside the vault are ignored, and each file's real path is checked again right before it is read.",
+      },
+      {
+        heading: "Measurement",
+        body: "49 tests: parsing, link resolution, every tool, path-traversal and symlink attempts, plus an end-to-end run that starts the server over stdio and calls each tool through the MCP SDK client. CI runs them on Node 20 and 22, on Ubuntu and Windows. On a real 215-note vault the index built in 87 ms, searches took 3 to 12 ms, and one note's backlinks (33 notes, 48 links) matched an independent count.",
+      },
+    ],
+    decisions: [
+      { choice: "READ-ONLY BY CONSTRUCTION", reason: "no write tools, and a test fails if a write call appears" },
+      { choice: "STDIO > HTTP", reason: "no port, no network, nothing to expose" },
+      { choice: "TWO DEPENDENCIES", reason: "MCP SDK and zod; own frontmatter parser, no search library" },
+    ],
+    facts: [
+      { label: "TYPE", value: "MCP SERVER · STDIO" },
+      { label: "LANGUAGE", value: "TYPESCRIPT" },
+      { label: "DEPENDENCIES", value: "MCP SDK · ZOD" },
+      { label: "TOOLS", value: "5" },
+      { label: "ACCESS", value: "READ-ONLY" },
+      { label: "NETWORK", value: "NONE" },
+      { label: "TESTS", value: "49 · UNIT + E2E" },
+      { label: "STATUS", value: "PUBLIC REPO" },
+    ],
+    specAccent: "ACCESS",
+  },
+  {
     slug: "finance-bi",
     name: "finance-bi",
     tagline: "Five years of personal finance, four questions, one honest report.",
@@ -1079,7 +1146,7 @@ export const tracks: Track[] = [
     intro: "I ship complete software with AI as the co-pilot and my judgement at the wheel:",
     introEm: "local-first, security-hardened, measured before it ships.",
     stats: [
-      { value: "05", label: "projects shipped" },
+      { value: "06", label: "projects shipped" },
       { value: "16", label: "security fixes from one audit" },
       { value: "88%", label: "routing accuracy, AI triage" },
     ],
