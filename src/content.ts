@@ -125,8 +125,8 @@ export const projects: Project[] = [
       stats: [
         { value: "16", label: "hardening fixes shipped" },
         { value: "0", label: "open ports" },
-        { value: "6", label: "agents in the audit" },
-        { value: "Hello", label: "Windows unlock" },
+        { value: "6", label: "areas in the audit" },
+        { value: "Hello", label: "optional Windows unlock" },
       ],
     },
     year: "Jun 2026", // repo created 2026-06-20
@@ -134,7 +134,7 @@ export const projects: Project[] = [
       "A password manager that never phones home — Rust core, encrypted local vault, zero cloud dependency.",
     gallery: [
       { src: "/shots/protec/app.webp", alt: "Protec's vault with an entry open: username, revealed password, URL, notes and tags (demo data)", caption: "The vault, with demo entries: one secret revealed at a time, copied with a shortcut, cleared from the clipboard after." },
-      { src: "/shots/protec/how-it-works.webp", alt: "Diagram: browser extension to desktop app over native messaging, Windows Hello unlock, Rust core encryption, vault file on disk", caption: "How it works: the extension talks to the app over native messaging, Windows Hello gates the unlock, and the Rust core encrypts a vault that never leaves the disk." },
+      { src: "/shots/protec/how-it-works.webp", alt: "Diagram: browser extension to desktop app over native messaging, Windows Hello unlock, Rust core encryption, vault file on disk", caption: "How it works: the extension talks to the app over native messaging, optional Windows Hello unlock, and the Rust core encrypts a vault that never leaves the disk." },
       { src: "/shots/protec/command-palette.webp", alt: "Protec command palette listing commands and fuzzy-matched vault entries", caption: "Ctrl+K command palette: run commands or jump to any entry. Demo entries on example.com." },
       { src: "/shots/protec/generator.webp", alt: "Protec password generator dialog with length slider and character-class toggles", caption: "Password generator: length and character classes. The result shown is a fixed demo string from the stand-in backend." },
       { src: "/shots/protec/terminal-green.webp", alt: "Protec main view in the Terminal Green theme with the GitHub entry revealed", caption: "Terminal Green theme with an entry revealed. Demo entry and password, not real credentials." },
@@ -146,11 +146,11 @@ export const projects: Project[] = [
       },
       {
         heading: "Build",
-        body: "A Rust core owns cryptography and storage; a Tauri + Svelte shell renders it. The browser extension talks to the desktop app over native messaging — no local server, no open port. Windows Hello gates every unlock.",
+        body: "A Rust core owns cryptography and storage; a Tauri + Svelte shell renders it. The browser extension talks to the desktop app over native messaging — no local server, no open port. Windows Hello is an optional extra unlock; the master password always works.",
       },
       {
         heading: "Hardening",
-        body: "A six-agent whole-codebase security audit shipped 16 fixes. Entry secrets — password, notes, TOTP seed, custom fields — zeroize on drop so they don't linger in memory. Plaintext reveals are rate-limited to block bulk exfiltration. The extension confirms nonces, matches the HTTPS scheme, and checks the message sender before it will fill anything.",
+        body: "A six-area whole-codebase security audit shipped 16 fixes. Entry secrets — password, notes, TOTP seed, custom fields — zeroize on drop so they don't linger in memory. Plaintext reveals are rate-limited to block bulk exfiltration. The extension confirms nonces, matches the HTTPS scheme, and checks the message sender before it will fill anything.",
       },
     ],
     decisions: [
@@ -162,9 +162,10 @@ export const projects: Project[] = [
       { label: "TYPE", value: "DESKTOP + WEBEXT" },
       { label: "CORE", value: "RUST" },
       { label: "SHELL", value: "TAURI · SVELTE" },
-      { label: "UNLOCK", value: "WINDOWS HELLO" },
+      { label: "UNLOCK", value: "PASSWORD · OPTIONAL HELLO" },
       { label: "NETWORK", value: "NONE" },
       { label: "AUDIT", value: "16 FIXES SHIPPED" },
+      { label: "RELEASE", value: "v0.2.0 · WIN + MAC (EXP.)" },
       { label: "STATUS", value: "PUBLIC" },
     ],
     specAccent: "NETWORK",
@@ -175,8 +176,9 @@ export const projects: Project[] = [
     tagline: "Self-hosted AI support triage on local Ollama.",
     discipline: "systems",
     category: "automation",
-    stack: ["n8n", "Ollama", "Eval-gated", "Docker"],
-    status: "private",
+    stack: ["n8n", "Ollama", "Eval-gated", "Node"],
+    status: "public",
+    href: "https://github.com/damanjz/n8n-ai-triage",
     metric: { label: "routing", value: "88%" },
     year: "2026",
     summary:
@@ -195,7 +197,7 @@ export const projects: Project[] = [
       },
       {
         heading: "Measurement",
-        body: "No prompt change ships on gut feel. A 40-case eval corpus gates the pipeline; AI-primary routing was promoted only when it beat the rules baseline — 88% against 70%. Ops is built for unattended running: exactly-once email processing, a self-healing watchdog, nightly backups, and a stress-test suite that proves the recovery behaviour.",
+        body: "No prompt change ships on gut feel. A 40-case eval corpus gates the pipeline; AI-primary routing was promoted only when it beat the rules baseline — 88% against 70%. Ops is built for unattended running: exactly-once email processing, a keep-alive task at logon, nightly backups, and a stress-test suite that proves the recovery behaviour.",
       },
     ],
     decisions: [
@@ -209,7 +211,7 @@ export const projects: Project[] = [
       { label: "MODEL", value: "LOCAL OLLAMA" },
       { label: "ROUTING", value: "88% (BASELINE 70%)" },
       { label: "COST", value: "$0 RECURRING" },
-      { label: "STATUS", value: "PRIVATE" },
+      { label: "STATUS", value: "PUBLIC MIRROR" },
     ],
     specAccent: "ROUTING",
   },
@@ -220,9 +222,11 @@ export const projects: Project[] = [
     discipline: "systems",
     category: "commerce",
     stack: ["Next.js 15", "Prisma", "Postgres", "NextAuth"],
-    status: "public",
-    href: "https://github.com/damanjz/volt-techwear-store",
-    metric: { label: "stack", value: "Next 15 · Prisma 7" },
+    status: "live",
+    href: "https://volt-techwear-store.vercel.app",
+    hrefLabel: "open the live store",
+    repo: "https://github.com/damanjz/volt-techwear-store",
+    metric: { label: "stack", value: "Next 15 · Prisma 6" },
     year: "Mar 2026", // repo created 2026-03-13
     summary:
       "VOLT HQ — a full Next.js 15 techwear storefront: membership identity, dynamic clearance leveling, secure Server Action checkouts.",
@@ -254,10 +258,10 @@ export const projects: Project[] = [
     facts: [
       { label: "TYPE", value: "COMMERCE · FULL STACK" },
       { label: "FRAMEWORK", value: "NEXT.JS 15" },
-      { label: "DATA", value: "PRISMA 7 · POSTGRES" },
+      { label: "DATA", value: "PRISMA 6 · POSTGRES" },
       { label: "AUTH", value: "NEXTAUTH" },
       { label: "CHECKOUT", value: "SERVER ACTIONS" },
-      { label: "STATUS", value: "PUBLIC" },
+      { label: "STATUS", value: "LIVE · v1.0.0" },
     ],
     specAccent: "CHECKOUT",
   },
@@ -339,7 +343,7 @@ export const projects: Project[] = [
     metric: { label: "tests", value: "177 · ~91% coverage" },
     year: "Aug 2026",
     summary:
-      "An open-source calendar with a web app and a REST API, so an AI assistant can check availability, spot conflicts and book events across a local file, Google, Outlook and CalDAV.",
+      "An open-source calendar with a web app and a REST API, so an AI assistant can check availability, spot conflicts and book events in a local calendar, with adapters for Google, Outlook and CalDAV.",
     gallery: [
       { src: "/shots/ai-calendar/month.webp", alt: "AI Calendar month view with work and personal events (demo data booked through the API)", caption: "Month view, with demo events that were booked through the API, the same way an assistant would." },
       { src: "/shots/ai-calendar/how-it-works.webp", alt: "Diagram: an AI assistant and people both use one REST API, which checks conflicts and writes to calendar providers", caption: "How it works: the assistant and the web app share one API, so the same conflict check guards every booking." },
@@ -358,7 +362,7 @@ export const projects: Project[] = [
       },
       {
         heading: "Measurement",
-        body: "177 automated tests across 15 suites, about 91% coverage, run by GitHub Actions on every push. Code-review findings were written as failing tests first, then fixed. The Google, Outlook and CalDAV adapters are tested against stand-ins; the local provider is the one running for real.",
+        body: "177 automated tests across 15 suites, about 91% coverage, run by GitHub Actions on every push to master and every pull request. Code-review findings were written as failing tests first, then fixed. The Google, Outlook and CalDAV adapters are tested against stand-ins; the local provider is the one running for real.",
       },
     ],
     decisions: [
@@ -370,7 +374,7 @@ export const projects: Project[] = [
       { label: "TYPE", value: "WEB APP + REST API" },
       { label: "FRONT END", value: "REACT 19 · VITE" },
       { label: "API", value: "NODE · EXPRESS 5" },
-      { label: "PROVIDERS", value: "LOCAL · GOOGLE · OUTLOOK · CALDAV" },
+      { label: "PROVIDERS", value: "LOCAL · 3 ADAPTERS" },
       { label: "TESTS", value: "177 · ~91% COVERAGE" },
       { label: "STATUS", value: "PUBLIC REPO" },
     ],
@@ -493,7 +497,7 @@ export const projects: Project[] = [
       },
       {
         heading: "Build",
-        body: "A seeded generator simulates the firm month by month, with planted effects to find: resignations driven by pay against market, slow raises, long commutes and bench time; women paid 3.5% less for the same job. DuckDB builds a point-in-time monthly snapshot of every employee with ASOF joins, so nothing leaks from the future. A scikit-learn model trained on 2022-23 and tested on 2024 onwards scores everyone on the books and lists the levers HR could change. The Tableau workbook is written as XML by Python, matched to the file Tableau itself saves.",
+        body: "A seeded generator simulates the firm month by month, with planted effects to find: resignations driven by pay against market, slow raises, long commutes and bench time; women paid 3.5% less for the same job. DuckDB builds a point-in-time monthly snapshot of every employee with ASOF joins, so nothing leaks from the future. A scikit-learn model trained on snapshots up to September 2023 and tested on March 2024 onwards scores everyone on the books and lists the levers HR could change. The Tableau workbook is written as XML by Python, matched to the file Tableau itself saves.",
       },
       {
         heading: "Measurement",
@@ -642,7 +646,7 @@ export const projects: Project[] = [
       },
       {
         heading: "Measurement",
-        body: "15 checks gate the build, including an exact day-to-day stock balance, and each one is proven by breaking the data on purpose; two full rebuilds produce identical files. The 14-day stockout model (gradient boosting) reaches ROC AUC 0.840 against 0.699 for the reorder-point rule; flagging the same share of products as the rule, it catches 65.6% of stockouts against 59.5%. Dashboard numbers were checked against DuckDB in three filtered views.",
+        body: "15 checks gate the build, including an exact day-to-day stock balance, and each one is proven by breaking the data on purpose; two full rebuilds produce identical files. The 14-day stockout model (gradient boosting) reaches ROC AUC 0.840 against 0.699 for the reorder-point rule; flagging the same share of products as the rule, it catches 65.6% of stockouts against 59.5%. Dashboard numbers were checked against DuckDB for the whole network and two filtered views.",
       },
       {
         heading: "What it found",
@@ -716,11 +720,11 @@ export const projects: Project[] = [
       },
       {
         heading: "Build",
-        body: "A day-by-day simulation of a B2B SaaS company from October 2024 to September 2026: 1,107 accounts across SMB, Mid-Market and Enterprise, with 13 kinds of dirty data mixed in. dbt on DuckDB builds a Kimball star schema with SCD Type 2 and enforced contracts. A six-detector leak monitor and a churn model (scikit-learn, XGBoost) sit on top, and the Power BI report (Revenue, Cohorts, Accounts, Account) is generated entirely from code.",
+        body: "A day-by-day simulation of a B2B SaaS company from October 2024 to September 2026: 1,107 accounts across SMB, Mid-Market and Enterprise, with 13 kinds of dirty data mixed in. dbt on DuckDB builds a Kimball star schema with SCD Type 2 and enforced contracts. A six-detector leak monitor and a churn model (logistic regression, chosen over XGBoost) sit on top, and the Power BI report (Revenue, Cohorts, Accounts, Account) is generated entirely from code.",
       },
       {
         heading: "Measurement",
-        body: "105 dbt nodes build with tests and contracts, and 13 of 13 injected data-problem types are caught (39,161 dirty rows). 14 of 14 deliberate breakages are caught. 69 of 69 Power BI figures match DuckDB, 3,391 of 3,391 text lines are measured to fit, and two runs from scratch give 90 of 90 byte-identical files.",
+        body: "105 dbt nodes build with tests and contracts, and 13 of 13 injected data-problem types are caught (39,161 dirty rows). 14 of 14 deliberate breakages are caught. 69 of 69 Power BI figures match DuckDB, 3,391 of 3,391 text lines are measured to fit, and two runs from scratch give 90 of 90 byte-identical files. GitHub Actions reruns the pipeline and the mutation test on every push.",
       },
       {
         heading: "What it found",
