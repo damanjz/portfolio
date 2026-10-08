@@ -244,7 +244,7 @@
  },
  {
   "k": "b",
-  "t": "Flux Player (Python, PySide6 native video player); NOCTRA (React Native, Express, Prisma, Razorpay UPI); Umbra (vanilla JS storefront, custom WebGL shader, zero dependencies); portfolio site (Next.js, 18 case studies)."
+  "t": "Obsidian Vault MCP server (TypeScript, read-only, 49 tests, github.com/damanjz/obsidian-vault-mcp); Flux Player (Python, PySide6 native video player); NOCTRA (React Native, Express, Prisma, Razorpay UPI); Umbra (vanilla JS storefront, custom WebGL shader, zero dependencies); portfolio site (Next.js, 18 case studies)."
  },
  {
   "k": "h",
