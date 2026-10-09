@@ -21,7 +21,7 @@
  },
  {
   "k": "p",
-  "t": "Creative technologist working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK) and a 15-month 3D Generalist internship at Blur'd LLP. In 2026 built five BI case studies in SQL, Python, Power BI and Tableau, each gated by automated data checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
+  "t": "Creative technologist working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK) and a 15-month 3D Generalist internship at Blur'd LLP. In 2026 built six BI case studies in SQL, Python, Power BI and Tableau, one on 56M real air-quality readings, each gated by automated data checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
  },
  {
   "k": "h",
@@ -83,6 +83,16 @@
  },
  {
   "k": "entry",
+  "l": "India Air Quality BI (real data): Python, DuckDB, SQL, Power BI, Excel",
+  "r": "Oct 2026",
+  "u": "https://github.com/damanjz/india-air-quality-bi"
+ },
+ {
+  "k": "b",
+  "t": "Built a pipeline over 56M real hourly readings from 107 government stations in six Indian cities with nothing filled in: a 27-month archive gap, mislabelled units and a fault code handled; Power BI and Excel generated from code, 423 of 423 report numbers matching SQL."
+ },
+ {
+  "k": "entry",
   "l": "SaaS Revenue Leak BI: Python, dbt, DuckDB, scikit-learn, Power BI",
   "r": "Oct 2026",
   "u": "https://github.com/damanjz/saas-revenue-leak-bi"
@@ -115,24 +125,6 @@
  },
  {
   "k": "entry",
-  "l": "HR Analytics: Python, DuckDB, scikit-learn, Tableau Public",
-  "r": "Oct 2026",
-  "u": "https://github.com/damanjz/hr-analytics"
- },
- {
-  "k": "b",
-  "t": "Modelled attrition, hiring, eNPS and pay equity for a synthetic IT services firm (4,238 employees over 48 months) with point-in-time ASOF joins."
- },
- {
-  "k": "b",
-  "t": "Trained a flight-risk model (gradient boosting, out-of-time ROC AUC 0.658) whose top 10% of scores caught 20.4% of leavers; gender, age and region are never features."
- },
- {
-  "k": "b",
-  "t": "Published a live Tableau Public workbook generated from code; 20 of 20 values matched SQL."
- },
- {
-  "k": "entry",
   "l": "Supply Chain Network BI: Python, DuckDB, SQL, Tableau",
   "r": "Oct 2026",
   "u": "https://github.com/damanjz/supply-chain-bi"
@@ -147,17 +139,13 @@
  },
  {
   "k": "entry",
-  "l": "Personal Finance BI: Python, DuckDB, SQL, DAX, Power BI",
+  "l": "HR Analytics and Personal Finance BI: Python, DuckDB, scikit-learn, Tableau Public, Power BI",
   "r": "Oct 2026",
-  "u": "https://github.com/damanjz/personal-finance-bi"
+  "u": "https://github.com/damanjz/hr-analytics"
  },
  {
   "k": "b",
-  "t": "Modelled 60 months of synthetic bank, card, payroll and investment exports into one ledger and categorised 2,818 transactions with rules kept as data."
- },
- {
-  "k": "b",
-  "t": "15 reconciliation checks gate the export; every Power BI headline measure matched DuckDB exactly."
+  "t": "HR: flight-risk model (out-of-time ROC AUC 0.658) and a live Tableau Public workbook generated from code, 20 of 20 values matching SQL. Finance: 60 months of bank, card and payroll exports in one ledger, gated by 15 reconciliation checks."
  },
  {
   "k": "h",
