@@ -1,6 +1,6 @@
 # Daman Reddy — Portfolio
 
-Portfolio of a creative technologist working in three crafts: **AI-assisted systems developer**, **3D environment artist** and **BI and data analyst**. Eighteen projects, one standard: real numbers only.
+Portfolio of a creative technologist working in three crafts: **AI-assisted systems developer**, **3D environment artist** and **BI and data analyst**. Twenty projects, one standard: real numbers only.
 
 **Live:** [damanjz.github.io/portfolio](https://damanjz.github.io/portfolio/)
 

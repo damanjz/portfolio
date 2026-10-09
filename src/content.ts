@@ -815,6 +815,86 @@ export const projects: Project[] = [
     ],
     specAccent: "LEAKS",
   },
+  {
+    slug: "india-air-quality",
+    name: "india-air-quality",
+    tagline: "How bad is the air in six Indian cities, and can the data be trusted?",
+    discipline: "systems",
+    category: "analytics",
+    stack: ["Python", "DuckDB", "SQL", "Power BI", "Excel"],
+    status: "public",
+    href: "https://github.com/damanjz/india-air-quality-bi",
+    hrefLabel: "view source",
+    caseStudy: "/case-studies/india-air-quality.pdf",
+    metric: { label: "report numbers", value: "423 of 423 match SQL" },
+    pipeline: {
+      mark: "bars",
+      layout: "stack",
+      accent: "#14b8a6",
+      onAccent: "#04201d",
+      status: "Public repo",
+      flow: [
+        { name: "OpenAQ archive", note: "107 stations · hourly · real" },
+        { name: "DuckDB warehouse", note: "23 checks · nothing filled in" },
+        { name: "Power BI + Excel", note: "5-page question rail" },
+      ],
+      stats: [
+        { value: "107", label: "stations, real data" },
+        { value: "27", label: "months gap, left blank" },
+        { value: "23/23", label: "checks pass" },
+        { value: "423/423", label: "numbers match SQL" },
+      ],
+    },
+    year: "Oct 2026",
+    summary:
+      "Government air-quality monitoring in Delhi, Mumbai, Kolkata, Chennai, Bengaluru and Hyderabad, hourly from 2019 to September 2026. The first piece in this series built on real data rather than a simulation: every problem in the source is found, counted and handled, and nothing is filled in.",
+    gallery: [
+      { src: "/shots/india-air-quality/bad.webp", alt: "Power BI page 'How bad is each city?': a five-question rail on the left, a one-sentence answer, four cards, days by CPCB AQI category per city, and the share of days over the national standard by city and pollutant", caption: "How bad is each city? 11% of city-days were Poor or worse (AQI above 200); Delhi averages an AQI of 205, Bengaluru 78." },
+      { src: "/shots/india-air-quality/when.webp", alt: "Power BI page 'When in the year is it worst?': mean AQI by city and month coloured by CPCB category with the archive gap left blank, mean AQI by season per city, and a typical year by calendar month", caption: "When in the year is it worst? Winter (Jan-Feb) averages AQI 155 against 74 in the monsoon; the 27-month archive gap stays blank, never drawn as clean air." },
+      { src: "/shots/india-air-quality/spikes.webp", alt: "Power BI page 'When do short spikes hit?': spike counts by city and start month, the nine largest spikes against their surrounding days, and mean PM2.5 by city for September, October-November and December", caption: "When do spikes hit? 79 short PM2.5 spikes, found from the data alone by comparing each day with the days around it; most start in October." },
+      { src: "/shots/india-air-quality/hours.webp", alt: "Power BI page 'Which hours and weekdays are worst?': mean PM2.5 by hour of day and weekday, hourly profile by season, and each weekday against the whole week", caption: "Which hours are worst? PM2.5 peaks at 22:00 IST across all cities, 1.4x the cleanest hour (16:00); weekday differences are a few percent." },
+      { src: "/shots/india-air-quality/trust.webp", alt: "Power BI page 'Can the data be trusted?': stations, valid station-hours, readings set aside and missing station-days, completeness by city and year, and the issue log with the action taken for each issue", caption: "Can the data be trusted? 1,089,800 readings set aside, each under a named reason, from mislabelled units to fault code 985." },
+    ],
+    sections: [
+      {
+        heading: "Problem",
+        body: "The earlier pieces in this series simulated their data and graded the analytics against a sealed answer key: that proves the method, not the world. This one uses real measurements from 107 government monitoring stations (CPCB and state boards, via the public OpenAQ archive) in six cities. There is no answer key, so every number has to survive the source.",
+      },
+      {
+        heading: "What real data cost",
+        body: "The archive has no Indian station data from 31 Oct 2022 to 19 Feb 2025: 27 months, left blank and never estimated. Later files label NO2, SO2 and CO as ppb, but the values are CPCB's own µg/m³ and mg/m³: 12,171,979 readings relabelled, not converted. PM value 985 is an analyser status code (22,707 readings at exactly 985, 15 at 984). 5,890 runs of a frozen value last 8 hours or more, and at two stations an old and a new OpenAQ id publish different values. In all, 1,089,800 readings are set aside, each under a named reason.",
+      },
+      {
+        heading: "Build",
+        body: "The stations were found from the archive itself, with no account or API key: 117,993 daily files (337.4 MB), each MD5-verified and listed in a manifest. 56,030,781 raw rows go into a DuckDB star schema, where every reading gets exactly one disposition, valid or a named issue, and only valid readings reach the facts. The marts score CPCB's National AQI, exceedance of the national standards, seasons, hourly profiles and spikes. An Excel workbook and a 5-page Power BI report are generated from the same warehouse; the report is a question rail, and each page opens with a one-sentence answer computed by a measure.",
+      },
+      {
+        heading: "Measurement",
+        body: "23 of 23 reconciliation checks pass, and the export is blocked if any fails; 23 of 23 deliberate breakages are caught. 423 of 423 figures on the report match independent SQL, and 56 of 56 measures evaluate. 305 of 305 single lines, 36 of 36 wrapped texts and 14 of 14 grids are measured to fit. Two builds from the raw files give 18 of 18 byte-identical output files.",
+      },
+      {
+        heading: "What it found",
+        body: "The worst city-month was Delhi in November 2021: mean AQI 401, with 30 of 30 days Very Poor or Severe. City PM2.5 was above the 24-hour national standard on 56.5% of measured days in Delhi and 3.6% in Bengaluru. Delhi's October-November PM2.5 runs 3.3x to 5.3x its September; with no weather or emissions data, levels are described and no cause is attributed. 79 short spikes were found from the data alone, starting most often in October.",
+      },
+    ],
+    decisions: [
+      { choice: "NOTHING FILLED IN", reason: "gaps stay blank; no trend claimed across the 27-month hole" },
+      { choice: "RELABEL, NOT CONVERT", reason: "the values were right, only the unit label was wrong" },
+      { choice: "SPIKES FROM DATA ALONE", reason: "no event calendar: each day against the days around it" },
+    ],
+    facts: [
+      { label: "TYPE", value: "BI CASE STUDY" },
+      { label: "DATA", value: "REAL · 107 STATIONS · HOURLY" },
+      { label: "WINDOW", value: "2019 TO SEP 2026 · 6 CITIES" },
+      { label: "SOURCE", value: "CPCB AND STATE BOARDS VIA OPENAQ" },
+      { label: "LICENCE", value: "PER PROVIDER" },
+      { label: "CHECKS", value: "23 / 23 PASS · 23 / 23 BREAKS CAUGHT" },
+      { label: "NUMBERS", value: "423 / 423 MATCH SQL" },
+      { label: "REPORT", value: "POWER BI · EXCEL · GENERATED" },
+      { label: "STATUS", value: "PUBLIC REPO" },
+    ],
+    specAccent: "DATA",
+  },
 
   /* ----------------------------------------------------------------------- */
   /*  CRAFT — 3D / art. Real renders from the project hub, optimized to WebP. */
@@ -1184,7 +1264,7 @@ export const tracks: Track[] = [
     intro: "I turn messy records into reports people can act on,",
     introEm: "with every number reconciled back to SQL before it ships.",
     stats: [
-      { value: "05", label: "end-to-end BI builds" },
+      { value: "06", label: "end-to-end BI builds" },
       { value: "0.840", label: "best model ROC AUC, stockouts" },
       { value: "63", label: "of 63 hospital report numbers matched to SQL" },
     ],

@@ -27,6 +27,7 @@ type Section = { heading: string; paras: string[]; skills: [string, string][]; e
 
 // resume entry title prefix -> project page; section heading -> door
 const PROJECT: [RegExp, string, string][] = [
+  [/^India Air Quality/, "/projects/india-air-quality/", "India air quality"],
   [/^SaaS Revenue Leak/, "/projects/saas-revenue-leak/", "SaaS Revenue Leak"],
   [/^Hospital Operations/, "/projects/hospital-operations/", "Hospital operations"],
   [/^HR Analytics/, "/projects/hr-analytics/", "HR analytics"],
@@ -66,7 +67,7 @@ function parse(blocks: Block[]) {
 
 // every figure here is in the resume itself
 const STATS = [
-  { value: "05", label: "BI case studies, end to end" },
+  { value: "06", label: "BI case studies, end to end" },
   { value: "16", label: "security fixes shipped in Protec" },
   { value: "177", label: "tests behind AI Calendar" },
   { value: "15", label: "months in a 3D studio" },
