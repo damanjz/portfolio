@@ -340,7 +340,7 @@ export const projects: Project[] = [
     status: "public",
     href: "https://github.com/damanjz/ai-calendar",
     hrefLabel: "view source",
-    metric: { label: "tests", value: "177 · ~91% coverage" },
+    metric: { label: "tests", value: "177 · ~96% coverage" },
     year: "Aug 2026",
     summary:
       "An open-source calendar with a web app and a REST API, so an AI assistant can check availability, spot conflicts and book events in a local calendar, with adapters for Google, Outlook and CalDAV.",
@@ -362,7 +362,7 @@ export const projects: Project[] = [
       },
       {
         heading: "Measurement",
-        body: "177 automated tests across 15 suites, about 91% coverage, run by GitHub Actions on every push to master and every pull request. Code-review findings were written as failing tests first, then fixed. The Google, Outlook and CalDAV adapters are tested against stand-ins; the local provider is the one running for real.",
+        body: "177 automated tests across 15 suites, about 96% line coverage, run by GitHub Actions on every push to master and every pull request. Code-review findings were written as failing tests first, then fixed. The Google, Outlook and CalDAV adapters are tested against stand-ins; the local provider is the one running for real.",
       },
     ],
     decisions: [
@@ -375,7 +375,7 @@ export const projects: Project[] = [
       { label: "FRONT END", value: "REACT 19 · VITE" },
       { label: "API", value: "NODE · EXPRESS 5" },
       { label: "PROVIDERS", value: "LOCAL · 3 ADAPTERS" },
-      { label: "TESTS", value: "177 · ~91% COVERAGE" },
+      { label: "TESTS", value: "177 · ~96% COVERAGE" },
       { label: "STATUS", value: "PUBLIC REPO" },
     ],
     specAccent: "TESTS",

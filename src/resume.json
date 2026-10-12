@@ -223,7 +223,7 @@
  },
  {
   "k": "b",
-  "t": "Built a calendar with a REST API that lets AI assistants check availability, detect conflicts and book events; 177 automated tests (about 91% coverage) run in GitHub Actions CI."
+  "t": "Built a calendar with a REST API that lets AI assistants check availability, detect conflicts and book events; 177 automated tests (about 96% line coverage) run in GitHub Actions CI."
  },
  {
   "k": "entry",
