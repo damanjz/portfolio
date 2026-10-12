@@ -21,7 +21,7 @@
  },
  {
   "k": "p",
-  "t": "Creative technologist working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK) and a 15-month 3D Generalist internship at Blur'd LLP. In 2026 built six BI case studies in SQL, Python, Power BI and Tableau, one on 56M real air-quality readings, each gated by automated data checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
+  "t": "Creative technologist working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK) and a 15-month 3D Generalist internship at Blur'd LLP. In 2026 built six BI case studies in SQL, Python, Power BI and Tableau, one on 36.1M real air-quality readings, each gated by automated data checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
  },
  {
   "k": "h",
@@ -89,7 +89,7 @@
  },
  {
   "k": "b",
-  "t": "Built a pipeline over 56M real hourly readings from 107 government stations in six Indian cities with nothing filled in: a 27-month archive gap, mislabelled units and a fault code handled; Power BI and Excel generated from code, 423 of 423 report numbers matching SQL."
+  "t": "Built a pipeline over 36.1M valid hourly readings from 107 government stations in six Indian cities with nothing filled in: a 27-month archive gap, mislabelled units and a fault code handled; Power BI and Excel generated from code, 423 of 423 report numbers matching SQL."
  },
  {
   "k": "entry",
