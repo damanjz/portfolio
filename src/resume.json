@@ -21,7 +21,7 @@
  },
  {
   "k": "p",
-  "t": "Creative technologist working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK) and a 15-month 3D Generalist internship at Blur'd LLP. In 2026 built six BI case studies in SQL, Python, Power BI and Tableau, one on 36.1M real air-quality readings, each gated by automated data checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
+  "t": "Creative technologist with 4.5 years of experience in 3D and product design, working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK). In 2026 built six BI case studies in SQL, Python, Power BI and Tableau, one on 36.1M real air-quality readings, each gated by automated data checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
  },
  {
   "k": "h",
@@ -29,18 +29,18 @@
  },
  {
   "k": "skill",
-  "l": "Data and BI",
+  "l": "Primary skills",
   "t": "SQL (DuckDB), Python (pandas, NumPy, scikit-learn), Power BI (DAX), Tableau, Excel, data modelling, ETL, data validation and reconciliation, web scraping, predictive modelling, data visualisation"
  },
  {
   "k": "skill",
-  "l": "Software and AI",
-  "t": "Rust, TypeScript, JavaScript, Python, C, Next.js, React, Node.js, Express, Tauri, Svelte, PySide6, Prisma, PostgreSQL, Redis, REST APIs, Git, GitHub Actions, n8n, Ollama (local LLMs), LLM evaluation, Claude Code"
+  "l": "Secondary skills (software and AI)",
+  "t": "Rust, TypeScript, JavaScript, C, Next.js, React, Node.js, Express, Tauri, Svelte, PySide6, Prisma, PostgreSQL, Redis, REST APIs, Git, GitHub Actions, n8n, Ollama, LLM evaluation, Claude Code"
  },
  {
   "k": "skill",
-  "l": "3D and Design",
-  "t": "Unreal Engine 5 (Lumen, Nanite, Blueprints), Blender (Geometry Nodes, Cycles), Substance Painter, Substance Designer, Adobe Photoshop, After Effects, Premiere Pro, CorelDRAW, WordPress (Elementor)"
+  "l": "Secondary skills (3D and design)",
+  "t": "Unreal Engine 5 (Lumen, Nanite, Blueprints), Blender (Geometry Nodes, Cycles), Substance Painter, Substance Designer, Adobe Photoshop, After Effects, Premiere Pro, CorelDRAW, WordPress"
  },
  {
   "k": "skill",
@@ -53,8 +53,8 @@
  },
  {
   "k": "entry",
-  "l": "Product and Brand Lead, Datatree Systems",
-  "r": "Jul 2026 – Present"
+  "l": "Product and Design Lead, Datatree Systems",
+  "r": "Jan 2026 – Present"
  },
  {
   "k": "b",
@@ -66,7 +66,20 @@
  },
  {
   "k": "b",
-  "t": "Research the market and target niches, and analyse pricing and AI running costs, to fit the product to its customers and support business decisions."
+  "t": "Research markets and target niches and analyse pricing and AI running costs for product fit and business decisions."
+ },
+ {
+  "k": "entry",
+  "l": "Design Associate, Datatree Systems",
+  "r": "Jun 2023 – Dec 2025"
+ },
+ {
+  "k": "b",
+  "t": "Designed the company website and handled design for external-facing documents."
+ },
+ {
+  "k": "b",
+  "t": "Began advocating for design in company decisions; worked remotely during the MA year."
  },
  {
   "k": "entry",
@@ -121,7 +134,7 @@
  },
  {
   "k": "b",
-  "t": "Generated the Power BI report from code; 63 of 63 report numbers matched SQL and 18 of 18 checks caught injected errors."
+  "t": "Generated Power BI from code; 63 of 63 numbers matched SQL and 18 of 18 checks caught injected errors."
  },
  {
   "k": "entry",
@@ -145,7 +158,7 @@
  },
  {
   "k": "b",
-  "t": "HR: flight-risk model (out-of-time ROC AUC 0.658) and a live Tableau Public workbook generated from code, 20 of 20 values matching SQL. Finance: 60 months of bank, card and payroll exports in one ledger, gated by 15 reconciliation checks."
+  "t": "HR: flight-risk model (out-of-time ROC AUC 0.658) and a live Tableau workbook built from code, 20 of 20 matching SQL. Finance: 60 months of bank, card and payroll exports in one ledger, gated by 15 reconciliation checks."
  },
  {
   "k": "h",
@@ -285,7 +298,7 @@
  },
  {
   "k": "p",
-  "t": "IELTS Academic 7.0 (CEFR C1), Jul 2023 | C Programming (60 hours), TechLearn Solutions, Jan 2020 | NCC 'A' (Air Wing), 2016"
+  "t": "IELTS Academic 7.0 (C1), Jul 2023 | C Programming (60 hours), TechLearn Solutions, Jan 2020 | NCC 'A' (Air Wing), 2016"
  },
  {
   "k": "h",
