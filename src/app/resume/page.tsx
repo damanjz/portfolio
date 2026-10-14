@@ -70,7 +70,7 @@ const STATS = [
   { value: "06", label: "BI case studies, end to end" },
   { value: "16", label: "security fixes shipped in Protec" },
   { value: "177", label: "tests behind AI Calendar" },
-  { value: "15", label: "months in a 3D studio" },
+  { value: "4.5", label: "years in 3D and product design" },
 ];
 
 const linkFor = (title: string) => PROJECT.find(([re]) => re.test(title));
