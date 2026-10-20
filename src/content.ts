@@ -900,8 +900,8 @@ export const projects: Project[] = [
   /*  CRAFT — 3D / art. Real renders from the project hub, optimized to WebP. */
   /* ----------------------------------------------------------------------- */
   {
-    slug: "umbraixs",
-    name: "Umbraixs",
+    slug: "umbraxis",
+    name: "Umbraxis",
     tagline: "A semi-stylized medieval village that reads in motion.",
     discipline: "craft",
     category: "environment",
@@ -915,16 +915,16 @@ export const projects: Project[] = [
       "A composition-driven, semi-stylized medieval village in Unreal Engine 5 — built to tell a story by itself and read clearly in motion. My MA Animation technical showcase.",
     youtube: "BFrPzJXAXRU",
     gallery: [
-      { src: "/art/umbraixs-vista.webp", alt: "Umbraixs village vista", caption: "The establishing vista — windmill, red rooftops, a lily-pad river, stylized cumulus over hazy mountains." },
-      { src: "/art/umbraixs-path.webp", alt: "Umbraixs forest path", caption: "A birch-lined path with dappled light and faint magic wisps in the shade — leading lines into the frame." },
-      { src: "/art/umbraixs-shot3.webp", alt: "Umbraixs environment shot", caption: "Value grouping and light anchors do the composition work — semi-stylized so lighting reads at a glance." },
-      { src: "/art/umbraixs-shot2.webp", alt: "Umbraixs environment shot", caption: "Emissive stylized materials with a fully dynamic day/night cycle and a randomized weather system." },
-      { src: "/art/umbraixs-shot5.webp", alt: "Umbraixs environment shot", caption: "Blockout-to-beauty — spline-driven castle walls and river, blueprint-authored buildings." },
+      { src: "/art/umbraxis-vista.webp", alt: "Umbraxis village vista", caption: "The establishing vista — windmill, red rooftops, a lily-pad river, stylized cumulus over hazy mountains." },
+      { src: "/art/umbraxis-path.webp", alt: "Umbraxis forest path", caption: "A birch-lined path with dappled light and faint magic wisps in the shade — leading lines into the frame." },
+      { src: "/art/umbraxis-shot3.webp", alt: "Umbraxis environment shot", caption: "Value grouping and light anchors do the composition work — semi-stylized so lighting reads at a glance." },
+      { src: "/art/umbraxis-shot2.webp", alt: "Umbraxis environment shot", caption: "Emissive stylized materials with a fully dynamic day/night cycle and a randomized weather system." },
+      { src: "/art/umbraxis-shot5.webp", alt: "Umbraxis environment shot", caption: "Blockout-to-beauty — spline-driven castle walls and river, blueprint-authored buildings." },
     ],
     sections: [
       {
         heading: "The brief",
-        body: "Under a clear blue sky brushed with soft pink clouds, a quiet medieval village of round stone towers and red-tiled roofs — a landscape that tells a story by itself. Umbraixs is my MA Animation technical showcase: composition-driven, semi-stylized environment building that has to read clearly in motion. The touchstones were Genshin's Mondstadt, Zelda: Breath of the Wild, and Studio Ghibli's Howl's Moving Castle.",
+        body: "Under a clear blue sky brushed with soft pink clouds, a quiet medieval village of round stone towers and red-tiled roofs — a landscape that tells a story by itself. Umbraxis is my MA Animation technical showcase: composition-driven, semi-stylized environment building that has to read clearly in motion. The touchstones were Genshin's Mondstadt, Zelda: Breath of the Wild, and Studio Ghibli's Howl's Moving Castle.",
       },
       {
         heading: "How it was built",
@@ -1241,7 +1241,7 @@ export const tracks: Track[] = [
     line1: "Environment",
     line2: "Artist",
     fit: 8.3,
-    cover: "/art/umbraixs-path.webp",
+    cover: "/art/umbraxis-path.webp",
     intro: "I build places that tell a story on their own,",
     introEm: "composed to read in motion, from stylized villages to sodium-lit roadsides.",
     stats: [
@@ -1339,7 +1339,7 @@ export const ethics: Record<TrackId, { title: string; body: string }[]> = {
     },
     {
       title: "Performance is part of the art",
-      body: "A scene that stutters doesn't read. Umbraixs was profiled to about 100 fps against a 60 fps target, with Lumen and Nanite doing the heavy lifting.",
+      body: "A scene that stutters doesn't read. Umbraxis was profiled to about 100 fps against a 60 fps target, with Lumen and Nanite doing the heavy lifting.",
     },
     {
       title: "Built for where it lands",

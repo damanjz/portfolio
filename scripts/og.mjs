@@ -26,7 +26,7 @@ const faces = (css.match(/@font-face\{[^}]*\}/g) ?? [])
 
 // the landing in miniature: who on the left, a wall of real work on the right
 const wall = [
-  ["art/umbraixs-path.webp", "shots/protec/app.webp", "art/highway-stop.webp"],
+  ["art/umbraxis-path.webp", "shots/protec/app.webp", "art/highway-stop.webp"],
   ["shots/hr-analytics/workbench.webp", "art/car-hero.webp", "shots/ai-calendar/month.webp"],
   ["art/interior-study.webp", "shots/supply-chain/network.webp", "art/proc-clouds.webp"],
 ];

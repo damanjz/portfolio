@@ -38,7 +38,7 @@ const PROJECT: [RegExp, string, string][] = [
   [/^VOLT/, "/projects/volt-techwear-store/", "VOLT"],
   [/^AI Calendar/, "/projects/ai-calendar/", "AI Calendar"],
   [/^Additional builds/, "/projects/flux-player/", "Flux Player"],
-  [/^Umbraixs/, "/projects/umbraixs/", "Umbraixs"],
+  [/^Umbraxis/, "/projects/umbraxis/", "Umbraxis"],
   [/^Blender Work/, "/art/", "Environments"],
 ];
 const DOOR: Record<string, [string, string]> = {

@@ -9,6 +9,9 @@ All notable changes to the portfolio. v6 ("dossier") is the live site; v5 ("thre
 
 The landing becomes a dossier: who on the left, every work on the right. The three craft pages stay.
 
+### Project name fix — 2026-10-20
+- The MA final project is **Umbraxis** (was misspelt "Umbraixs"). Name, case-study URL (`/projects/umbraxis/`), image files, resume entry, resume PDF and `llms.txt` updated. The old URL `/projects/umbraixs/` redirects to the new one.
+
 ### v6.5 — Seven pipeline cards — 2026-10-07
 - **Pipeline cards** each get their own layout and colour: ledger (Finance BI, emerald), spotlight (HR Analytics, violet), rail (Hospital Operations, rose), network (Supply Chain, amber), split (SaaS Revenue Leak, orange), stack (Protec, blue), transport (Flux Player, teal). Black and white until hovered; the lines pulse on hover only. Homepage tiles show names and numbers only.
 - **Fix** — arriving on the landing from another page measured the wall before layout and rendered thousands of tile copies (8,407 on a phone). The wall now waits for real tile heights, re-checks while it runs, and caps the copies.
