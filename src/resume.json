@@ -21,7 +21,7 @@
  },
  {
   "k": "p",
-  "t": "Creative technologist with 4.5 years of experience in 3D and product design, working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK). In 2026 built six local AI systems scored against baselines (RAG support agent, text-to-SQL, document extraction, integrations, evals, voice), six BI case studies in SQL, Python, Power BI and Tableau, each gated by automated data checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
+  "t": "Creative technologist with 4.5 years of experience in 3D and product design, working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK). In 2026 built six local AI systems and six BI case studies, each measured against baselines or gated by automated checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
  },
  {
   "k": "h",
@@ -85,6 +85,28 @@
  {
   "k": "b",
   "t": "Produced 3D visualisation, signage, flyer and packaging designs for client advertising campaigns over 15 months, to brand guidelines; employer certificate cites \"exceptional skills and professionalism in 3D Design & Visualisation\"."
+ },
+ {
+  "k": "h",
+  "t": "AI Systems Projects"
+ },
+ {
+  "k": "entry",
+  "l": "FDE Portfolio, fictional client: Python, FastAPI, PostgreSQL, pgvector, Ollama",
+  "r": "Nov 2026",
+  "u": "https://damanjz.github.io/portfolio/systems/"
+ },
+ {
+  "k": "b",
+  "t": "Shipped six local AI systems on synthetic data, each scored against baselines: a tool-using RAG support agent at 88% on 60 cases (vs 37% without retrieval), text-to-SQL at 90% (vs 42%), and invoice extraction with 0 silent errors in 1,130 fields."
+ },
+ {
+  "k": "b",
+  "t": "Built an exactly-once webhook hub (Postgres outbox, OAuth2, HMAC, rate limits) that delivered 1,476 events under chaos testing with 0 lost and 0 duplicates, and a voice front end (Whisper, Piper) matching typed accuracy."
+ },
+ {
+  "k": "b",
+  "t": "Built an eval and regression-gate harness (McNemar test, bootstrap, CI gate) that measured a 4-of-60 noise floor and blocked a faster model failing 2 of 10 safety cases; adversarial reviews caught scorer and test bugs before publishing."
  },
  {
   "k": "h",
@@ -180,24 +202,6 @@
  },
  {
   "k": "entry",
-  "l": "FDE Portfolio, fictional client: Python, FastAPI, PostgreSQL, pgvector, Ollama",
-  "r": "Nov 2026",
-  "u": "https://damanjz.github.io/portfolio/systems/"
- },
- {
-  "k": "b",
-  "t": "Shipped six local AI systems on synthetic data, each scored against baselines: a tool-using RAG support agent at 88% on 60 cases (vs 37% without retrieval), text-to-SQL at 90% (vs 42%), and invoice extraction with 0 silent errors in 1,130 fields."
- },
- {
-  "k": "b",
-  "t": "Built an exactly-once webhook hub (Postgres outbox, OAuth2, HMAC, rate limits) that delivered 1,476 events under chaos testing with 0 lost and 0 duplicates, and a voice front end (Whisper, Piper) matching typed accuracy."
- },
- {
-  "k": "b",
-  "t": "Built an eval and regression-gate harness (McNemar test, bootstrap, CI gate) that measured a 4-of-60 noise floor and blocked a faster model failing 2 of 10 safety cases; adversarial reviews caught scorer and test bugs before publishing."
- },
- {
-  "k": "entry",
   "l": "Protec, local-first password manager: Rust, Tauri, Svelte",
   "r": "Jun 2026 – Jul 2026",
   "u": "https://github.com/damanjz/protec"
@@ -223,7 +227,7 @@
  },
  {
   "k": "b",
-  "t": "VOLT Techwear Store (live Next.js 15 storefront, NextAuth, Prisma, server-side checkout); AI Calendar (REST API for AI assistants, 177 tests, about 96% coverage); Obsidian Vault MCP server (read-only, 49 tests); Flux Player (Python, PySide6); NOCTRA (React Native, Express, Prisma, Razorpay UPI); Umbra (vanilla JS, custom WebGL shader); portfolio site (Next.js, 26 case studies)."
+  "t": "VOLT Techwear Store (live Next.js 15 storefront, Prisma); AI Calendar (REST API for AI assistants, 177 tests); Obsidian Vault MCP server (49 tests); Flux Player (PySide6); NOCTRA (React Native, Razorpay UPI); Umbra (WebGL shader); portfolio site (Next.js, 26 case studies)."
  },
  {
   "k": "h",
@@ -284,6 +288,6 @@
  },
  {
   "k": "p",
-  "t": "Portfolio: https://damanjz.github.io/portfolio/ | GitHub: https://github.com/damanjz | ArtStation: https://www.artstation.com/damanpsd | Tableau Public: https://public.tableau.com/app/profile/daman.reddy"
+  "t": "ArtStation: https://www.artstation.com/damanpsd | Tableau Public: https://public.tableau.com/app/profile/daman.reddy"
  }
 ]

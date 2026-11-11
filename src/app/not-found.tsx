@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { site } from "@/content";
-import Split from "@/components/Split";
-import { TLink } from "@/components/Transition";
 
 /** 404: on static export this is out/404.html, which GitHub Pages serves for unknown paths. */
 export const metadata: Metadata = {
@@ -12,22 +11,15 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className="nf">
-      <header className="me-top nf-top">
-        <span className="name">
-          {site.name} <span>/ Hyderabad</span>
-        </span>
-      </header>
-      <main>
-        <span className="lbl">Error 404</span>
-        <Split as="h1" text="Nothing|here" className="cap" />
-        <p data-fade="">The page you followed was moved, renamed or never existed.</p>
-        <div>
-          <TLink href="/" label={site.name} className="pill on" data-magnetic>
-            &larr; Back to all work
-          </TLink>
-        </div>
-      </main>
+    <div className="paper nf">
+      <p className="tagrow"><span>Error 404</span></p>
+      <h1>Nothing here.</h1>
+      <p>The page you followed was moved, renamed or never existed.</p>
+      <div className="acts">
+        <Link className="btn on" href="/">Back to the start</Link>
+        <Link className="btn" href="/ai/">AI</Link>
+        <Link className="btn" href="/data/">Data</Link>
+      </div>
     </div>
   );
 }

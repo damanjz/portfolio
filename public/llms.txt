@@ -1,10 +1,9 @@
-# Daman Reddy — Systems, 3D Environments, BI and Data
+# Daman Reddy — AI Agents, Data Systems and BI
 
-> Daman Reddy is based in Hyderabad, India, and works in three crafts: an
-> AI-assisted systems developer (local-first, security-hardened software), a trained
-> 3D environment artist (MA Animation, University of Salford, Merit), and a BI and
-> data analyst (SQL, DuckDB, Power BI, Tableau). Working style: local-first,
-> evidence over vibes, measure before shipping.
+> Daman Reddy, Hyderabad, India, builds AI agents graded by their own evals and BI reports where every
+> number reconciles to SQL, on local models. Four lanes: AI agents and integrations, BI and data analysis,
+> AI-assisted systems development, and 3D environment art (MA Animation, University of Salford, Merit).
+> Working style: local-first, evidence over vibes, measure before shipping.
 
 Site: https://damanjz.github.io/portfolio/
 Contact: daman.w3d@gmail.com · GitHub @damanjz · ArtStation @damanpsd
@@ -15,6 +14,14 @@ Status: Open to work (replies in ~24h)
 - 3D environments: Composition first. Blockout to beauty. Performance is part of the art. Built for where it lands.
 - Data: Every number reconciles. Break it on purpose. Fair by design. Reports as code.
 
+## AI agents and integrations (https://damanjz.github.io/portfolio/ai/)
+- [fde-support-agent](https://damanjz.github.io/portfolio/projects/fde-support-agent/): Support agent for a fictional coffee-gear brand: hybrid retrieval with citations, four tools, writes only after the customer confirms; 88% on a 60-case eval (mean of 3 runs) vs 85% keyword-only and 37% without retrieval, local 27B model, INR 0 per query. Public: https://github.com/damanjz/fde-support-agent
+- [fde-integration-hub](https://damanjz.github.io/portfolio/projects/fde-integration-hub/): Webhook hub delivering order events to warehouse, helpdesk and accounting through a Postgres outbox with leases, HMAC, OAuth2, rate limits and a circuit breaker; chaos run of 1,476 deliveries with 0 lost, 0 duplicates, 0 ordering violations. Public: https://github.com/damanjz/fde-integration-hub
+- [fde-doc-extraction](https://damanjz.github.io/portfolio/projects/fde-doc-extraction/): Invoice and delivery-note extraction (PDF and OCR) with validation in code (GSTIN checksum, sums, tax rules); 0 silent errors in 1,130 fields and 0 bad documents auto-accepted vs 17 for raw LLM extraction. Public: https://github.com/damanjz/fde-doc-extraction
+- [fde-ask-your-data](https://damanjz.github.io/portfolio/projects/fde-ask-your-data/): Text-to-SQL over a 12-month warehouse with a read-only, PII-free database role and checked summaries; 36/40 (90%) on gold questions vs 17/40 for a raw-schema baseline. Public: https://github.com/damanjz/fde-ask-your-data
+- [fde-eval-harness](https://damanjz.github.io/portfolio/projects/fde-eval-harness/): Eval and regression gate across models: paired McNemar, exact bootstrap, Wilson intervals; measured a 4-of-60 noise floor and blocked a faster model that failed 2 of 10 safety cases. Public: https://github.com/damanjz/fde-eval-harness
+- [fde-voice-intake](https://damanjz.github.io/portfolio/projects/fde-voice-intake/): Voice front end for the support agent (faster-whisper and Piper on CPU): 25/25 spoken requests end to end on synthetic speech, quiet clips never reach the agent, hedged answers never confirm an action. Public: https://github.com/damanjz/fde-voice-intake
+
 ## AI-assisted systems development (https://damanjz.github.io/portfolio/systems/)
 - [protec](https://damanjz.github.io/portfolio/projects/protec/): A password manager that never phones home — Rust core, encrypted local vault, Windows Hello unlock, browser extension over native messaging. 16 hardening fixes from a six-agent audit. Public: https://github.com/damanjz/protec
 - [n8n-automation](https://damanjz.github.io/portfolio/projects/n8n-automation/): Self-hosted AI support triage on local Ollama — routes tickets and drafts KB-grounded replies for human approval, gated by a 40-case eval corpus (88% vs 70% baseline). Private.
@@ -22,12 +29,6 @@ Status: Open to work (replies in ~24h)
 - [flux-player](https://damanjz.github.io/portfolio/projects/flux-player/): A native Windows video player in Python + PySide6 (Qt) — a homage to Windows Media Player 12, no web wrapper. Public: https://github.com/damanjz/flux-player
 - [ai-calendar](https://damanjz.github.io/portfolio/projects/ai-calendar/): An open-source calendar with a React web app and a Node/Express REST API so AI assistants can check availability, spot conflicts and book events (local file, Google, Outlook, CalDAV); 177 tests, about 96% line coverage. Public: https://github.com/damanjz/ai-calendar
 - [obsidian-vault-mcp](https://damanjz.github.io/portfolio/projects/obsidian-vault-mcp/): A read-only Model Context Protocol server (TypeScript, stdio, MCP SDK + zod only) that lets an AI assistant search an Obsidian vault: search, read_note, backlinks, outgoing_links, list_notes. No write calls, no network; path traversal, dot-folders and links outside the vault refused; 49 tests including end-to-end over stdio. Public: https://github.com/damanjz/obsidian-vault-mcp
-- [fde-support-agent](https://damanjz.github.io/portfolio/projects/fde-support-agent/): Support agent for a fictional coffee-gear brand: hybrid retrieval with citations, four tools, writes only after the customer confirms; 88% on a 60-case eval (mean of 3 runs) vs 85% keyword-only and 37% without retrieval, local 27B model, INR 0 per query. Public: https://github.com/damanjz/fde-support-agent
-- [fde-integration-hub](https://damanjz.github.io/portfolio/projects/fde-integration-hub/): Webhook hub delivering order events to warehouse, helpdesk and accounting through a Postgres outbox with leases, HMAC, OAuth2, rate limits and a circuit breaker; chaos run of 1,476 deliveries with 0 lost, 0 duplicates, 0 ordering violations. Public: https://github.com/damanjz/fde-integration-hub
-- [fde-doc-extraction](https://damanjz.github.io/portfolio/projects/fde-doc-extraction/): Invoice and delivery-note extraction (PDF and OCR) with validation in code (GSTIN checksum, sums, tax rules); 0 silent errors in 1,130 fields and 0 bad documents auto-accepted vs 17 for raw LLM extraction. Public: https://github.com/damanjz/fde-doc-extraction
-- [fde-ask-your-data](https://damanjz.github.io/portfolio/projects/fde-ask-your-data/): Text-to-SQL over a 12-month warehouse with a read-only, PII-free database role and checked summaries; 36/40 (90%) on gold questions vs 17/40 for a raw-schema baseline. Public: https://github.com/damanjz/fde-ask-your-data
-- [fde-eval-harness](https://damanjz.github.io/portfolio/projects/fde-eval-harness/): Eval and regression gate across models: paired McNemar, exact bootstrap, Wilson intervals; measured a 4-of-60 noise floor and blocked a faster model that failed 2 of 10 safety cases. Public: https://github.com/damanjz/fde-eval-harness
-- [fde-voice-intake](https://damanjz.github.io/portfolio/projects/fde-voice-intake/): Voice front end for the support agent (faster-whisper and Piper on CPU): 25/25 spoken requests end to end on synthetic speech, quiet clips never reach the agent, hedged answers never confirm an action. Public: https://github.com/damanjz/fde-voice-intake
 
 ## BI and data analysis (https://damanjz.github.io/portfolio/data/)
 - [finance-bi](https://damanjz.github.io/portfolio/projects/finance-bi/): A BI case study on five years of synthetic personal-finance records — DuckDB/SQL model reconciled by 15 checks, and a four-question Power BI report generated from code, its measures matched to SQL exactly. Public: https://github.com/damanjz/personal-finance-bi
@@ -53,6 +54,7 @@ Engineering: Rust, Python, Tauri, PySide6. Web: TypeScript, Next.js 15, Svelte, 
 
 ## Links
 - Resume: https://damanjz.github.io/portfolio/resume/ (PDF: https://damanjz.github.io/portfolio/resume/Daman-Reddy-Resume.pdf)
+- AI: https://damanjz.github.io/portfolio/ai/
 - Systems: https://damanjz.github.io/portfolio/systems/
 - 3D environments: https://damanjz.github.io/portfolio/art/
 - BI and data: https://damanjz.github.io/portfolio/data/

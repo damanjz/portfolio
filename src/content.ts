@@ -6,18 +6,18 @@
 export const site = {
   handle: "damanjz",
   name: "Daman Reddy",
-  role: "Systems developer · 3D environment artist · BI and data analyst",
+  role: "AI agents and data systems · BI analyst · 3D environment artist",
   location: "Hyderabad, IN",
   status: "Open to work",
   // landing intro
-  lede: ["3D artist turned", "systems builder."],
-  bio: "I ship local-first software with AI as the co-pilot, build worlds in Unreal and Blender, and turn messy records into reports people can act on.",
+  lede: ["I build agents and reports", "you can check."],
+  bio: "Agents graded by their own evals. Reports where every number reconciles to SQL. All of it runs on local models.",
   email: "daman.w3d@gmail.com", // public work contact
   // Title < 60 chars (Google truncates ~60); keywords front-loaded.
-  metaTitle: "Daman Reddy — Systems, 3D Environments, BI and Data",
+  metaTitle: "Daman Reddy — AI Agents, Data Systems and BI",
   // Description < 160 chars (Google truncates ~155); primary keywords early.
   metaDescription:
-    "Daman Reddy, Hyderabad: AI-assisted systems developer, 3D environment artist (Unreal, Blender) and BI and data analyst (SQL, Power BI, Tableau).",
+    "Daman Reddy, Hyderabad: AI agents graded by their own evals, BI reports reconciled to SQL (Power BI, Tableau), local models. Also a 3D environment artist.",
 } as const;
 
 export const socials = [
@@ -1510,7 +1510,7 @@ export function categoryLabel(id: CategoryId): string {
  * from its discipline and category (craft = art, analytics = data, the rest
  * = systems), so nothing is written twice.
  */
-export type TrackId = "systems" | "art" | "data";
+export type TrackId = "ai" | "data" | "systems" | "art";
 
 export type Track = {
   id: TrackId;
@@ -1530,8 +1530,27 @@ export type Track = {
 
 export const tracks: Track[] = [
   {
-    id: "systems",
+    id: "ai",
     num: "01",
+    role: "AI agents and integrations",
+    word: "AI",
+    line1: "AI",
+    line2: "Agents",
+    fit: 7.6,
+    cover: "/shots/fde-support-agent/result.webp",
+    intro: "Six builds for one fictional customer,",
+    introEm: "each graded by its own eval before it counts.",
+    stats: [
+      { value: "06", label: "builds, one customer" },
+      { value: "88%", label: "support agent, 60-case eval" },
+      { value: "0", label: "lost in 1,476 deliveries" },
+    ],
+    ribbon: ["Python", "FastAPI", "Postgres", "pgvector", "Ollama", "RAG", "Tool calling", "Evals", "Whisper"],
+    outro: ["Let's build", "an agent"],
+  },
+  {
+    id: "systems",
+    num: "03",
     role: "AI-assisted systems developer",
     word: "Systems",
     line1: "Systems",
@@ -1541,7 +1560,7 @@ export const tracks: Track[] = [
     intro: "I ship complete software with AI as the co-pilot and my judgement at the wheel:",
     introEm: "local-first, security-hardened, measured before it ships.",
     stats: [
-      { value: "12", label: "projects shipped" },
+      { value: "06", label: "projects shipped" },
       { value: "16", label: "security fixes from one audit" },
       { value: "88%", label: "routing accuracy, AI triage" },
     ],
@@ -1550,7 +1569,7 @@ export const tracks: Track[] = [
   },
   {
     id: "art",
-    num: "02",
+    num: "04",
     role: "3D environment artist",
     word: "Environ|ments",
     line1: "Environment",
@@ -1569,7 +1588,7 @@ export const tracks: Track[] = [
   },
   {
     id: "data",
-    num: "03",
+    num: "02",
     role: "BI and data analyst",
     word: "Data",
     line1: "Data",
@@ -1590,8 +1609,16 @@ export const tracks: Track[] = [
 
 export function trackOf(p: Project): TrackId {
   if (p.discipline === "craft") return "art";
+  if (p.category === "applied-ai" || p.category === "integration") return "ai";
   return p.category === "analytics" ? "data" : "systems";
 }
+
+/** Lane order on the site: AI and data lead, art last (Daman, 2026-11-11). */
+export const laneOrder: TrackId[] = ["ai", "data", "systems", "art"];
+export const lanes = (): Track[] => laneOrder.map((id) => tracks.find((t) => t.id === id)!);
+
+/** Short label for a lane's column. */
+export const laneLabel: Record<TrackId, string> = { ai: "AI", data: "Data", systems: "Systems", art: "Art" };
 
 export function getTrack(id: string): Track | undefined {
   return tracks.find((t) => t.id === id);
@@ -1624,7 +1651,7 @@ export function fitOf(text: string): number {
  * HOW I WORK — the standards behind each craft, four per door. Every line is
  * backed by a project on that door.
  */
-export const ethics: Record<TrackId, { title: string; body: string }[]> = {
+export const ethics: Record<Exclude<TrackId, "ai">, { title: string; body: string }[]> = {
   systems: [
     {
       title: "Local-first",
@@ -1680,6 +1707,58 @@ export const ethics: Record<TrackId, { title: string; body: string }[]> = {
     },
   ],
 };
+
+/**
+ * ABOUT — the "you" column. Copy is a draft for Daman's edit (2026-11-11): AI and data lead,
+ * 3D training as background. Facts from the resume and this site only.
+ */
+export const about = {
+  draft: true,
+  portrait: null as null | { src: string; alt: string },
+  head: ["I build agents and reports", "you can check."] as [string, string],
+  line: "Agents graded by their own evals. Reports where every number reconciles to SQL. All of it runs on local models.",
+  story: [
+    "I build AI agents and data systems, with AI as the co-pilot and my judgement at the wheel. I have no computer-science degree; I learned by shipping, and the work is public on GitHub.",
+    "In 2026 that meant six agent builds for one fictional customer, each graded by its own eval: a support agent, an integration hub, document extraction, a read-only data agent, an eval harness and a voice intake line. All of it runs on local models.",
+    "On the data side, six BI case studies in SQL, Python, Power BI and Tableau, one of them on 36.1M real air-quality readings. No report ships until its numbers match an independent SQL calculation.",
+    "The rule is the same everywhere: if it is not measured, it is not done.",
+    "Before this I trained as a 3D environment artist: an MA in Animation at the University of Salford and fifteen months on ad campaigns at Blur'd. It is where I learned composition and a critical eye.",
+    "Today I lead product and design at Datatree Systems, building GrafiLabs. I am open to work.",
+  ],
+  timeline: [
+    { when: "Jan 2026 – now", what: "Product and Design Lead", where: "Datatree Systems", note: "Building GrafiLabs, an AI flyer and social-post service." },
+    { when: "Sep 2024 – Sep 2025", what: "MA Animation, Merit", where: "University of Salford, UK", note: "Global Gold Excellence Scholarship." },
+    { when: "Jun 2023 – Dec 2025", what: "Design Associate", where: "Datatree Systems", note: "Company website and external documents." },
+    { when: "Jan 2022 – Apr 2023", what: "3D Generalist Intern", where: "Blur'd LLP, Hyderabad", note: "3D visualisation for client ad campaigns." },
+    { when: "2020 – 2023", what: "B.Sc. Multimedia and Animation", where: "Loyola Academy, Hyderabad", note: "GPA 9.1 / 10." },
+  ],
+  personal: [
+    { title: "What I look at", body: "Studio Ghibli, Breath of the Wild, Arcane, Spider-Verse, Blade Runner 2049 and Roger Deakins. Mood through light." },
+    { title: "Languages", body: "Telugu, English, Hindi and beginner Japanese." },
+    { title: "Behind a camera", body: "Winner of an inter-college photography competition. Composition came before code." },
+    { title: "How I work", body: "Local-first, measured before shipped, AI speeds it up and I own it." },
+  ],
+};
+
+/** The Golden Hour scenes behind the site: four of Daman's renders, one per time of day. */
+export const scenes = [
+  { id: "day", label: "Day", src: "/art/umbraxis-vista.webp", slug: "umbraxis", name: "Umbraxis" },
+  { id: "golden", label: "Golden hour", src: "/art/proc-clouds.webp", slug: "procedural-clouds", name: "Procedural Clouds" },
+  { id: "evening", label: "Evening", src: "/art/interior-study.webp", slug: "interior-study", name: "Interior Study" },
+  { id: "night", label: "Night", src: "/art/highway-stop.webp", slug: "highway-stop", name: "Highway Night Stop" },
+] as const;
+
+const ACR: Record<string, string> = { ai: "AI", bi: "BI", hr: "HR", mcp: "MCP", saas: "SaaS", n8n: "n8n", volt: "VOLT" };
+/** A project's name as a title: "fde-support-agent" -> "Support Agent", "hr-analytics" -> "HR Analytics". */
+export function nameOf(p: Project): string {
+  const n = p.name.replace(/^fde-/, "").replace(/-/g, " ");
+  return /[A-Z]/.test(n) ? n : n.split(" ").map((w) => ACR[w] ?? w[0].toUpperCase() + w.slice(1)).join(" ");
+}
+
+/** The short value beside a project in lists: its metric, or the year for art. */
+export function shortOf(p: Project): string {
+  return trackOf(p) === "art" || !p.metric ? p.year : p.metric.value;
+}
 
 export const seo = {
   url: "https://damanjz.github.io/portfolio", // update if a custom domain lands

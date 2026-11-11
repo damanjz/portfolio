@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { projects, getProject, categoryLabel, site, trackOf, getTrack, projectsIn, displayName, fitOf, coverOf } from "@/content";
+import { projects, getProject, site, trackOf, laneLabel, nameOf, coverOf } from "@/content";
 import { asset, srcSet } from "@/lib/asset";
-import Bar from "@/components/Bar";
-import Split from "@/components/Split";
 import Gallery from "@/components/Gallery";
 import YouTubeFigure from "@/components/YouTubeFigure";
 import VideoFigure from "@/components/VideoFigure";
-import Foot from "@/components/Foot";
 import DataCard from "@/components/DataCard";
-import { TLink } from "@/components/Transition";
 import { ProjectJsonLd } from "./project-jsonld";
 
 type Params = { slug: string };
+
+export const dynamicParams = false;
 
 export function generateStaticParams(): Params[] {
   return projects.map((p) => ({ slug: p.slug }));
@@ -21,7 +20,7 @@ export function generateStaticParams(): Params[] {
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const p = getProject((await params).slug);
   if (!p) return { title: "Not found" };
-  const title = `${displayName(p.name)} — ${site.name}`;
+  const title = `${nameOf(p)} — ${site.name}`;
   const ogImage = p.gallery[0]?.src ?? "/og.png";
   return {
     title,
@@ -32,146 +31,103 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   };
 }
 
-const STATUS: Record<string, string> = { public: "Public", private: "Private", wip: "In development", live: "Live" };
+const STATUS: Record<string, string> = { public: "Public repo", private: "Private", wip: "In development", live: "Live" };
+const ICON = {
+  out: <svg className="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" /></svg>,
+  back: <svg className="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4" /></svg>,
+  next: <svg className="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" /></svg>,
+};
 
+/** A case study, open in its lane's column: claim, proof, the build, then every picture and reel. */
 export default async function ProjectPage({ params }: { params: Promise<Params> }) {
   const p = getProject((await params).slug);
   if (!p) notFound();
 
-  const track = getTrack(trackOf(p))!;
-  const peers = projectsIn(track.id);
-  const idx = peers.findIndex((x) => x.slug === p.slug);
-  const next = peers[(idx + 1) % peers.length];
-  const shots = p.gallery;
+  const lane = trackOf(p);
+  const sibs = projects.filter((x) => trackOf(x) === lane);
+  const i = sibs.indexOf(p);
+  const prev = sibs[(i - 1 + sibs.length) % sibs.length];
+  const next = sibs[(i + 1) % sibs.length];
+  const title = nameOf(p);
   const cover = p.cover ?? coverOf(p);
-  const rest = shots[0] ? shots.slice(1) : shots;
-  const title = displayName(p.name);
-  const nextTitle = displayName(next.name);
-  const doorName = track.word.replace("|", "");
+  const rest = p.gallery[0] ? p.gallery.slice(1) : p.gallery;
+  const proof = p.pipeline?.stats ?? (p.metric ? [{ value: p.metric.value, label: p.metric.label }] : []);
+  const label = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
   return (
-    <>
+    <div className="paper">
       <ProjectJsonLd p={p} />
-      <Bar backHref={`/${track.id}/`} backLabel={doorName} backText={doorName} active={track.id} />
-
-      <section className="cs-hero" style={{ ["--fit" as string]: fitOf(title) }}>
-        <div className="kick" data-fade="">
-          <span className="lbl">
-            <span className="acc">{track.num}</span> / {track.role}
-          </span>
-          <span className="lbl">&middot; {categoryLabel(p.category)}</span>
-        </div>
-        <Split as="h1" text={title} className="cap" />
-        <p className="sum" data-fade="" style={{ ["--d" as string]: "200ms" }}>
-          {p.summary}
+      <Link className="up" href={`/${lane}/`}>{ICON.back}All {laneLabel[lane]}</Link>
+      <article className="case">
+        <h1>{title}</h1>
+        <p className="tag">{p.tagline}</p>
+        <p className="tagrow meta">
+          <span>{laneLabel[lane]}</span><span>{p.year}</span><span>{STATUS[p.status] ?? p.status}</span><span>{p.stack.join(", ")}</span>
         </p>
-      </section>
-
-      <div className="cs-meta">
-        {[
-          ["Year", p.year],
-          ["Status", STATUS[p.status] ?? p.status],
-          ["Stack", p.stack.slice(0, 4).join(", ")],
-          [p.metric?.label ?? "Type", p.metric?.value ?? categoryLabel(p.category)],
-        ].map(([k, v], i) => (
-          <div key={k} data-fade="" style={{ ["--d" as string]: `${i * 90}ms` }}>
-            <span className="lbl" style={{ textTransform: "capitalize" }}>{k}</span>
-            <div className="v">{v}</div>
+        {(p.href || p.repo || p.caseStudy) && (
+          <div className="acts">
+            {p.href && <a className="btn on" href={p.href} target="_blank" rel="noopener noreferrer">{label(p.hrefLabel ?? "view on GitHub")}{ICON.out}</a>}
+            {p.repo && <a className="btn" href={p.repo} target="_blank" rel="noopener noreferrer">View source{ICON.out}</a>}
+            {p.caseStudy && <a className="btn" href={asset(p.caseStudy)} target="_blank" rel="noopener">Case study PDF{ICON.out}</a>}
           </div>
-        ))}
-      </div>
-
-      {!cover && p.pipeline && (
-        // no screenshot yet: the project's pipeline card stands in as the cover
-        <div className="cs-cover cs-pipe" data-fade="">
-          <DataCard name={p.name} year={p.year} pipe={p.pipeline} />
-        </div>
-      )}
-
-      {cover && (
-        <div className="cs-cover" data-colorize="">
-          <img src={asset(cover.src)} srcSet={srcSet(cover.src)} sizes="(max-width: 760px) 100vw, 96vw" alt={cover.alt} fetchPriority="high" />
-        </div>
-      )}
-
-      <section className="cs-body">
-        <div>
-          {p.sections.map((s, i) => (
-            <div key={s.heading} className="cs-ch">
-              <span className="n" data-fade="">{String(i + 1).padStart(2, "0")}</span>
-              <Split as="h2" text={s.heading} className="cap" />
-              <p data-fade="">{s.body}</p>
-            </div>
-          ))}
-          {p.decisions && p.decisions.length > 0 && (
-            <div className="cs-ch">
-              <span className="n" data-fade="">{String(p.sections.length + 1).padStart(2, "0")}</span>
-              <Split as="h2" text="Decisions" className="cap" />
-              <div className="cs-dec" data-fade="">
-                {p.decisions.map((d) => (
-                  <div key={d.choice}>
-                    <b>{d.choice}</b>
-                    <span>{d.reason}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <aside className="cs-aside" data-fade="">
-          <div className="cs-facts">
-            {p.facts.map((f) => (
-              <div key={f.label}>
-                <span className="k">{f.label}</span>
-                <span className={p.specAccent === f.label ? "hot" : ""}>{f.value}</span>
-              </div>
+        )}
+        {proof.length > 0 && (
+          <dl className="proof">
+            {proof.map((s) => (
+              <div key={s.label}><dt className="num">{s.value}</dt><dd>{s.label}</dd></div>
             ))}
-          </div>
-          <div className="cs-links">
-            {p.href && (
-              <a className="pill on" href={p.href} target="_blank" rel="noopener noreferrer" data-magnetic>
-                {p.hrefLabel ? p.hrefLabel.charAt(0).toUpperCase() + p.hrefLabel.slice(1) : "View on GitHub"} &#8599;
-              </a>
-            )}
-            {p.repo && (
-              <a className="pill" href={p.repo} target="_blank" rel="noopener noreferrer" data-magnetic>
-                View source &#8599;
-              </a>
-            )}
-            {p.caseStudy && (
-              <a className="pill" href={asset(p.caseStudy)} target="_blank" rel="noopener" data-magnetic>
-                Read the case study (PDF) &#8599;
-              </a>
-            )}
-          </div>
-        </aside>
-      </section>
-
-      {(p.youtube || (p.reels && p.reels.length > 0) || rest.length > 0) && (
-        <section className="cs-media">
-          {p.youtube && (
-            <YouTubeFigure videoId={p.youtube} poster={shots[0]?.src ?? ""} title={`${title}, full piece`} caption="The full piece on YouTube. Nothing loads from YouTube until you press play." />
-          )}
-          {p.reels && p.reels.length > 0 && (
-            <div className="reels">
-              {p.reels.map((r) => (
-                <VideoFigure key={r.src} src={r.src} poster={r.poster} portrait={r.portrait} title={`${title} reel`} caption={r.caption} />
+          </dl>
+        )}
+        {cover ? (
+          <figure className="cover"><img src={asset(cover.src)} srcSet={srcSet(cover.src)} sizes="(max-width: 999px) 100vw, 60vw" alt={cover.alt} fetchPriority="high" /></figure>
+        ) : p.pipeline ? (
+          <figure className="cover"><DataCard name={p.name} year={p.year} pipe={p.pipeline} /></figure>
+        ) : null}
+        <p className="sum">{p.summary}</p>
+        <div className="secs">
+          {p.sections.map((s) => (
+            <section key={s.heading} className="sec"><h3>{s.heading}</h3><p>{s.body}</p></section>
+          ))}
+        </div>
+        {p.decisions && p.decisions.length > 0 && (
+          <section className="blk">
+            <h3>Decisions</h3>
+            <div className="dec">
+              {p.decisions.map((d) => (
+                <div key={d.choice}><b>{d.choice}</b><span>{d.reason}</span></div>
               ))}
             </div>
-          )}
-          {rest.length > 0 && <Gallery shots={rest} />}
+          </section>
+        )}
+        <section className="blk">
+          <h3>Facts</h3>
+          <dl className="facts">
+            {p.facts.map((f) => (
+              <div key={f.label}><dt>{f.label}</dt><dd className={p.specAccent === f.label ? "hot" : undefined}>{f.value}</dd></div>
+            ))}
+          </dl>
         </section>
-      )}
-
-      {next.slug !== p.slug && (
-        <TLink href={`/projects/${next.slug}/`} label={nextTitle} className="next" data-cursor="Next" style={{ ["--fit" as string]: fitOf(nextTitle) }}>
-          <span className="lbl">Next in {doorName.toLowerCase()}</span>
-          <span className="cap" style={{ display: "block" }}>{nextTitle} &rarr;</span>
-        </TLink>
-      )}
-
-      <Foot outro={track.outro} />
-    </>
+        {(p.youtube || (p.reels && p.reels.length > 0) || rest.length > 0) && (
+          <section className="blk">
+            <h3>Pictures and reels</h3>
+            <div className="media">
+              {p.youtube && <YouTubeFigure videoId={p.youtube} poster={p.gallery[0]?.src ?? ""} title={`${title}, full piece`} caption="The full piece on YouTube. Nothing loads from YouTube until you press play." />}
+              {p.reels && p.reels.length > 0 && (
+                <div className="reels">
+                  {p.reels.map((r) => <VideoFigure key={r.src} src={r.src} poster={r.poster} portrait={r.portrait} title={`${title} reel`} caption={r.caption} />)}
+                </div>
+              )}
+              {rest.length > 0 && <Gallery shots={rest} />}
+            </div>
+          </section>
+        )}
+        {sibs.length > 1 && (
+          <nav className="pn" aria-label={`More in ${laneLabel[lane]}`}>
+            <Link href={`/projects/${prev.slug}/`}>{ICON.back}{nameOf(prev)}</Link>
+            <Link href={`/projects/${next.slug}/`}>{nameOf(next)}{ICON.next}</Link>
+          </nav>
+        )}
+      </article>
+    </div>
   );
 }
