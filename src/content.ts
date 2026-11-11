@@ -42,6 +42,8 @@ export const categories = [
   { id: "multimedia", label: "Multimedia", discipline: "systems" },
   { id: "analytics", label: "Analytics", discipline: "systems" },
   { id: "productivity", label: "Productivity", discipline: "systems" },
+  { id: "applied-ai", label: "Applied AI", discipline: "systems" },
+  { id: "integration", label: "Integration", discipline: "systems" },
 ] as const;
 
 export type CategoryId = (typeof categories)[number]["id"];
@@ -86,6 +88,7 @@ export type Project = {
   facts: { label: string; value: string }[];
   specAccent?: string; // which spec label gets the accent (e.g. "NETWORK")
   pipeline?: Pipeline; // drawn as a pipeline card instead of a screenshot
+  cover?: Shot; // case-page cover when the card image can't take that crop (wide, with scroll parallax)
 };
 
 /** A pipeline card: what goes in, the core, what comes out, four numbers (the first leads).
@@ -446,6 +449,318 @@ export const projects: Project[] = [
       { label: "STATUS", value: "PUBLIC REPO" },
     ],
     specAccent: "ACCESS",
+  },
+  {
+    slug: "fde-support-agent",
+    name: "fde-support-agent",
+    tagline: "A support agent that answers from the help centre with citations and acts only after the customer confirms.",
+    discipline: "systems",
+    category: "applied-ai",
+    stack: ["Python", "FastAPI", "Postgres + pgvector", "Ollama", "Slack"],
+    status: "public",
+    href: "https://github.com/damanjz/fde-support-agent",
+    hrefLabel: "view source",
+    metric: { label: "60-case eval", value: "88% · mean of 3 runs" },
+    year: "Nov 2026",
+    summary:
+      "A customer-support agent for Larkfield Coffee Co., a fictional Indian coffee-gear brand: it answers from the help centre with citations, looks up orders and stock, and starts a return or raises a ticket only after the customer confirms. It runs on a local 27B model at zero cost per query. The data is synthetic; the engineering and the numbers are real.",
+    reels: [
+      { src: "/shots/fde-support-agent/reel.mp4", poster: "/shots/fde-support-agent/title.webp", caption: "REEL — A RETURN REQUEST, ANSWERED, CONFIRMED AND MEASURED" },
+    ],
+    cover: { src: "/shots/fde-support-agent/cover.webp", alt: "88% on a 60-case eval, mean of three runs, against 85% keyword-only and 37% with no retrieval", caption: "" },
+    gallery: [
+      { src: "/shots/fde-support-agent/result.webp", alt: "88% on a 60-case eval, mean of three runs, against 85% keyword-only and 37% with no retrieval", caption: "The headline: 88% on 60 cases, the mean of runs 5 to 7, against 85% with keyword-only retrieval and 37% with none. Every refuse and escalate case passes." },
+      { src: "/shots/fde-support-agent/architecture.webp", alt: "Architecture: customer channels, input guardrails, agent loop with retrieval and tools, output checks, reply and confirmation card, Postgres", caption: "Architecture: guardrails in, hybrid retrieval and four tools in the agent loop, honesty checks out. Writes wait for a confirmation card." },
+      { src: "/shots/fde-support-agent/trace.webp", alt: "Trace of one return request through the API, the agent, retrieval, tools and Postgres", caption: "One return request traced from the customer's message through retrieval, tools and Postgres to the confirmed return." },
+    ],
+    sections: [
+      {
+        heading: "Problem",
+        body: "Larkfield's customers ask the same things all day, in English and Hinglish, with typos and sometimes anger: where is my order, can I return this, what is the policy. The shop wanted answers grounded in its own help centre and real actions on real orders, with no invented policy, dates or refunds, and no recurring cost.",
+      },
+      {
+        heading: "Build",
+        body: "Hybrid retrieval (Postgres full-text and pgvector, fused by reciprocal rank fusion, expanded to whole articles), with every policy claim cited. Four tools: order lookup with date facts computed in code, stock check, product search, and returns and tickets that wait for Confirm or Cancel. Guardrails mask personal data, strip injected lines from retrieved text and decline fake admin claims; output checks block invented codes and any claimed action without a tool call. REST API, a local chat page and a Slack bot.",
+      },
+      {
+        heading: "Measurement",
+        body: "60 cases (35 answers, 15 tool tasks, 10 that must refuse or escalate) against two baselines on the same model: 88% vs 85% keyword-only and 37% without retrieval, the mean of three runs. An LLM judge passes all 35 answers in every run vs 32 for keyword-only, hand-checked 15 of 15. 40 unscripted simulated customers found 76 issues, 2 critical, fixed at the root cause. The first real user was offered a refund on an order that did not match their story; that rule moved from the prompt into code.",
+      },
+    ],
+    decisions: [
+      { choice: "DATES IN CODE", reason: "the model counted a 33-day-old delivery as inside 30 days and held the line; order lookup now returns the arithmetic" },
+      { choice: "CONFIRM BEFORE WRITES", reason: "returns and tickets need a click or a clear yes; a hedge like \"Yeah, no\" never confirms" },
+      { choice: "MONEY RULES IN CODE", reason: "a records mismatch blocks the return in code; a prompt rule is only a suggestion" },
+    ],
+    facts: [
+      { label: "TYPE", value: "SUPPORT AGENT · RAG + TOOLS" },
+      { label: "MODEL", value: "LOCAL 27B · OLLAMA" },
+      { label: "RETRIEVAL", value: "FULL-TEXT + PGVECTOR" },
+      { label: "EVAL", value: "88% · 60 CASES" },
+      { label: "COST", value: "INR 0 PER QUERY" },
+      { label: "STATUS", value: "PUBLIC REPO" },
+    ],
+    specAccent: "EVAL",
+  },
+  {
+    slug: "fde-integration-hub",
+    name: "fde-integration-hub",
+    tagline: "A webhook hub that delivers every order event to three systems once, in order, through outages and crashes.",
+    discipline: "systems",
+    category: "integration",
+    stack: ["Python", "FastAPI", "Postgres", "OAuth2", "HMAC"],
+    status: "public",
+    href: "https://github.com/damanjz/fde-integration-hub",
+    hrefLabel: "view source",
+    metric: { label: "chaos run", value: "1,476 deliveries · 0 lost" },
+    year: "Nov 2026",
+    summary:
+      "A webhook hub for Larkfield Coffee Co. (fictional): every storefront order event reaches the warehouse, helpdesk and accounting systems exactly once in effect, and in order, through slow commits, rate limits, outages and worker crashes. All three destinations are local mock providers.",
+    reels: [
+      { src: "/shots/fde-integration-hub/reel.mp4", poster: "/shots/fde-integration-hub/title.webp", caption: "REEL — 500 EVENTS THROUGH THE HUB UNDER CHAOS" },
+    ],
+    cover: { src: "/shots/fde-integration-hub/cover.webp", alt: "1,476 deliveries under chaos: 0 lost, duplicated or out of order", caption: "" },
+    gallery: [
+      { src: "/shots/fde-integration-hub/result.webp", alt: "1,476 deliveries under chaos: 0 lost, duplicated or out of order", caption: "The chaos run: 1,476 deliveries with 0 lost, duplicated or out of order, through 549 retries and 437 server errors." },
+      { src: "/shots/fde-integration-hub/architecture.webp", alt: "Architecture: storefront webhook through intake, the Postgres outbox and workers, the rate gate and client, to warehouse, helpdesk and accounting", caption: "Architecture: signed intake, a Postgres outbox with leased workers, and one rate gate per destination." },
+      { src: "/shots/fde-integration-hub/trace.webp", alt: "Trace of one order.paid event from the signed webhook to three destinations, with a retry and a suppressed duplicate", caption: "One order event traced: three delivery rows, a retry after a 503, a lookup before resending, and a duplicate webhook suppressed." },
+    ],
+    sections: [
+      {
+        heading: "Problem",
+        body: "After each order event a script called three APIs directly. When one was slow, rate-limited or down, orders were lost or booked twice, and nobody could say which.",
+      },
+      {
+        heading: "Build",
+        body: "Postgres is the queue: the raw event and one outbox row per destination are written in one transaction, claimed with SKIP LOCKED under a lease, and settled under a lease token, so a dead worker's rows are recovered. Order is enforced per order and destination; an older event whose later sibling already went out is marked superseded, never sent. HMAC-signed intake, OAuth2 client credentials, and a shared token bucket, Retry-After block and circuit breaker per destination.",
+      },
+      {
+        heading: "Measurement",
+        body: "A chaos run of 500 events across 257 orders, with 3 hard worker kills, a 60-second outage, slow commits, rate limits and 27 duplicate webhooks: 1,476 deliveries, 0 lost, 0 duplicates, 0 ordering violations, passed twice on production settings. An independent review first showed the verdict could not fail; it now counts duplicates at the destination and judges order on every arrival. A separate probe exceeds the timeout window on purpose and fails, and the README states where the guarantee stops.",
+      },
+    ],
+    decisions: [
+      { choice: "POSTGRES AS THE QUEUE", reason: "a few hundred events an hour need one database and a few workers, not a message broker" },
+      { choice: "LOOK BEFORE RESENDING", reason: "the warehouse has no idempotency, so after an unknown outcome the hub searches for its own key first" },
+      { choice: "A TEST THAT CAN FAIL", reason: "the slow-commit fault is part of every standard run, and a probe shows the boundary" },
+    ],
+    facts: [
+      { label: "TYPE", value: "INTEGRATION HUB" },
+      { label: "QUEUE", value: "POSTGRES OUTBOX" },
+      { label: "AUTH", value: "HMAC · OAUTH2" },
+      { label: "DELIVERIES", value: "1,476 · 0 LOST · 0 DUPES" },
+      { label: "FAULTS", value: "CRASHES · OUTAGE · 429S" },
+      { label: "STATUS", value: "PUBLIC REPO" },
+    ],
+    specAccent: "DELIVERIES",
+  },
+  {
+    slug: "fde-doc-extraction",
+    name: "fde-doc-extraction",
+    tagline: "Supplier invoices and delivery notes in, validated JSON out; only the doubtful fields go to a person.",
+    discipline: "systems",
+    category: "applied-ai",
+    stack: ["Python", "pypdf", "RapidOCR", "Ollama", "SQLite"],
+    status: "public",
+    href: "https://github.com/damanjz/fde-doc-extraction",
+    hrefLabel: "view source",
+    metric: { label: "silent errors", value: "0 in 1,130 fields" },
+    year: "Nov 2026",
+    summary:
+      "Document extraction for Larkfield Coffee Co. (fictional): drop in a supplier invoice or courier delivery note, as a PDF or a scan, and get validated JSON. Code checks every total, tax rule and GST number, and only the doubtful fields go to a review screen. Fully local, because invoices carry bank details.",
+    reels: [
+      { src: "/shots/fde-doc-extraction/reel.mp4", poster: "/shots/fde-doc-extraction/title.webp", caption: "REEL — AN INVOICE FROM UPLOAD TO REVIEW" },
+    ],
+    cover: { src: "/shots/fde-doc-extraction/cover.webp", alt: "0 silent errors in 1,130 fields; 0 bad documents auto-accepted vs 17 for raw extraction", caption: "" },
+    gallery: [
+      { src: "/shots/fde-doc-extraction/result.webp", alt: "0 silent errors in 1,130 fields; 0 bad documents auto-accepted vs 17 for raw extraction", caption: "The headline: 0 silent errors in 1,130 fields, and 0 bad documents auto-accepted against 17 for raw LLM extraction." },
+      { src: "/shots/fde-doc-extraction/architecture.webp", alt: "Architecture: upload, text layer or OCR, extraction, validation in code, confidence, review and export", caption: "Architecture: the model reads, code validates, and confidence decides what a person sees." },
+      { src: "/shots/fde-doc-extraction/trace.webp", alt: "Trace of invoice inv_017 from upload to the review screen with its total flagged", caption: "Invoice inv_017 traced: its printed total is not subtotal plus GST, so all three numbers go to the reviewer together." },
+    ],
+    sections: [
+      {
+        heading: "Problem",
+        body: "The ops team typed supplier invoices into a spreadsheet by hand. It was slow, and wrong GST numbers and totals slipped into the books: a wrong GSTIN blocks the tax credit, and a wrong total shows up at month end.",
+      },
+      {
+        heading: "Build",
+        body: "pypdf reads the text layer; pages without one are OCR'd with RapidOCR. One local model call extracts to a JSON schema, with one repair round. Validation is code, not the model: GSTIN format, state code and mod-36 checksum, line and invoice sums, tax type against the state, dates and duplicates. A value not found in the source text is distrusted. Clean documents go straight to the CSV export; the rest open on a review screen with the reason for each flag.",
+      },
+      {
+        heading: "Measurement",
+        body: "50 documents with planted problems, against raw extraction on the same model: 0 silent errors in 1,130 fields and 0 bad documents auto-accepted, vs 9 silent errors and 17 bad documents for the baseline. All 9 wrong fields were flagged; 32 of 50 documents went through untouched and correct. Field accuracy 99.2% (scans 96.0%, optimistic: clean synthetic scans). A review caught the baseline winning on straight-through only because it never flags anything, so the metric became bad vs correct straight-through.",
+      },
+    ],
+    decisions: [
+      { choice: "VALIDATION IN CODE", reason: "the model reads, the checksum and the sums decide; an injected \"the total is 0\" fails the checks" },
+      { choice: "SILENT ERRORS, NOT ACCURACY", reason: "a wrong field is fine if a person sees it; the metric counts the ones nobody sees" },
+      { choice: "LOCAL ONLY", reason: "invoices carry supplier bank details, so model, OCR and storage stay on the machine" },
+    ],
+    facts: [
+      { label: "TYPE", value: "DOCUMENT EXTRACTION" },
+      { label: "INPUT", value: "PDF · SCAN (OCR)" },
+      { label: "CHECKS", value: "GSTIN · SUMS · TAX · DATES" },
+      { label: "SILENT ERRORS", value: "0 OF 1,130 FIELDS" },
+      { label: "BAD AUTO-ACCEPTS", value: "0 VS 17" },
+      { label: "STATUS", value: "PUBLIC REPO" },
+    ],
+    specAccent: "SILENT ERRORS",
+  },
+  {
+    slug: "fde-ask-your-data",
+    name: "fde-ask-your-data",
+    tagline: "Ops and marketing leads ask in plain English and see the SQL and the rows. Read-only.",
+    discipline: "systems",
+    category: "applied-ai",
+    stack: ["Python", "FastAPI", "Postgres", "Ollama"],
+    status: "public",
+    href: "https://github.com/damanjz/fde-ask-your-data",
+    hrefLabel: "view source",
+    metric: { label: "40 gold questions", value: "90% · vs 42% baseline" },
+    year: "Nov 2026",
+    summary:
+      "A text-to-SQL agent over the 12-month sales warehouse of Larkfield Coffee Co. (fictional): a lead asks in plain English and sees the SQL, the rows and a checked one-line summary. A read-only database role with no access to customers' personal data is the control that must hold.",
+    reels: [
+      { src: "/shots/fde-ask-your-data/reel.mp4", poster: "/shots/fde-ask-your-data/title.webp", caption: "REEL — A QUESTION, ITS SQL, ITS ROWS" },
+    ],
+    cover: { src: "/shots/fde-ask-your-data/cover.webp", alt: "90% on 40 gold questions against 42% for raw schema and 18% for table names only", caption: "" },
+    gallery: [
+      { src: "/shots/fde-ask-your-data/result.webp", alt: "90% on 40 gold questions against 42% for raw schema and 18% for table names only", caption: "The headline: 36 of 40 gold questions (90%) against 42% with the raw schema and 18% with table names only, on the same model." },
+      { src: "/shots/fde-ask-your-data/architecture.webp", alt: "Architecture: question screen, schema-docs prompt, local model, SQL checks, read-only database role, summary checks, answer", caption: "Architecture: five layers of defence, with the read-only role as the one that must hold." },
+      { src: "/shots/fde-ask-your-data/trace.webp", alt: "Trace of question G07 through the guards, SQL, execution and summary checks", caption: "Question G07 traced: correct SQL and rows, and a summary that named the wrong lowest value, dropped by the superlative check." },
+    ],
+    sections: [
+      {
+        heading: "Problem",
+        body: "Every question about orders, returns or tickets went to one analyst, who became the bottleneck. The leads would not learn SQL and would not accept a tool that could change data or expose customers.",
+      },
+      {
+        heading: "Build",
+        body: "Business definitions (revenue, return rate, repeat customer, fiscal quarter, \"last month\") are written once in a schema-docs file the model reads. Five layers of defence: a question pre-filter, the prompt, a real SQL lexer allowing one SELECT on allowed tables and functions, a read-only role with no privilege on raw customer data, and a row cap. Every number in the summary must appear in the rows, and a lowest or highest claim must name the right row.",
+      },
+      {
+        heading: "Measurement",
+        body: "40 gold questions on the same local model: 36/40 (90%) vs 17/40 (42%) for the raw schema plus today's date, and 7/40 (18%) for table names only; simple 24/25, complex 7/10, refuse 5/5. Before publishing, an independent reviewer pushed deliberately wrong SQL through the scorer and 10 of 23 passed; the half-finished run was thrown away and the scorer fixed first. A wrong \"lowest\" summary, caught while recording the demo, led to the superlative check.",
+      },
+    ],
+    decisions: [
+      { choice: "THE ROLE IS THE CONTROL", reason: "parser and filter are extra layers; the database role holds whatever the model writes" },
+      { choice: "DEFINITIONS WRITTEN DOWN", reason: "vague words resolve one way, so the model never guesses what \"last quarter\" means" },
+      { choice: "TEST THE SCORER", reason: "wrong answers were pushed through the scorer before any number was published" },
+    ],
+    facts: [
+      { label: "TYPE", value: "TEXT-TO-SQL AGENT" },
+      { label: "WAREHOUSE", value: "12 MONTHS · 8,034 ORDERS" },
+      { label: "ACCESS", value: "READ-ONLY · NO PII" },
+      { label: "ACCURACY", value: "36/40 · 90%" },
+      { label: "BASELINE", value: "17/40 · RAW SCHEMA" },
+      { label: "STATUS", value: "PUBLIC REPO" },
+    ],
+    specAccent: "ACCURACY",
+  },
+  {
+    slug: "fde-eval-harness",
+    name: "fde-eval-harness",
+    tagline: "Runs an AI feature's golden set on any model, says whether a difference is real, and blocks regressions in CI.",
+    discipline: "systems",
+    category: "applied-ai",
+    stack: ["Python", "SQLite", "Statistics", "CI gate"],
+    status: "public",
+    href: "https://github.com/damanjz/fde-eval-harness",
+    hrefLabel: "view source",
+    metric: { label: "noise floor", value: "4 of 60 cases" },
+    year: "Nov 2026",
+    summary:
+      "An eval and monitoring harness for the AI features of Larkfield Coffee Co. (fictional). It runs a feature's golden cases on any model, pairs the results case by case, says whether a difference is real, and blocks a change in CI when it regresses or fails a must-pass category.",
+    reels: [
+      { src: "/shots/fde-eval-harness/reel.mp4", poster: "/shots/fde-eval-harness/title.webp", caption: "REEL — THREE MODELS, ONE NOISE FLOOR, ONE GATE" },
+    ],
+    cover: { src: "/shots/fde-eval-harness/cover.webp", alt: "Noise floor: 4 of 60 cases flipped with nothing changed; three models scored 53, 55 and 48 of 60", caption: "" },
+    gallery: [
+      { src: "/shots/fde-eval-harness/result.webp", alt: "Noise floor: 4 of 60 cases flipped with nothing changed; three models scored 53, 55 and 48 of 60", caption: "The noise floor: 4 of 60 cases flip between identical runs, so the gate allows a drop of 4. Three models: 53, 55 and 48 of 60." },
+      { src: "/shots/fde-eval-harness/architecture.webp", alt: "Architecture: a candidate change through the suite adapter and harness into the gate, with every run stored in SQLite", caption: "Architecture: adapters call each feature's own eval, every run is stored with its fingerprint, and the gate compares like with like." },
+      { src: "/shots/fde-eval-harness/trace.webp", alt: "Trace of one CI run of the gate, qwen3:14b against fusion27b:iq3, ending in exit code 1", caption: "One CI run traced: qwen3:14b against the baseline, blocked with exit code 1 because it failed the must-pass refuse cases." },
+    ],
+    sections: [
+      {
+        heading: "Problem",
+        body: "Every prompt, model or data change could silently break an AI feature, and each feature measured itself in its own way, so nobody could answer \"is this change safe?\" with one number and a plain reading.",
+      },
+      {
+        heading: "Build",
+        body: "Adapters call each feature's own eval code, and a parity test reproduces all 60 of the support agent's recorded results. Every run is stored in SQLite with its model, prompt, case file, scoring-code hash and frozen clock, and the gate refuses to compare runs that differ in any of them. Exact McNemar test on paired flips, exact paired bootstrap and Wilson intervals. No LLM judge in the gate, because it would move with the model under test. A monitor job watches the request log.",
+      },
+      {
+        heading: "Measurement",
+        body: "The support agent's 60 cases on three local models: fusion27b:iq3 53/60, fusion27b:q4ks 55/60 (within noise, p 0.688, at about 1.4x the latency) and qwen3:14b 48/60. The same model run twice on identical code flipped 4 of 60 cases, so the allowed drop is 4, not a guessed 2. The 14B model was only about 1.2x faster on a clean run and failed 2 of 10 refuse cases; a must-pass rule on refuse blocks it automatically.",
+      },
+    ],
+    decisions: [
+      { choice: "NOISE BEFORE COMPARISON", reason: "identical runs flip 4 of 60 cases; a smaller difference is not evidence" },
+      { choice: "MUST-PASS CATEGORIES", reason: "safety cases gate on their own, not hidden inside the average" },
+      { choice: "NO JUDGE IN THE GATE", reason: "a judge running on the candidate model would grade itself" },
+    ],
+    facts: [
+      { label: "TYPE", value: "EVAL + REGRESSION GATE" },
+      { label: "STATS", value: "MCNEMAR · BOOTSTRAP · WILSON" },
+      { label: "MODELS", value: "3 LOCAL" },
+      { label: "NOISE FLOOR", value: "4 OF 60 CASES" },
+      { label: "GATE", value: "BLOCKS QWEN3:14B" },
+      { label: "STATUS", value: "PUBLIC REPO" },
+    ],
+    specAccent: "NOISE FLOOR",
+  },
+  {
+    slug: "fde-voice-intake",
+    name: "fde-voice-intake",
+    tagline: "Customers talk instead of type; the support agent answers out loud and still asks before it acts.",
+    discipline: "systems",
+    category: "applied-ai",
+    stack: ["Python", "faster-whisper", "Piper", "FastAPI"],
+    status: "public",
+    href: "https://github.com/damanjz/fde-voice-intake",
+    hrefLabel: "view source",
+    metric: { label: "end to end, voiced", value: "25/25 · synthetic speech" },
+    year: "Nov 2026",
+    summary:
+      "A voice front end for the Larkfield support agent (fictional customer): hold a button and speak, and the same agent answers out loud with the same confirmation rules. Speech to text and text to speech run on the CPU, so the GPU stays free for the agent's model.",
+    reels: [
+      { src: "/shots/fde-voice-intake/reel.mp4", poster: "/shots/fde-voice-intake/title.webp", caption: "REEL — A SPOKEN RETURN, READ BACK AND CONFIRMED" },
+    ],
+    cover: { src: "/shots/fde-voice-intake/cover.webp", alt: "25 of 25 voiced requests reached the right tool and order id; typed 25 of 25; quiet clips 5 of 5 made no agent call", caption: "" },
+    gallery: [
+      { src: "/shots/fde-voice-intake/result.webp", alt: "25 of 25 voiced requests reached the right tool and order id; typed 25 of 25; quiet clips 5 of 5 made no agent call", caption: "End to end: 25 of 25 spoken requests reached the right tool and order id, the same as typed text. Synthetic speech, so optimistic." },
+      { src: "/shots/fde-voice-intake/architecture.webp", alt: "Architecture: browser page, speech in, voice rules, the support agent, speech out", caption: "Architecture: speech in and out on the CPU, voice rules in between, and the support agent as the only brain." },
+      { src: "/shots/fde-voice-intake/trace.webp", alt: "Trace of one spoken return from button press to Return started", caption: "One spoken return traced: the customer asks, hears the pending return read back, says yes, and the return is written." },
+    ],
+    sections: [
+      {
+        heading: "Problem",
+        body: "Older buyers and people on the move would rather talk than type. A voice path must not become a way around the agent's rules: a misheard order id or a hedged yes must never start a return.",
+      },
+      {
+        heading: "Build",
+        body: "faster-whisper small (int8) turns speech into text, with a prompt carrying Larkfield terms so order ids come out right, and Piper speaks the reply. The brain is the support agent over HTTP, so the typed and spoken paths cannot drift apart. Silence and low-confidence audio are never sent; while an action waits, only a whole-utterance yes or a clear no is passed on. Order ids are converted by code, never snapped to the nearest real order. Audio is dropped after each request.",
+      },
+      {
+        heading: "Measurement",
+        body: "25 of 25 spoken requests reached the right tool and order id end to end, matching typed text; 5 of 5 quiet clips (silence, noise, laughter) never reached the agent; word error rate 1.3% on synthetic speech, which is optimistic. In the author's own voice, 7 of 8 end to end, and the one misheard id was caught and asked again. A review of the voice path found the support agent taking \"Yeah, no\" and \"Ji nahi\" as a yes; it was fixed at the source, in the agent.",
+      },
+    ],
+    decisions: [
+      { choice: "ONE BRAIN", reason: "voice calls the support agent's API, so no logic is copied and nothing drifts" },
+      { choice: "STRICT YES", reason: "only a whole-utterance yes or a clear no is passed on while an action waits" },
+      { choice: "CPU FOR SPEECH", reason: "Whisper and Piper on the CPU keep the GPU free for the 27B model" },
+    ],
+    facts: [
+      { label: "TYPE", value: "VOICE FRONT END" },
+      { label: "SPEECH IN", value: "FASTER-WHISPER · CPU" },
+      { label: "SPEECH OUT", value: "PIPER · CPU" },
+      { label: "END TO END", value: "25/25 VOICED" },
+      { label: "WER", value: "1.3% · SYNTHETIC" },
+      { label: "STATUS", value: "PUBLIC REPO" },
+    ],
+    specAccent: "END TO END",
   },
   {
     slug: "finance-bi",
@@ -1226,11 +1541,11 @@ export const tracks: Track[] = [
     intro: "I ship complete software with AI as the co-pilot and my judgement at the wheel:",
     introEm: "local-first, security-hardened, measured before it ships.",
     stats: [
-      { value: "06", label: "projects shipped" },
+      { value: "12", label: "projects shipped" },
       { value: "16", label: "security fixes from one audit" },
       { value: "88%", label: "routing accuracy, AI triage" },
     ],
-    ribbon: ["Rust", "TypeScript", "Next.js", "React", "Node", "Python", "Tauri", "Ollama", "Postgres"],
+    ribbon: ["Rust", "TypeScript", "Next.js", "React", "Node", "Python", "FastAPI", "Tauri", "Ollama", "Postgres", "pgvector"],
     outro: ["Let's build", "something"],
   },
   {

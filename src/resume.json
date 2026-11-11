@@ -21,7 +21,7 @@
  },
  {
   "k": "p",
-  "t": "Creative technologist with 4.5 years of experience in 3D and product design, working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK). In 2026 built six BI case studies in SQL, Python, Power BI and Tableau, one on 36.1M real air-quality readings, each gated by automated data checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
+  "t": "Creative technologist with 4.5 years of experience in 3D and product design, working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK). In 2026 built six local AI systems scored against baselines (RAG support agent, text-to-SQL, document extraction, integrations, evals, voice), six BI case studies in SQL, Python, Power BI and Tableau, each gated by automated data checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
  },
  {
   "k": "h",
@@ -35,7 +35,7 @@
  {
   "k": "skill",
   "l": "Secondary skills (software and AI)",
-  "t": "Rust, TypeScript, JavaScript, C, Next.js, React, Node.js, Express, Tauri, Svelte, PySide6, Prisma, PostgreSQL, Redis, REST APIs, Git, GitHub Actions, n8n, Ollama, LLM evaluation, Claude Code"
+  "t": "Rust, TypeScript, JavaScript, C, FastAPI, Next.js, React, Node.js, Express, Tauri, Svelte, PySide6, Prisma, PostgreSQL (pgvector), Redis, REST APIs, webhooks, Git, GitHub Actions, Docker, n8n, Ollama, RAG, LLM tool calling, LLM evaluation, Claude Code"
  },
  {
   "k": "skill",
@@ -75,11 +75,7 @@
  },
  {
   "k": "b",
-  "t": "Designed the company website and handled design for external-facing documents."
- },
- {
-  "k": "b",
-  "t": "Began advocating for design in company decisions; worked remotely during the MA year."
+  "t": "Designed the company website and external-facing documents, and began advocating for design in company decisions; worked remotely during the MA year."
  },
  {
   "k": "entry",
@@ -130,11 +126,7 @@
  },
  {
   "k": "b",
-  "t": "Built a readmission model (logistic regression, ROC AUC 0.786) that beat the clinical LACE score (0.749) on an out-of-time test; its top decile caught 34.9% of readmissions."
- },
- {
-  "k": "b",
-  "t": "Generated Power BI from code; 63 of 63 numbers matched SQL and 18 of 18 checks caught injected errors."
+  "t": "Built a readmission model (logistic regression, ROC AUC 0.786) that beat the clinical LACE score (0.749) out of time, top decile catching 34.9%; Power BI generated from code, 63 of 63 numbers matching SQL."
  },
  {
   "k": "entry",
@@ -171,11 +163,7 @@
  },
  {
   "k": "b",
-  "t": "Collected public filings for 758 Indian medical colleges across two cycles into an Excel dataset (1,031-college registry); MBBS seats reconciled exactly to the published 129,602 and 96 of 96 delivery checks passed."
- },
- {
-  "k": "b",
-  "t": "Built comparison indicators for every college, such as faculty strength and teaching-hospital beds per MBBS seat, so the client could benchmark institutions against national norms."
+  "t": "Collected public filings for 758 Indian medical colleges across two cycles (1,031-college registry); MBBS seats reconciled exactly to the published 129,602, 96 of 96 delivery checks passed, and per-college indicators let the client benchmark against national norms."
  },
  {
   "k": "entry",
@@ -192,17 +180,31 @@
  },
  {
   "k": "entry",
+  "l": "FDE Portfolio, fictional client: Python, FastAPI, PostgreSQL, pgvector, Ollama",
+  "r": "Nov 2026",
+  "u": "https://damanjz.github.io/portfolio/systems/"
+ },
+ {
+  "k": "b",
+  "t": "Shipped six local AI systems on synthetic data, each scored against baselines: a tool-using RAG support agent at 88% on 60 cases (vs 37% without retrieval), text-to-SQL at 90% (vs 42%), and invoice extraction with 0 silent errors in 1,130 fields."
+ },
+ {
+  "k": "b",
+  "t": "Built an exactly-once webhook hub (Postgres outbox, OAuth2, HMAC, rate limits) that delivered 1,476 events under chaos testing with 0 lost and 0 duplicates, and a voice front end (Whisper, Piper) matching typed accuracy."
+ },
+ {
+  "k": "b",
+  "t": "Built an eval and regression-gate harness (McNemar test, bootstrap, CI gate) that measured a 4-of-60 noise floor and blocked a faster model failing 2 of 10 safety cases; adversarial reviews caught scorer and test bugs before publishing."
+ },
+ {
+  "k": "entry",
   "l": "Protec, local-first password manager: Rust, Tauri, Svelte",
   "r": "Jun 2026 – Jul 2026",
   "u": "https://github.com/damanjz/protec"
  },
  {
   "k": "b",
-  "t": "Built an encrypted local vault (Argon2id, XChaCha20-Poly1305) with optional Windows Hello unlock and a browser extension that autofills over native messaging, with no open network ports."
- },
- {
-  "k": "b",
-  "t": "Ran a six-area security audit that shipped 16 hardening fixes; about 110 Rust tests; released v0.2.0 on GitHub."
+  "t": "Built an encrypted local vault (Argon2id, XChaCha20-Poly1305) with Windows Hello unlock and a native-messaging browser extension; a six-area security audit shipped 16 hardening fixes; about 110 Rust tests, v0.2.0 on GitHub."
  },
  {
   "k": "entry",
@@ -212,40 +214,16 @@
  },
  {
   "k": "b",
-  "t": "Self-hosted an email support desk that routes tickets with a local LLM and drafts knowledge-base replies for human approval, at no recurring cost."
- },
- {
-  "k": "b",
-  "t": "Built a 40-case labelled evaluation set and promoted AI routing only after it scored 88% vs a 70% keyword baseline."
- },
- {
-  "k": "entry",
-  "l": "VOLT Techwear Store: Next.js 15, React, TypeScript, Prisma, PostgreSQL",
-  "r": "Mar 2026",
-  "u": "https://volt-techwear-store.vercel.app"
- },
- {
-  "k": "b",
-  "t": "Shipped a live storefront with NextAuth accounts, loyalty points, level-gated products, an admin area and a single-transaction server-side checkout."
- },
- {
-  "k": "entry",
-  "l": "AI Calendar: React, Node.js, Express",
-  "r": "Aug 2026",
-  "u": "https://github.com/damanjz/ai-calendar"
- },
- {
-  "k": "b",
-  "t": "Built a calendar with a REST API that lets AI assistants check availability, detect conflicts and book events; 177 automated tests (about 96% line coverage) run in GitHub Actions CI."
+  "t": "Self-hosted an email support desk that routes tickets with a local LLM and drafts knowledge-base replies for human approval; promoted AI routing only after it scored 88% vs a 70% keyword baseline on a 40-case evaluation set."
  },
  {
   "k": "entry",
   "l": "Additional builds",
-  "r": "Feb 2026 – Aug 2026"
+  "r": "Feb 2026 – Oct 2026"
  },
  {
   "k": "b",
-  "t": "Obsidian Vault MCP server (TypeScript, read-only, 49 tests, github.com/damanjz/obsidian-vault-mcp); Flux Player (Python, PySide6 native video player); NOCTRA (React Native, Express, Prisma, Razorpay UPI); Umbra (vanilla JS storefront, custom WebGL shader, zero dependencies); portfolio site (Next.js, 18 case studies)."
+  "t": "VOLT Techwear Store (live Next.js 15 storefront, NextAuth, Prisma, server-side checkout); AI Calendar (REST API for AI assistants, 177 tests, about 96% coverage); Obsidian Vault MCP server (read-only, 49 tests); Flux Player (Python, PySide6); NOCTRA (React Native, Express, Prisma, Razorpay UPI); Umbra (vanilla JS, custom WebGL shader); portfolio site (Next.js, 26 case studies)."
  },
  {
   "k": "h",

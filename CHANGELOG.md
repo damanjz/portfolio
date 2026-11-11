@@ -9,6 +9,12 @@ All notable changes to the portfolio. v6 ("dossier") is the live site; v5 ("thre
 
 The landing becomes a dossier: who on the left, every work on the right. The three craft pages stay.
 
+### v6.6 — Six FDE projects — 2026-11-11
+- **Added** six case studies to the Systems door (now 12 works, 26 in all): `fde-support-agent`, `fde-integration-hub`, `fde-doc-extraction`, `fde-ask-your-data`, `fde-eval-harness`, `fde-voice-intake`. Each has a result card, its reel (self-hosted, plays on click), the architecture and trace diagrams, and a link to its public repo. New categories: Applied AI, Integration.
+- **Case-page cover** can differ from the card image (`cover` field): the cover is a wide crop with scroll parallax, so the FDE covers keep their numbers in the safe middle. Diagrams are padded to the 16:10 gallery frame and result cards to the card crop, so nothing is cut off.
+- **Fix**: a landscape reel poster loaded the 800 px copy at full width (its size hint assumed portrait reels); it now asks for the full-width size.
+- **Resume page and PDF**: FDE portfolio entry added; Systems stats say 12 projects; `llms.txt` lists the six.
+
 ### Project name fix — 2026-10-20
 - The MA final project is **Umbraxis** (was misspelt "Umbraixs"). Name, case-study URL (`/projects/umbraxis/`), image files, resume entry, resume PDF and `llms.txt` updated. The old URL `/projects/umbraixs/` redirects to the new one.
 

@@ -43,7 +43,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
   const idx = peers.findIndex((x) => x.slug === p.slug);
   const next = peers[(idx + 1) % peers.length];
   const shots = p.gallery;
-  const cover = coverOf(p);
+  const cover = p.cover ?? coverOf(p);
   const rest = shots[0] ? shots.slice(1) : shots;
   const title = displayName(p.name);
   const nextTitle = displayName(next.name);

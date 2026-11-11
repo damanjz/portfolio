@@ -26,7 +26,7 @@ export default function VideoFigure({
           <video src={asset(src)} poster={asset(poster)} controls autoPlay loop playsInline style={{ objectFit: "contain", background: "#000" }} />
         ) : (
           <button onClick={() => setPlaying(true)} aria-label={`Play ${title}`} data-cursor="Play" style={{ position: "absolute", inset: 0 }}>
-            <img src={asset(poster)} srcSet={srcSet(poster)} sizes="(max-width: 760px) 100vw, 30vw" alt={title} loading="lazy" decoding="async" />
+            <img src={asset(poster)} srcSet={srcSet(poster)} sizes={portrait ? "(max-width: 760px) 100vw, 30vw" : "(max-width: 760px) 100vw, 96vw"} alt={title} loading="lazy" decoding="async" />
             <span className="play">
               <span>&#9654; Play</span>
             </span>
