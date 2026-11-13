@@ -7,6 +7,10 @@ All notable changes to the portfolio. v6 ("dossier") is the live site; v5 ("thre
 
 ## v7 — Columns in Golden Hour
 
+### v7.2 — Project page fixes — 2026-11-13
+- **Image viewer**: opens over the whole page; the header and the other columns no longer sit on top of it.
+- **Galleries**: pictures line up at the top of each row (short captions pushed them down); 4 per row on desktop, 2 on phones.
+
 ### v7.1 — De-slop pass — 2026-11-13
 - **Type**: Newsreader for display and Instrument Sans for text (were Source Serif 4 and Inter), still self-hosted by next/font.
 - **Colour**: one accent per time of day; the second accent is gone and numbers on the paper use ink. Golden hour is tinted umber, not purple. The dial sun has no glow.

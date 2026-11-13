@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { asset, srcSet } from "@/lib/asset";
 import type { Shot } from "@/content";
 
@@ -40,7 +41,8 @@ export default function Gallery({ shots, start = 1 }: { shots: Shot[]; start?: n
         ))}
       </div>
 
-      {open !== null && (
+      {/* on body, not in the column: the column's stacking context put the header and other columns over it */}
+      {open !== null && createPortal(
         <div className="lightbox" role="dialog" aria-modal="true" aria-label={shots[open].alt}>
           <div className="lb-top">
             <span className="count num">{String(open + 1).padStart(2, "0")} / {String(shots.length).padStart(2, "0")}</span>
@@ -54,7 +56,8 @@ export default function Gallery({ shots, start = 1 }: { shots: Shot[]; start?: n
             <p>{shots[open].caption}</p>
             <button onClick={() => go(1)} aria-label="Next image">&rarr;</button>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );
