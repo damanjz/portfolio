@@ -21,11 +21,11 @@
 .pipe .p-wire { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .pipe .p-wire path { fill: none; stroke: color-mix(in srgb, var(--a) 70%, transparent); stroke-width: 2; stroke-dasharray: 6 6; vector-effect: non-scaling-stroke; }
 @media (hover: hover) {
-  :is(.card, .tile):hover .pipe { filter: none; }
-  :is(.card, .tile, .cs-pipe):hover .pipe .p-glow { transform: scale(1.15); }
-  :is(.card, .tile, .cs-pipe):hover .pipe .p-ln::after { animation: pipe-x 1.1s linear infinite; }
-  :is(.card, .tile, .cs-pipe):hover .pipe .p-vln::after { animation-name: pipe-y; }
-  :is(.card, .tile, .cs-pipe):hover .pipe .p-wire path { animation: pipe-dash 1s linear infinite; }
+  :is(.row, .case .cover):hover .pipe { filter: none; }
+  :is(.row, .case .cover):hover .pipe .p-glow { transform: scale(1.15); }
+  :is(.row, .case .cover):hover .pipe .p-ln::after { animation: pipe-x 1.1s linear infinite; }
+  :is(.row, .case .cover):hover .pipe .p-vln::after { animation-name: pipe-y; }
+  :is(.row, .case .cover):hover .pipe .p-wire path { animation: pipe-dash 1s linear infinite; }
 }
 @keyframes pipe-x { to { transform: translateX(250%); } }
 @keyframes pipe-y { to { transform: translateY(250%); } }

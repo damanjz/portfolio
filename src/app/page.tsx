@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { about, lanes, laneLabel, site, socials, projects, getProject, trackOf, nameOf, shortOf, coverOf, type Project } from "@/content";
-import { asset, srcSet } from "@/lib/asset";
+import { asset } from "@/lib/asset";
+import { srcSet } from "@/lib/srcset";
 import { Portrait } from "@/components/Shell";
 import CopyEmail from "@/components/CopyEmail";
 import resume from "@/resume.json";
@@ -26,12 +27,11 @@ export default function Home() {
           <a className="cta-1" href="#featured">View work</a>
           <a className="cta-2" href={asset("/resume/Daman-Reddy-Resume.pdf")} download>Download resume</a>
         </div>
-        <div className="go" aria-label="Lanes">
+        <nav className="go" aria-label="Lanes">
           {lanes().map((l) => (
             <Link key={l.id} href={`/${l.id}/`}>{laneLabel[l.id]}<small className="num">{projects.filter((p) => trackOf(p) === l.id).length} projects</small></Link>
           ))}
-        </div>
-        <div className="avail">{site.status} · {site.location}</div>
+        </nav>
       </div>
       <section className="paper featured" id="featured" aria-labelledby="featured-h">
         <h2 id="featured-h">Featured work</h2>
@@ -42,7 +42,7 @@ export default function Home() {
               <Link key={p.slug} className="row" href={`/projects/${p.slug}/`}>
                 <span className="th">{c && <img src={asset(c.src)} srcSet={srcSet(c.src)} sizes="120px" alt="" loading="lazy" />}</span>
                 <span><b>{nameOf(p)}</b><small>{p.tagline}</small></span>
-                <em className="num">{`${laneLabel[trackOf(p)]} · ${shortOf(p)}`}</em>
+                <em className="num"><span>{laneLabel[trackOf(p)]}</span>{shortOf(p)}</em>
               </Link>
             );
           })}
@@ -51,7 +51,7 @@ export default function Home() {
       <div className="paper">
         <article className="about">
           <div className="top">
-            <Portrait portrait={about.portrait} />
+            <Portrait portrait={about.portrait && { ...about.portrait, srcSet: srcSet(about.portrait.src) }} />
             <div>
               <p className="tagrow"><span>{site.name}</span><span>{site.location}</span><span>{site.status}</span></p>
               <div className="links">
@@ -60,7 +60,7 @@ export default function Home() {
                 ))}
                 <CopyEmail email={site.email} />
                 <Link className="btn on" href="/resume/">Resume</Link>
-                <a className="btn" href={asset("/resume/Daman-Reddy-Resume.pdf")} target="_blank" rel="noopener">Resume PDF{OUT}</a>
+                <a className="btn" href={asset("/resume/Daman-Reddy-Resume.pdf")} download>Download resume</a>
               </div>
             </div>
           </div>

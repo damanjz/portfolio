@@ -7,6 +7,13 @@ All notable changes to the portfolio. v6 ("dossier") is the live site; v5 ("thre
 
 ## v7 — Columns in Golden Hour
 
+### v7.3 — Theme fixes, code check, second de-slop pass — 2026-11-13
+- **Theme changes**: no more flicker on buttons and paper (their own colour fades fought the palette fade); text swaps colour halfway instead of fading into the paper; the new scene fades in over the old one (no dip to black); the dial lights the right time before the page loads; changes every minute, and stops once you pick a time.
+- **Fixes**: Featured and lane rows show results again (a regex typo showed dates); data cards colour on hover again; tall reel frames no longer pick up portrait styles; image viewer locks the page and returns focus; typo addresses under a lane open the right column; Back restores the column's scroll; header no longer overflows between 1000 and 1200 px.
+- **Copy**: 352 all-caps facts and decisions in sentence case; reel captions as sentences; dot chains replaced with commas; no zero-padded numbers; no image numbering; one label per action ("Download resume", "Email me").
+- **Layout**: heading two lines on desktop; availability line dropped from the hero (the column already says it); one corner radius for every rectangle; Play sits in the poster's corner, off its title.
+- **Weight**: unused italic font dropped (147 KB); 400 px image copies for thumbnails; portrait and posters load the size they show; image manifest out of the shared script; unused v5/v6 content removed.
+
 ### v7.2 — Project page fixes — 2026-11-13
 - **Image viewer**: opens over the whole page; the header and the other columns no longer sit on top of it.
 - **Galleries**: pictures line up at the top of each row (short captions pushed them down); 4 per row on desktop, 2 on phones.

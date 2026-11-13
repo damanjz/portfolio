@@ -1,5 +1,5 @@
 /**
- * Writes smaller copies of every site image (800 and 1400 px wide, WebP) next
+ * Writes smaller copies of every site image (400, 800 and 1400 px wide, WebP) next
  * to the original as name.800.webp / name.1400.webp, and records each image's
  * widths in src/image-sizes.json so pages can serve a srcset. Safe to re-run;
  * originals are never touched. Run after adding images: node scripts/sizes.mjs
@@ -11,9 +11,9 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const PUB = join(ROOT, "public");
-const WIDTHS = [800, 1400];
+const WIDTHS = [400, 800, 1400];
 const walk = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(join(d, e.name)) : [join(d, e.name)]));
-const images = walk(PUB).filter((f) => /\.(webp|png|jpe?g)$/i.test(f) && !/\.(800|1400)\.webp$/.test(f) && !f.endsWith("og.png"));
+const images = walk(PUB).filter((f) => /\.(webp|png|jpe?g)$/i.test(f) && !/\.(400|800|1400)\.webp$/.test(f) && !f.endsWith("og.png"));
 
 const manifest = {};
 for (const file of images) {

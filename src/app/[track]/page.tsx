@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { tracks, getTrack, projectsIn, site, ethics, laneLabel, nameOf, shortOf, coverOf, type TrackId } from "@/content";
-import { asset, srcSet } from "@/lib/asset";
+import { asset } from "@/lib/asset";
+import { srcSet } from "@/lib/srcset";
 import DataCard from "@/components/DataCard";
 
 type Params = { track: string };

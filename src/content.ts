@@ -6,11 +6,10 @@
 export const site = {
   handle: "damanjz",
   name: "Daman Reddy",
-  role: "AI agents and data systems · BI analyst · 3D environment artist",
+  role: "AI agents and data systems, BI analyst, 3D environment artist",
   location: "Hyderabad, IN",
   status: "Open to work",
   // landing intro
-  lede: ["I build agents and reports", "you can check."],
   bio: "Agents graded by their own evals. Reports where every number reconciles to SQL. All of it runs on local models.",
   email: "daman.w3d@gmail.com", // public work contact
   // Title < 60 chars (Google truncates ~60); keywords front-loaded.
@@ -23,7 +22,7 @@ export const site = {
 export const socials = [
   { label: "ArtStation", handle: "@damanpsd", href: "https://www.artstation.com/damanpsd" },
   { label: "GitHub", handle: "@damanjz", href: "https://github.com/damanjz" },
-  { label: "Email", handle: site.email, href: `mailto:${site.email}` },
+  { label: "Email me", handle: site.email, href: `mailto:${site.email}` },
 ] as const;
 
 /** Two disciplines; trackOf() maps them (plus the analytics category) onto the three doors. */
@@ -86,7 +85,6 @@ export type Project = {
   sections: { heading: string; body: string }[];
   decisions?: { choice: string; reason: string }[];
   facts: { label: string; value: string }[];
-  specAccent?: string; // which spec label gets the accent (e.g. "NETWORK")
   pipeline?: Pipeline; // drawn as a pipeline card instead of a screenshot
   cover?: Shot; // case-page cover when the card image can't take that crop (wide, with scroll parallax)
 };
@@ -157,21 +155,20 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "ARGON2ID > PBKDF2", reason: "memory-hard KDF; GPU farms pay full price" },
-      { choice: "NATIVE MSG > LOCAL SERVER", reason: "no listening port, no CORS surface" },
-      { choice: "ZEROIZE ON DROP", reason: "secrets leave memory the moment they're unused" },
+      { choice: "Argon2id over PBKDF2", reason: "memory-hard KDF; GPU farms pay full price" },
+      { choice: "Native messaging over local server", reason: "no listening port, no CORS surface" },
+      { choice: "Zeroize on drop", reason: "secrets leave memory the moment they're unused" },
     ],
     facts: [
-      { label: "TYPE", value: "DESKTOP + WEBEXT" },
-      { label: "CORE", value: "RUST" },
-      { label: "SHELL", value: "TAURI · SVELTE" },
-      { label: "UNLOCK", value: "PASSWORD · OPTIONAL HELLO" },
-      { label: "NETWORK", value: "NONE" },
-      { label: "AUDIT", value: "16 FIXES SHIPPED" },
-      { label: "RELEASE", value: "v0.2.0 · WIN + MAC (EXP.)" },
-      { label: "STATUS", value: "PUBLIC" },
+      { label: "Type", value: "Desktop + WebExt" },
+      { label: "Core", value: "Rust" },
+      { label: "Shell", value: "Tauri, Svelte" },
+      { label: "Unlock", value: "Password, optional Hello" },
+      { label: "Network", value: "None" },
+      { label: "Audit", value: "16 fixes shipped" },
+      { label: "Release", value: "v0.2.0 · WIN + MAC (EXP.)" },
+      { label: "Status", value: "Public" },
     ],
-    specAccent: "NETWORK",
   },
   {
     slug: "n8n-automation",
@@ -204,19 +201,18 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "LOCAL OLLAMA > CLOUD API", reason: "a support inbox never leaves the machine" },
-      { choice: "EVAL CORPUS GATE", reason: "88% vs 70% baseline: measured, then shipped" },
-      { choice: "HUMAN APPROVAL QUEUE", reason: "AI drafts; a person sends" },
+      { choice: "Local Ollama over cloud API", reason: "a support inbox never leaves the machine" },
+      { choice: "Eval corpus gate", reason: "88% vs 70% baseline: measured, then shipped" },
+      { choice: "Human approval queue", reason: "AI drafts; a person sends" },
     ],
     facts: [
-      { label: "TYPE", value: "AUTOMATION PIPELINE" },
-      { label: "ENGINE", value: "N8N · SELF-HOSTED" },
-      { label: "MODEL", value: "LOCAL OLLAMA" },
-      { label: "ROUTING", value: "88% (BASELINE 70%)" },
-      { label: "COST", value: "$0 RECURRING" },
-      { label: "STATUS", value: "PUBLIC MIRROR" },
+      { label: "Type", value: "Automation pipeline" },
+      { label: "Engine", value: "n8n, self-hosted" },
+      { label: "Model", value: "Local Ollama" },
+      { label: "Routing", value: "88% (baseline 70%)" },
+      { label: "Cost", value: "$0 recurring" },
+      { label: "Status", value: "Public mirror" },
     ],
-    specAccent: "ROUTING",
   },
   {
     slug: "volt-techwear-store",
@@ -229,7 +225,7 @@ export const projects: Project[] = [
     href: "https://volt-techwear-store.vercel.app",
     hrefLabel: "open the live store",
     repo: "https://github.com/damanjz/volt-techwear-store",
-    metric: { label: "stack", value: "Next 15 · Prisma 6" },
+    metric: { label: "stack", value: "Next 15, Prisma 6" },
     year: "Mar 2026", // repo created 2026-03-13
     summary:
       "VOLT HQ is a full Next.js 15 techwear storefront with membership identity, dynamic clearance leveling and Server Action checkouts.",
@@ -255,18 +251,17 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "SERVER ACTIONS > CLIENT FLOW", reason: "the sensitive path never trusts the browser" },
-      { choice: "CLEARANCE AS STATE", reason: "identity, gating, and checkout share one model" },
+      { choice: "Server actions over client flow", reason: "the sensitive path never trusts the browser" },
+      { choice: "Clearance as state", reason: "identity, gating, and checkout share one model" },
     ],
     facts: [
-      { label: "TYPE", value: "COMMERCE · FULL STACK" },
-      { label: "FRAMEWORK", value: "NEXT.JS 15" },
-      { label: "DATA", value: "PRISMA 6 · POSTGRES" },
-      { label: "AUTH", value: "NEXTAUTH" },
-      { label: "CHECKOUT", value: "SERVER ACTIONS" },
-      { label: "STATUS", value: "LIVE · v1.0.0" },
+      { label: "Type", value: "Commerce, full stack" },
+      { label: "Framework", value: "Next.js 15" },
+      { label: "Data", value: "Prisma 6, Postgres" },
+      { label: "Auth", value: "NextAuth" },
+      { label: "Checkout", value: "Server actions" },
+      { label: "Status", value: "LIVE · v1.0.0" },
     ],
-    specAccent: "CHECKOUT",
   },
   {
     slug: "flux-player",
@@ -321,17 +316,16 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "QT > ELECTRON", reason: "instant start, native widgets, sane memory" },
+      { choice: "Qt over Electron", reason: "instant start, native widgets, sane memory" },
     ],
     facts: [
-      { label: "TYPE", value: "DESKTOP · NATIVE" },
-      { label: "LANGUAGE", value: "PYTHON" },
-      { label: "TOOLKIT", value: "PYSIDE6 (QT)" },
-      { label: "PLATFORM", value: "WINDOWS" },
-      { label: "RUNTIME", value: "NATIVE · NO WEBVIEW" },
-      { label: "STATUS", value: "PUBLIC" },
+      { label: "Type", value: "Desktop, native" },
+      { label: "Language", value: "Python" },
+      { label: "Toolkit", value: "PySide6 (Qt)" },
+      { label: "Platform", value: "Windows" },
+      { label: "Runtime", value: "Native, no WebView" },
+      { label: "Status", value: "Public" },
     ],
-    specAccent: "RUNTIME",
   },
   {
     slug: "ai-calendar",
@@ -343,7 +337,7 @@ export const projects: Project[] = [
     status: "public",
     href: "https://github.com/damanjz/ai-calendar",
     hrefLabel: "view source",
-    metric: { label: "tests", value: "177 · ~96% coverage" },
+    metric: { label: "tests", value: "177, ~96% coverage" },
     year: "Aug 2026",
     summary:
       "An open-source calendar with a web app and a REST API, so an AI assistant can check availability, spot conflicts and book events in a local calendar, with adapters for Google, Outlook and CalDAV.",
@@ -369,19 +363,18 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "CONFLICTS IN THE API", reason: "assistants get the same check as the UI; double-booking needs an explicit override" },
-      { choice: "LOCALHOST BY DEFAULT", reason: "listens on 127.0.0.1 only, with an optional API key" },
-      { choice: "ONE TEST RUNNER", reason: "Node's built-in runner, no extra frameworks to maintain" },
+      { choice: "Conflicts in the API", reason: "assistants get the same check as the UI; double-booking needs an explicit override" },
+      { choice: "localhost by default", reason: "listens on 127.0.0.1 only, with an optional API key" },
+      { choice: "One test runner", reason: "Node's built-in runner, no extra frameworks to maintain" },
     ],
     facts: [
-      { label: "TYPE", value: "WEB APP + REST API" },
-      { label: "FRONT END", value: "REACT 19 · VITE" },
-      { label: "API", value: "NODE · EXPRESS 5" },
-      { label: "PROVIDERS", value: "LOCAL · 3 ADAPTERS" },
-      { label: "TESTS", value: "177 · ~96% COVERAGE" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "Web app + REST API" },
+      { label: "Front end", value: "React 19, Vite" },
+      { label: "API", value: "Node, Express 5" },
+      { label: "Providers", value: "Local, 3 adapters" },
+      { label: "Tests", value: "177, ~96% coverage" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "TESTS",
   },
   {
     slug: "obsidian-vault-mcp",
@@ -393,7 +386,7 @@ export const projects: Project[] = [
     status: "public",
     href: "https://github.com/damanjz/obsidian-vault-mcp",
     hrefLabel: "view source",
-    metric: { label: "tests", value: "49 · unit + end to end" },
+    metric: { label: "tests", value: "49, unit + end to end" },
     pipeline: {
       mark: "network",
       layout: "stack",
@@ -434,21 +427,20 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "READ-ONLY BY CONSTRUCTION", reason: "no write tools, and a test fails if a write call appears" },
-      { choice: "STDIO > HTTP", reason: "no port, no network, nothing to expose" },
-      { choice: "TWO DEPENDENCIES", reason: "MCP SDK and zod; own frontmatter parser, no search library" },
+      { choice: "Read-only by construction", reason: "no write tools, and a test fails if a write call appears" },
+      { choice: "stdio over HTTP", reason: "no port, no network, nothing to expose" },
+      { choice: "Two dependencies", reason: "MCP SDK and zod; own frontmatter parser, no search library" },
     ],
     facts: [
-      { label: "TYPE", value: "MCP SERVER · STDIO" },
-      { label: "LANGUAGE", value: "TYPESCRIPT" },
-      { label: "DEPENDENCIES", value: "MCP SDK · ZOD" },
-      { label: "TOOLS", value: "5" },
-      { label: "ACCESS", value: "READ-ONLY" },
-      { label: "NETWORK", value: "NONE" },
-      { label: "TESTS", value: "49 · UNIT + E2E" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "MCP server, stdio" },
+      { label: "Language", value: "TypeScript" },
+      { label: "Dependencies", value: "MCP SDK, Zod" },
+      { label: "Tools", value: "5" },
+      { label: "Access", value: "Read-only" },
+      { label: "Network", value: "None" },
+      { label: "Tests", value: "49, unit + E2E" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "ACCESS",
   },
   {
     slug: "fde-support-agent",
@@ -460,12 +452,12 @@ export const projects: Project[] = [
     status: "public",
     href: "https://github.com/damanjz/fde-support-agent",
     hrefLabel: "view source",
-    metric: { label: "60-case eval", value: "88% · mean of 3 runs" },
+    metric: { label: "60-case eval", value: "88%, mean of 3 runs" },
     year: "Nov 2026",
     summary:
       "A customer-support agent for Larkfield Coffee Co., a fictional Indian coffee-gear brand: it answers from the help centre with citations, looks up orders and stock, and starts a return or raises a ticket only after the customer confirms. It runs on a local 27B model at zero cost per query. The data is synthetic; the engineering and the numbers are real.",
     reels: [
-      { src: "/shots/fde-support-agent/reel.mp4", poster: "/shots/fde-support-agent/title.webp", caption: "REEL: A RETURN REQUEST, ANSWERED, CONFIRMED AND MEASURED" },
+      { src: "/shots/fde-support-agent/reel.mp4", poster: "/shots/fde-support-agent/title.webp", caption: "A return request, answered, confirmed and measured." },
     ],
     cover: { src: "/shots/fde-support-agent/cover.webp", alt: "88% on a 60-case eval, mean of three runs, against 85% keyword-only and 37% with no retrieval", caption: "" },
     gallery: [
@@ -488,19 +480,18 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "DATES IN CODE", reason: "the model counted a 33-day-old delivery as inside 30 days and held the line; order lookup now returns the arithmetic" },
-      { choice: "CONFIRM BEFORE WRITES", reason: "returns and tickets need a click or a clear yes; a hedge like \"Yeah, no\" never confirms" },
-      { choice: "MONEY RULES IN CODE", reason: "a records mismatch blocks the return in code; a prompt rule is only a suggestion" },
+      { choice: "Dates in code", reason: "the model counted a 33-day-old delivery as inside 30 days and held the line; order lookup now returns the arithmetic" },
+      { choice: "Confirm before writes", reason: "returns and tickets need a click or a clear yes; a hedge like \"Yeah, no\" never confirms" },
+      { choice: "Money rules in code", reason: "a records mismatch blocks the return in code; a prompt rule is only a suggestion" },
     ],
     facts: [
-      { label: "TYPE", value: "SUPPORT AGENT · RAG + TOOLS" },
-      { label: "MODEL", value: "LOCAL 27B · OLLAMA" },
-      { label: "RETRIEVAL", value: "FULL-TEXT + PGVECTOR" },
-      { label: "EVAL", value: "88% · 60 CASES" },
-      { label: "COST", value: "INR 0 PER QUERY" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "Support agent, RAG + tools" },
+      { label: "Model", value: "Local 27B, Ollama" },
+      { label: "Retrieval", value: "Full-text + pgvector" },
+      { label: "Eval", value: "88%, 60 cases" },
+      { label: "Cost", value: "INR 0 per query" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "EVAL",
   },
   {
     slug: "fde-integration-hub",
@@ -512,12 +503,12 @@ export const projects: Project[] = [
     status: "public",
     href: "https://github.com/damanjz/fde-integration-hub",
     hrefLabel: "view source",
-    metric: { label: "chaos run", value: "1,476 deliveries · 0 lost" },
+    metric: { label: "chaos run", value: "1,476 deliveries, 0 lost" },
     year: "Nov 2026",
     summary:
       "A webhook hub for Larkfield Coffee Co. (fictional): every storefront order event reaches the warehouse, helpdesk and accounting systems exactly once in effect, and in order, through slow commits, rate limits, outages and worker crashes. All three destinations are local mock providers.",
     reels: [
-      { src: "/shots/fde-integration-hub/reel.mp4", poster: "/shots/fde-integration-hub/title.webp", caption: "REEL: 500 EVENTS THROUGH THE HUB UNDER CHAOS" },
+      { src: "/shots/fde-integration-hub/reel.mp4", poster: "/shots/fde-integration-hub/title.webp", caption: "500 events through the hub under chaos." },
     ],
     cover: { src: "/shots/fde-integration-hub/cover.webp", alt: "1,476 deliveries under chaos: 0 lost, duplicated or out of order", caption: "" },
     gallery: [
@@ -540,19 +531,18 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "POSTGRES AS THE QUEUE", reason: "a few hundred events an hour need one database and a few workers, not a message broker" },
-      { choice: "LOOK BEFORE RESENDING", reason: "the warehouse has no idempotency, so after an unknown outcome the hub searches for its own key first" },
-      { choice: "A TEST THAT CAN FAIL", reason: "the slow-commit fault is part of every standard run, and a probe shows the boundary" },
+      { choice: "Postgres as the queue", reason: "a few hundred events an hour need one database and a few workers, not a message broker" },
+      { choice: "Look before resending", reason: "the warehouse has no idempotency, so after an unknown outcome the hub searches for its own key first" },
+      { choice: "A test that can fail", reason: "the slow-commit fault is part of every standard run, and a probe shows the boundary" },
     ],
     facts: [
-      { label: "TYPE", value: "INTEGRATION HUB" },
-      { label: "QUEUE", value: "POSTGRES OUTBOX" },
-      { label: "AUTH", value: "HMAC · OAUTH2" },
-      { label: "DELIVERIES", value: "1,476 · 0 LOST · 0 DUPES" },
-      { label: "FAULTS", value: "CRASHES · OUTAGE · 429S" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "Integration hub" },
+      { label: "Queue", value: "Postgres outbox" },
+      { label: "Auth", value: "HMAC, OAuth2" },
+      { label: "Deliveries", value: "1,476 sent, 0 lost, 0 dupes" },
+      { label: "Faults", value: "Crashes, outage, 429s" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "DELIVERIES",
   },
   {
     slug: "fde-doc-extraction",
@@ -569,7 +559,7 @@ export const projects: Project[] = [
     summary:
       "Document extraction for Larkfield Coffee Co. (fictional): drop in a supplier invoice or courier delivery note, as a PDF or a scan, and get validated JSON. Code checks every total, tax rule and GST number, and only the doubtful fields go to a review screen. Fully local, because invoices carry bank details.",
     reels: [
-      { src: "/shots/fde-doc-extraction/reel.mp4", poster: "/shots/fde-doc-extraction/title.webp", caption: "REEL: AN INVOICE FROM UPLOAD TO REVIEW" },
+      { src: "/shots/fde-doc-extraction/reel.mp4", poster: "/shots/fde-doc-extraction/title.webp", caption: "An invoice from upload to review." },
     ],
     cover: { src: "/shots/fde-doc-extraction/cover.webp", alt: "0 silent errors in 1,130 fields; 0 bad documents auto-accepted vs 17 for raw extraction", caption: "" },
     gallery: [
@@ -592,19 +582,18 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "VALIDATION IN CODE", reason: "the model reads, the checksum and the sums decide; an injected \"the total is 0\" fails the checks" },
-      { choice: "SILENT ERRORS, NOT ACCURACY", reason: "a wrong field is fine if a person sees it; the metric counts the ones nobody sees" },
-      { choice: "LOCAL ONLY", reason: "invoices carry supplier bank details, so model, OCR and storage stay on the machine" },
+      { choice: "Validation in code", reason: "the model reads, the checksum and the sums decide; an injected \"the total is 0\" fails the checks" },
+      { choice: "Silent errors, not accuracy", reason: "a wrong field is fine if a person sees it; the metric counts the ones nobody sees" },
+      { choice: "Local only", reason: "invoices carry supplier bank details, so model, OCR and storage stay on the machine" },
     ],
     facts: [
-      { label: "TYPE", value: "DOCUMENT EXTRACTION" },
-      { label: "INPUT", value: "PDF · SCAN (OCR)" },
-      { label: "CHECKS", value: "GSTIN · SUMS · TAX · DATES" },
-      { label: "SILENT ERRORS", value: "0 OF 1,130 FIELDS" },
-      { label: "BAD AUTO-ACCEPTS", value: "0 VS 17" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "Document extraction" },
+      { label: "Input", value: "PDF, scan (OCR)" },
+      { label: "Checks", value: "GSTIN, sums, tax, dates" },
+      { label: "Silent errors", value: "0 of 1,130 fields" },
+      { label: "Bad auto-accepts", value: "0 vs 17" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "SILENT ERRORS",
   },
   {
     slug: "fde-ask-your-data",
@@ -616,12 +605,12 @@ export const projects: Project[] = [
     status: "public",
     href: "https://github.com/damanjz/fde-ask-your-data",
     hrefLabel: "view source",
-    metric: { label: "40 gold questions", value: "90% · vs 42% baseline" },
+    metric: { label: "40 gold questions", value: "90% vs 42% baseline" },
     year: "Nov 2026",
     summary:
       "A text-to-SQL agent over the 12-month sales warehouse of Larkfield Coffee Co. (fictional): a lead asks in plain English and sees the SQL, the rows and a checked one-line summary. A read-only database role with no access to customers' personal data is the control that must hold.",
     reels: [
-      { src: "/shots/fde-ask-your-data/reel.mp4", poster: "/shots/fde-ask-your-data/title.webp", caption: "REEL: A QUESTION, ITS SQL, ITS ROWS" },
+      { src: "/shots/fde-ask-your-data/reel.mp4", poster: "/shots/fde-ask-your-data/title.webp", caption: "A question, its SQL, its rows." },
     ],
     cover: { src: "/shots/fde-ask-your-data/cover.webp", alt: "90% on 40 gold questions against 42% for raw schema and 18% for table names only", caption: "" },
     gallery: [
@@ -644,19 +633,18 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "THE ROLE IS THE CONTROL", reason: "parser and filter are extra layers; the database role holds whatever the model writes" },
-      { choice: "DEFINITIONS WRITTEN DOWN", reason: "vague words resolve one way, so the model never guesses what \"last quarter\" means" },
-      { choice: "TEST THE SCORER", reason: "wrong answers were pushed through the scorer before any number was published" },
+      { choice: "The role is the control", reason: "parser and filter are extra layers; the database role holds whatever the model writes" },
+      { choice: "Definitions written down", reason: "vague words resolve one way, so the model never guesses what \"last quarter\" means" },
+      { choice: "Test the scorer", reason: "wrong answers were pushed through the scorer before any number was published" },
     ],
     facts: [
-      { label: "TYPE", value: "TEXT-TO-SQL AGENT" },
-      { label: "WAREHOUSE", value: "12 MONTHS · 8,034 ORDERS" },
-      { label: "ACCESS", value: "READ-ONLY · NO PII" },
-      { label: "ACCURACY", value: "36/40 · 90%" },
-      { label: "BASELINE", value: "17/40 · RAW SCHEMA" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "Text-to-SQL agent" },
+      { label: "Warehouse", value: "12 months, 8,034 orders" },
+      { label: "Access", value: "Read-only, no PII" },
+      { label: "Accuracy", value: "36/40, 90%" },
+      { label: "Baseline", value: "17/40, raw schema" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "ACCURACY",
   },
   {
     slug: "fde-eval-harness",
@@ -673,7 +661,7 @@ export const projects: Project[] = [
     summary:
       "An eval and monitoring harness for the AI features of Larkfield Coffee Co. (fictional). It runs a feature's golden cases on any model, pairs the results case by case, says whether a difference is real, and blocks a change in CI when it regresses or fails a must-pass category.",
     reels: [
-      { src: "/shots/fde-eval-harness/reel.mp4", poster: "/shots/fde-eval-harness/title.webp", caption: "REEL: THREE MODELS, ONE NOISE FLOOR, ONE GATE" },
+      { src: "/shots/fde-eval-harness/reel.mp4", poster: "/shots/fde-eval-harness/title.webp", caption: "Three models, one noise floor, one gate." },
     ],
     cover: { src: "/shots/fde-eval-harness/cover.webp", alt: "Noise floor: 4 of 60 cases flipped with nothing changed; three models scored 53, 55 and 48 of 60", caption: "" },
     gallery: [
@@ -696,19 +684,18 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "NOISE BEFORE COMPARISON", reason: "identical runs flip 4 of 60 cases; a smaller difference is not evidence" },
-      { choice: "MUST-PASS CATEGORIES", reason: "safety cases gate on their own, not hidden inside the average" },
-      { choice: "NO JUDGE IN THE GATE", reason: "a judge running on the candidate model would grade itself" },
+      { choice: "Noise before comparison", reason: "identical runs flip 4 of 60 cases; a smaller difference is not evidence" },
+      { choice: "Must-pass categories", reason: "safety cases gate on their own, not hidden inside the average" },
+      { choice: "No judge in the gate", reason: "a judge running on the candidate model would grade itself" },
     ],
     facts: [
-      { label: "TYPE", value: "EVAL + REGRESSION GATE" },
-      { label: "STATS", value: "MCNEMAR · BOOTSTRAP · WILSON" },
-      { label: "MODELS", value: "3 LOCAL" },
-      { label: "NOISE FLOOR", value: "4 OF 60 CASES" },
-      { label: "GATE", value: "BLOCKS QWEN3:14B" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "Eval + regression gate" },
+      { label: "Stats", value: "McNemar, bootstrap, Wilson" },
+      { label: "Models", value: "3 local" },
+      { label: "Noise floor", value: "4 of 60 cases" },
+      { label: "Gate", value: "Blocks qwen3:14b" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "NOISE FLOOR",
   },
   {
     slug: "fde-voice-intake",
@@ -720,12 +707,12 @@ export const projects: Project[] = [
     status: "public",
     href: "https://github.com/damanjz/fde-voice-intake",
     hrefLabel: "view source",
-    metric: { label: "end to end, voiced", value: "25/25 · synthetic speech" },
+    metric: { label: "end to end, voiced", value: "25/25, synthetic speech" },
     year: "Nov 2026",
     summary:
       "A voice front end for the Larkfield support agent (fictional customer): hold a button and speak, and the same agent answers out loud with the same confirmation rules. Speech to text and text to speech run on the CPU, so the GPU stays free for the agent's model.",
     reels: [
-      { src: "/shots/fde-voice-intake/reel.mp4", poster: "/shots/fde-voice-intake/title.webp", caption: "REEL: A SPOKEN RETURN, READ BACK AND CONFIRMED" },
+      { src: "/shots/fde-voice-intake/reel.mp4", poster: "/shots/fde-voice-intake/title.webp", caption: "A spoken return, read back and confirmed." },
     ],
     cover: { src: "/shots/fde-voice-intake/cover.webp", alt: "25 of 25 voiced requests reached the right tool and order id; typed 25 of 25; quiet clips 5 of 5 made no agent call", caption: "" },
     gallery: [
@@ -748,19 +735,18 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "ONE BRAIN", reason: "voice calls the support agent's API, so no logic is copied and nothing drifts" },
-      { choice: "STRICT YES", reason: "only a whole-utterance yes or a clear no is passed on while an action waits" },
-      { choice: "CPU FOR SPEECH", reason: "Whisper and Piper on the CPU keep the GPU free for the 27B model" },
+      { choice: "One brain", reason: "voice calls the support agent's API, so no logic is copied and nothing drifts" },
+      { choice: "Strict yes", reason: "only a whole-utterance yes or a clear no is passed on while an action waits" },
+      { choice: "CPU for speech", reason: "Whisper and Piper on the CPU keep the GPU free for the 27B model" },
     ],
     facts: [
-      { label: "TYPE", value: "VOICE FRONT END" },
-      { label: "SPEECH IN", value: "FASTER-WHISPER · CPU" },
-      { label: "SPEECH OUT", value: "PIPER · CPU" },
-      { label: "END TO END", value: "25/25 VOICED" },
-      { label: "WER", value: "1.3% · SYNTHETIC" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "Voice front end" },
+      { label: "Speech in", value: "faster-whisper, CPU" },
+      { label: "Speech out", value: "Piper, CPU" },
+      { label: "End to end", value: "25/25 voiced" },
+      { label: "WER", value: "1.3%, synthetic" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "END TO END",
   },
   {
     slug: "finance-bi",
@@ -817,19 +803,18 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "SYNTHETIC, NOT TOY", reason: "publishable, but messy enough to need real cleaning" },
-      { choice: "REPORT AS CODE", reason: "generated TMDL + PBIR: reviewable, reproducible" },
-      { choice: "ACCRUAL SPEND", reason: "card spend counts when it happens, not when it's paid" },
+      { choice: "Synthetic, not toy", reason: "publishable, but messy enough to need real cleaning" },
+      { choice: "Report as code", reason: "generated TMDL + PBIR: reviewable, reproducible" },
+      { choice: "Accrual spend", reason: "card spend counts when it happens, not when it's paid" },
     ],
     facts: [
-      { label: "TYPE", value: "BI CASE STUDY" },
-      { label: "DATA", value: "60 MONTHS · SYNTHETIC" },
-      { label: "MODEL", value: "DUCKDB · PLAIN SQL" },
-      { label: "CHECKS", value: "15 / 15 PASS" },
-      { label: "REPORT", value: "POWER BI · GENERATED" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "BI case study" },
+      { label: "Data", value: "60 months, synthetic" },
+      { label: "Model", value: "DuckDB, plain SQL" },
+      { label: "Checks", value: "15 / 15 pass" },
+      { label: "Report", value: "Power BI, generated" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "CHECKS",
   },
   {
     slug: "hr-analytics",
@@ -887,19 +872,18 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "OUT-OF-TIME TEST", reason: "the model is judged on years it never saw" },
-      { choice: "RISK AS A RANK", reason: "the model over-predicts calm years; ranks stay honest" },
-      { choice: "WORKBOOK AS CODE", reason: "Tableau's own save as the spec; the XML rebuilds byte for byte" },
+      { choice: "Out-of-time test", reason: "the model is judged on years it never saw" },
+      { choice: "Risk as a rank", reason: "the model over-predicts calm years; ranks stay honest" },
+      { choice: "Workbook as code", reason: "Tableau's own save as the spec; the XML rebuilds byte for byte" },
     ],
     facts: [
-      { label: "TYPE", value: "PEOPLE ANALYTICS" },
-      { label: "DATA", value: "4,238 PEOPLE · 48 MONTHS" },
-      { label: "MODEL", value: "GRADIENT BOOSTING" },
-      { label: "AUC", value: "0.658 OUT-OF-TIME" },
-      { label: "DASHBOARD", value: "TABLEAU PUBLIC · LIVE" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "People analytics" },
+      { label: "Data", value: "4,238 people, 48 months" },
+      { label: "Model", value: "Gradient boosting" },
+      { label: "AUC", value: "0.658 out-of-time" },
+      { label: "Dashboard", value: "Tableau Public, live" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "AUC",
   },
 
   {
@@ -960,20 +944,19 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "OUT-OF-TIME TEST", reason: "train on the past, test on a later year: no leakage from the future" },
-      { choice: "MODEL VS LACE", reason: "beat the score clinicians already use, like for like" },
-      { choice: "REPORT AS CODE", reason: "generated Power BI project: reviewable, rebuilt identically" },
+      { choice: "Out-of-time test", reason: "train on the past, test on a later year: no leakage from the future" },
+      { choice: "Model vs LACE", reason: "beat the score clinicians already use, like for like" },
+      { choice: "Report as code", reason: "generated Power BI project: reviewable, rebuilt identically" },
     ],
     facts: [
-      { label: "TYPE", value: "BI CASE STUDY" },
-      { label: "DATA", value: "168K ER VISITS · SYNTHETIC" },
-      { label: "MODEL", value: "LOGISTIC REGRESSION" },
-      { label: "AUC", value: "0.786 VS LACE 0.749" },
-      { label: "CHECKS", value: "18 / 18 PASS" },
-      { label: "REPORT", value: "POWER BI · GENERATED" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "BI case study" },
+      { label: "Data", value: "168K ER visits, synthetic" },
+      { label: "Model", value: "Logistic regression" },
+      { label: "AUC", value: "0.786 vs LACE 0.749" },
+      { label: "Checks", value: "18 / 18 pass" },
+      { label: "Report", value: "Power BI, generated" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "AUC",
   },
   {
     slug: "supply-chain",
@@ -1036,22 +1019,21 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "OTIF PER ORDER LINE", reason: "one short line in a big order shouldn't hide which lines fail" },
-      { choice: "MAP AS NAVIGATION", reason: "click a warehouse or lane and everything follows" },
-      { choice: "MODEL VS RULE", reason: "beat the reorder-point rule planners already use" },
+      { choice: "OTIF per order line", reason: "one short line in a big order shouldn't hide which lines fail" },
+      { choice: "Map as navigation", reason: "click a warehouse or lane and everything follows" },
+      { choice: "Model vs rule", reason: "beat the reorder-point rule planners already use" },
     ],
     facts: [
-      { label: "TYPE", value: "BI CASE STUDY" },
-      { label: "DATA", value: "3 YEARS · SYNTHETIC" },
-      { label: "NETWORK", value: "4 DCS · 40 SUPPLIERS · 200 SKUS" },
-      { label: "MODEL", value: "GRADIENT BOOSTING" },
-      { label: "AUC", value: "0.840 VS RULE 0.699" },
+      { label: "Type", value: "BI case study" },
+      { label: "Data", value: "3 years, synthetic" },
+      { label: "Network", value: "4 DCs, 40 suppliers, 200 SKUs" },
+      { label: "Model", value: "Gradient boosting" },
+      { label: "AUC", value: "0.840 vs rule 0.699" },
       { label: "OTIF", value: "80.2%" },
-      { label: "DASHBOARD", value: "TABLEAU PUBLIC · LIVE" },
-      { label: "CHECKS", value: "15 / 15 PASS" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Dashboard", value: "Tableau Public, live" },
+      { label: "Checks", value: "15 / 15 pass" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "AUC",
   },
   {
     slug: "saas-revenue-leak",
@@ -1114,21 +1096,20 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "SEALED ANSWER KEY", reason: "grade the analytics, don't just build them" },
-      { choice: "STATISTICAL DETECTORS", reason: "false alarms 10 to 3, checked on unseen worlds" },
-      { choice: "REPORT AS CODE", reason: "TMDL + PBIR, rebuilt byte-identical" },
+      { choice: "Sealed answer key", reason: "grade the analytics, don't just build them" },
+      { choice: "Statistical detectors", reason: "false alarms 10 to 3, checked on unseen worlds" },
+      { choice: "Report as code", reason: "TMDL + PBIR, rebuilt byte-identical" },
     ],
     facts: [
-      { label: "TYPE", value: "BI CASE STUDY" },
-      { label: "DATA", value: "1,107 ACCOUNTS · 24 MONTHS · SYNTHETIC" },
-      { label: "WAREHOUSE", value: "DBT · DUCKDB · STAR SCHEMA" },
-      { label: "LEAKS", value: "5 / 5 FOUND · 19 / 20 ACROSS 4 WORLDS" },
-      { label: "AUC", value: "0.73 OUT-OF-TIME" },
-      { label: "CHECKS", value: "69 / 69 NUMBERS MATCH" },
-      { label: "REPORT", value: "POWER BI · GENERATED" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "BI case study" },
+      { label: "Data", value: "1,107 accounts, 24 months, synthetic" },
+      { label: "Warehouse", value: "dbt, DuckDB, star schema" },
+      { label: "Leaks", value: "5 / 5 found, 19 / 20 across 4 worlds" },
+      { label: "AUC", value: "0.73 out-of-time" },
+      { label: "Checks", value: "69 / 69 numbers match" },
+      { label: "Report", value: "Power BI, generated" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "LEAKS",
   },
   {
     slug: "india-air-quality",
@@ -1193,22 +1174,21 @@ export const projects: Project[] = [
       },
     ],
     decisions: [
-      { choice: "NOTHING FILLED IN", reason: "gaps stay blank; no trend claimed across the 27-month hole" },
-      { choice: "RELABEL, NOT CONVERT", reason: "the values were right, only the unit label was wrong" },
-      { choice: "SPIKES FROM DATA ALONE", reason: "no event calendar: each day against the days around it" },
+      { choice: "Nothing filled in", reason: "gaps stay blank; no trend claimed across the 27-month hole" },
+      { choice: "Relabel, not convert", reason: "the values were right, only the unit label was wrong" },
+      { choice: "Spikes from data alone", reason: "no event calendar: each day against the days around it" },
     ],
     facts: [
-      { label: "TYPE", value: "BI CASE STUDY" },
-      { label: "DATA", value: "REAL · 107 STATIONS · HOURLY" },
-      { label: "WINDOW", value: "2019 TO SEP 2026 · 6 CITIES" },
-      { label: "SOURCE", value: "CPCB AND STATE BOARDS VIA OPENAQ" },
-      { label: "LICENCE", value: "PER PROVIDER" },
-      { label: "CHECKS", value: "23 / 23 PASS · 23 / 23 BREAKS CAUGHT" },
-      { label: "NUMBERS", value: "423 / 423 MATCH SQL" },
-      { label: "REPORT", value: "POWER BI · EXCEL · GENERATED" },
-      { label: "STATUS", value: "PUBLIC REPO" },
+      { label: "Type", value: "BI case study" },
+      { label: "Data", value: "Real, 107 stations, hourly" },
+      { label: "Window", value: "2019 to Sep 2026, 6 cities" },
+      { label: "Source", value: "CPCB and state boards via OpenAQ" },
+      { label: "Licence", value: "Per provider" },
+      { label: "Checks", value: "23 / 23 pass, 23 / 23 breaks caught" },
+      { label: "Numbers", value: "423 / 423 match SQL" },
+      { label: "Report", value: "Power BI, Excel, generated" },
+      { label: "Status", value: "Public repo" },
     ],
-    specAccent: "DATA",
   },
 
   /* ----------------------------------------------------------------------- */
@@ -1259,12 +1239,12 @@ export const projects: Project[] = [
       },
     ],
     facts: [
-      { label: "TYPE", value: "MA ANIMATION SHOWCASE" },
-      { label: "ENGINE", value: "UNREAL ENGINE 5.6" },
-      { label: "LIGHTING", value: "LUMEN · DYNAMIC" },
-      { label: "FOLIAGE", value: "NANITE" },
-      { label: "PERFORMANCE", value: "~100 FPS (TARGET 60)" },
-      { label: "RUNTIME", value: "~10 MIN PIECE" },
+      { label: "Type", value: "MA animation showcase" },
+      { label: "Engine", value: "Unreal Engine 5.6" },
+      { label: "Lighting", value: "Lumen, dynamic" },
+      { label: "Foliage", value: "Nanite" },
+      { label: "Performance", value: "~100 fps (target 60)" },
+      { label: "Runtime", value: "~10 min piece" },
     ],
   },
   {
@@ -1296,10 +1276,10 @@ export const projects: Project[] = [
       },
     ],
     facts: [
-      { label: "TYPE", value: "LIGHTING STUDY" },
-      { label: "TOOL", value: "BLENDER · CYCLES" },
-      { label: "FOCUS", value: "STUDIO LIGHTING" },
-      { label: "LOOK", value: "CINEMATIC · LOW-KEY" },
+      { label: "Type", value: "Lighting study" },
+      { label: "Tool", value: "Blender, Cycles" },
+      { label: "Focus", value: "Studio lighting" },
+      { label: "Look", value: "Cinematic, low-key" },
     ],
   },
   {
@@ -1330,10 +1310,10 @@ export const projects: Project[] = [
       },
     ],
     facts: [
-      { label: "TYPE", value: "EXPERIMENTS" },
-      { label: "TOOL", value: "BLENDER · GEO NODES" },
-      { label: "RANGE", value: "TOON / NPR · PROCEDURAL" },
-      { label: "GENERATORS", value: "CASTLE · CITY · FLOCK" },
+      { label: "Type", value: "Experiments" },
+      { label: "Tool", value: "Blender, geo nodes" },
+      { label: "Range", value: "Toon / NPR, procedural" },
+      { label: "Generators", value: "Castle, city, flock" },
     ],
   },
   {
@@ -1346,15 +1326,15 @@ export const projects: Project[] = [
     status: "live",
     href: "https://www.artstation.com/artwork/8Bo3O6",
     hrefLabel: "view on ArtStation",
-    metric: { label: "format", value: "9:16 · social" },
+    metric: { label: "format", value: "9:16, social" },
     year: "2025",
     summary:
       "Looks-development for a set of graphic-finish electric guitars: low-key studio lighting, textured bodies, and compositing built for a vertical social cut. Made for the output, then posted.",
     reels: [
-      { src: "/art/gtr-reel-lineup.mp4", poster: "/art/gtr-lineup.webp", portrait: true, caption: "REEL.01: THE LINEUP · THREE SIGNATURE FINISHES · 9:16" },
-      { src: "/art/gtr-reel-1.mp4", poster: "/art/gtr-slayer.webp", portrait: true, caption: "REEL.02: HEADSTOCK PASS · RIM-LIT ON BLACK" },
-      { src: "/art/gtr-reel-2.mp4", poster: "/art/gtr-detail.webp", portrait: true, caption: "REEL.03: HARDWARE PASS · PICKUPS & BRIDGE" },
-      { src: "/art/gtr-reel-3.mp4", poster: "/art/gtr-body.webp", portrait: true, caption: "REEL.04: BODY GRAPHIC PASS · TEXTURED WRAP" },
+      { src: "/art/gtr-reel-lineup.mp4", poster: "/art/gtr-lineup.webp", portrait: true, caption: "The lineup: three signature finishes." },
+      { src: "/art/gtr-reel-1.mp4", poster: "/art/gtr-slayer.webp", portrait: true, caption: "Headstock pass, rim-lit on black." },
+      { src: "/art/gtr-reel-2.mp4", poster: "/art/gtr-detail.webp", portrait: true, caption: "Hardware pass: pickups and bridge." },
+      { src: "/art/gtr-reel-3.mp4", poster: "/art/gtr-body.webp", portrait: true, caption: "Body graphic pass: textured wrap." },
     ],
     gallery: [
       { src: "/art/gtr-lineup.webp", alt: "three signature electric guitars lit against black", caption: "The lineup: three signature-graphic guitars, rim-lit against near-black so the silhouettes read first." },
@@ -1373,14 +1353,13 @@ export const projects: Project[] = [
       },
     ],
     facts: [
-      { label: "TYPE", value: "PRODUCT LOOKS-DEV" },
-      { label: "TOOL", value: "BLENDER · CYCLES" },
-      { label: "WORK", value: "LIGHTING · TEXTURING · COMP" },
-      { label: "SUBJECT", value: "SIGNATURE GUITARS" },
-      { label: "FORMAT", value: "9:16 · SOCIAL" },
-      { label: "SHIPPED", value: "INSTAGRAM" },
+      { label: "Type", value: "Product looks-dev" },
+      { label: "Tool", value: "Blender, Cycles" },
+      { label: "Work", value: "Lighting, texturing, comp" },
+      { label: "Subject", value: "Signature guitars" },
+      { label: "Format", value: "9:16, social" },
+      { label: "Shipped", value: "Instagram" },
     ],
-    specAccent: "FORMAT",
   },
   {
     slug: "procedural-clouds",
@@ -1404,9 +1383,9 @@ export const projects: Project[] = [
       { heading: "Why procedural", body: "Built as volumetrics rather than painted so the light genuinely travels through the cloud. It's the same instinct as the rest of the craft work: describe the thing with rules and let the render resolve it." },
     ],
     facts: [
-      { label: "TYPE", value: "LIGHTING STUDY" },
-      { label: "TOOL", value: "BLENDER · VOLUMES" },
-      { label: "SUBJECT", value: "CUMULUS · GOLDEN HOUR" },
+      { label: "Type", value: "Lighting study" },
+      { label: "Tool", value: "Blender, volumes" },
+      { label: "Subject", value: "cumulus, golden hour" },
     ],
   },
   {
@@ -1431,10 +1410,10 @@ export const projects: Project[] = [
       { heading: "Built by rules", body: "The density is the point: enough buildings, each with believable rooftop detail, that placing them by hand isn't the move. It's an environment/scale exercise in the same procedural vein as the generators." },
     ],
     facts: [
-      { label: "TYPE", value: "ENVIRONMENT · SCALE" },
-      { label: "TOOL", value: "BLENDER" },
-      { label: "RENDER", value: "GREYSCALE CLAY" },
-      { label: "SUBJECT", value: "DENSE CITY" },
+      { label: "Type", value: "Environment, scale" },
+      { label: "Tool", value: "Blender" },
+      { label: "Render", value: "Greyscale clay" },
+      { label: "Subject", value: "Dense city" },
     ],
   },
   {
@@ -1459,10 +1438,10 @@ export const projects: Project[] = [
       { heading: "Leading the eye", body: "The crash barrier and the line of lamps act as leading lines pulling into depth; the lit canopy is the anchor. It's a composition-and-lighting study more than a modelling one." },
     ],
     facts: [
-      { label: "TYPE", value: "ENVIRONMENT · MOOD" },
-      { label: "TOOL", value: "BLENDER" },
-      { label: "STUDY", value: "NIGHT LIGHTING · FOG" },
-      { label: "SUBJECT", value: "ROADSIDE STOP" },
+      { label: "Type", value: "Environment, mood" },
+      { label: "Tool", value: "Blender" },
+      { label: "Study", value: "Night lighting, fog" },
+      { label: "Subject", value: "Roadside stop" },
     ],
   },
   {
@@ -1487,10 +1466,10 @@ export const projects: Project[] = [
       { heading: "Materials in low light", body: "It's also a materials test: how the sofa fabric, marble top, and patterned floor hold up when they're described almost entirely by warm, indirect light rather than a bright key." },
     ],
     facts: [
-      { label: "TYPE", value: "INTERIOR · LIGHTING" },
-      { label: "TOOL", value: "BLENDER" },
-      { label: "STUDY", value: "EVENING · LOW-KEY" },
-      { label: "SUBJECT", value: "LIVING ROOM" },
+      { label: "Type", value: "Interior, lighting" },
+      { label: "Tool", value: "Blender" },
+      { label: "Study", value: "Evening, low-key" },
+      { label: "Subject", value: "Living room" },
     ],
   },
 ];
@@ -1514,96 +1493,61 @@ export type TrackId = "ai" | "data" | "systems" | "art";
 
 export type Track = {
   id: TrackId;
-  num: string;
   role: string; // the door label
-  word: string; // the giant word on the landing door ("|" = forced line break)
-  line1: string; // door-page hero, line 1
-  line2: string; // door-page hero, line 2
-  fit: number; // hero size: content width / fit (em), same scale as the approved v5 build
   cover: string; // landing door image
   intro: string; // the one-paragraph pitch; introEm is accented
   introEm: string;
   stats: { value: string; label: string }[];
-  ribbon: string[];
-  outro: [string, string]; // footer headline, second line accented
 };
 
 export const tracks: Track[] = [
   {
     id: "ai",
-    num: "01",
     role: "AI agents and integrations",
-    word: "AI",
-    line1: "AI",
-    line2: "Agents",
-    fit: 7.6,
     cover: "/shots/fde-support-agent/result.webp",
     intro: "Six builds for one fictional customer,",
     introEm: "each graded by its own eval before it counts.",
     stats: [
-      { value: "06", label: "builds, one customer" },
+      { value: "6", label: "builds, one customer" },
       { value: "88%", label: "support agent, 60-case eval" },
       { value: "0", label: "lost in 1,476 deliveries" },
     ],
-    ribbon: ["Python", "FastAPI", "Postgres", "pgvector", "Ollama", "RAG", "Tool calling", "Evals", "Whisper"],
-    outro: ["Let's build", "an agent"],
   },
   {
     id: "systems",
-    num: "03",
     role: "AI-assisted systems developer",
-    word: "Systems",
-    line1: "Systems",
-    line2: "Developer",
-    fit: 9.2,
     cover: "/doors/systems.webp",
     intro: "I ship complete software with AI as the co-pilot and my judgement at the wheel:",
     introEm: "local-first, security-hardened, measured before it ships.",
     stats: [
-      { value: "06", label: "projects shipped" },
+      { value: "6", label: "projects shipped" },
       { value: "16", label: "security fixes from one audit" },
       { value: "88%", label: "routing accuracy, AI triage" },
     ],
-    ribbon: ["Rust", "TypeScript", "Next.js", "React", "Node", "Python", "FastAPI", "Tauri", "Ollama", "Postgres", "pgvector"],
-    outro: ["Let's build", "something"],
   },
   {
     id: "art",
-    num: "04",
     role: "3D environment artist",
-    word: "Environ|ments",
-    line1: "Environment",
-    line2: "Artist",
-    fit: 8.3,
     cover: "/art/umbraxis-path.webp",
     intro: "I build places that tell a story on their own,",
     introEm: "composed to read in motion, from stylized villages to sodium-lit roadsides.",
     stats: [
-      { value: "08", label: "pieces" },
+      { value: "8", label: "pieces" },
       { value: "UE5", label: "and Blender" },
       { value: "MA", label: "Animation" },
     ],
-    ribbon: ["Unreal Engine 5", "Blender", "Substance", "Lumen", "Nanite", "Lighting", "Composition"],
-    outro: ["Let's build", "a world"],
   },
   {
     id: "data",
-    num: "02",
     role: "BI and data analyst",
-    word: "Data",
-    line1: "Data",
-    line2: "Analyst",
-    fit: 7.6,
     cover: "/doors/data.webp",
     intro: "I turn messy records into reports people can act on,",
     introEm: "with every number reconciled back to SQL before it ships.",
     stats: [
-      { value: "06", label: "end-to-end BI builds" },
+      { value: "6", label: "end-to-end BI builds" },
       { value: "0.840", label: "best model ROC AUC, stockouts" },
       { value: "63", label: "of 63 hospital report numbers matched to SQL" },
     ],
-    ribbon: ["SQL", "DuckDB", "Python", "Power BI", "DAX", "Tableau", "Modelling", "Reconciliation"],
-    outro: ["Let's find", "the signal"],
   },
 ];
 
@@ -1639,12 +1583,6 @@ export function coverOf(p: Project): Shot | undefined {
 /** Repo-style names read as words in giant caps: "flux-player" -> "flux player". */
 export function displayName(name: string): string {
   return name.replace(/-/g, " ");
-}
-
-/** Widest word in em for Archivo 900 caps (~0.76em a letter), so a title never clips. */
-export function fitOf(text: string): number {
-  const longest = Math.max(...text.split(" ").map((w) => w.length));
-  return Math.max(longest * 0.76, 4.5);
 }
 
 /**
@@ -1759,7 +1697,7 @@ export function nameOf(p: Project): string {
 /** The short value beside a project in lists: its metric, or the year for art. */
 export function shortOf(p: Project): string {
   // a metric with no number in it ("native") is not proof, so the year stands in
-  return trackOf(p) === "art" || !p.metric || !/d/.test(p.metric.value) ? p.year : p.metric.value;
+  return trackOf(p) === "art" || !p.metric || !/\d/.test(p.metric.value) ? p.year : p.metric.value;
 }
 
 export const seo = {

@@ -63,7 +63,6 @@ function parse(blocks: Block[]) {
 }
 
 const linkFor = (title: string) => PROJECT.find(([re]) => re.test(title));
-const OUT = <svg className="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" /></svg>;
 
 export default function ResumePage() {
   const { head, sections } = parse(resume as Block[]);
@@ -74,7 +73,7 @@ export default function ResumePage() {
         <h1>{site.name}</h1>
         <p>{head.headline}</p>
         <div className="acts">
-          <a className="btn on" href={asset("/resume/Daman-Reddy-Resume.pdf")} target="_blank" rel="noopener">Download PDF{OUT}</a>
+          <a className="btn on" href={asset("/resume/Daman-Reddy-Resume.pdf")} download>Download resume</a>
           <a className="btn" href={`mailto:${site.email}`}>{site.email}</a>
           <span className="tagrow"><span>{site.location}</span></span>
         </div>

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { projects, getProject, site, trackOf, laneLabel, nameOf, coverOf } from "@/content";
-import { asset, srcSet } from "@/lib/asset";
+import { asset } from "@/lib/asset";
+import { srcSet } from "@/lib/srcset";
 import Gallery from "@/components/Gallery";
 import YouTubeFigure from "@/components/YouTubeFigure";
 import VideoFigure from "@/components/VideoFigure";
@@ -94,7 +95,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
             <h3>Decisions</h3>
             <div className="dec">
               {p.decisions.map((d) => (
-                <div key={d.choice}><b>{d.choice}</b><span>{d.reason}</span></div>
+                <div key={d.choice}><b>{d.choice}</b><span>{d.reason.charAt(0).toUpperCase() + d.reason.slice(1)}</span></div>
               ))}
             </div>
           </section>
@@ -102,7 +103,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
         <section className="blk">
           <h3>Facts</h3>
           <dl className="facts">
-            <div><dt>STACK</dt><dd>{p.stack.join(" · ").toUpperCase()}</dd></div>
+            <div className="wide"><dt>Stack</dt><dd>{p.stack.join(", ")}</dd></div>
             {p.facts.map((f) => (
               <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>
             ))}

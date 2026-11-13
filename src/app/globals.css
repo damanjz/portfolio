@@ -37,15 +37,17 @@ html, html * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.28)
 .co-body:hover, html:hover { scrollbar-color: color-mix(in srgb, var(--acc) 75%, transparent) transparent; }
 
 /* ---------- the scene and its four times of day ---------- */
-.ga { position: relative; min-height: 100dvh; transition: --sky 1.4s, --acc 1.4s, --p-bg 1.4s, --p-ink 1.4s; }
+/* ink swaps once, when the paper is halfway: fading it with the paper took text to 1:1 contrast between light and dark times */
+.ga { position: relative; min-height: 100dvh; transition: --sky 1.4s, --acc 1.4s, --p-bg 1.4s, --p-ink 0s 0.4s; }
 .ga[data-t="day"] { --sky: #17324a; --acc: #ffd9a0; --p-bg: #f6efe3; --p-ink: #1c2634; }
 .ga[data-t="golden"] { --sky: #3d2610; --acc: #ffb463; --p-bg: #fbe9d0; --p-ink: #33241b; }
 .ga[data-t="evening"] { --sky: #140d09; --acc: #f0a85c; --p-bg: #1f1712; --p-ink: #f3e2c8; }
 .ga[data-t="night"] { --sky: #05080d; --acc: #ff5868; --p-bg: #0d1219; --p-ink: #e1e8f0; }
 .ga-sky, .ga-grade { position: fixed; inset: 0; z-index: 0; }
-.ga-sky img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.4s ease; }
+/* the new scene fades in on top; the old one stays lit underneath until it is covered, so the screen never dips to black */
+.ga-sky img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0s 1.4s; }
 .ga[data-t="day"] .ga-sky img:nth-child(1), .ga[data-t="golden"] .ga-sky img:nth-child(2),
-.ga[data-t="evening"] .ga-sky img:nth-child(3), .ga[data-t="night"] .ga-sky img:nth-child(4) { opacity: 1; }
+.ga[data-t="evening"] .ga-sky img:nth-child(3), .ga[data-t="night"] .ga-sky img:nth-child(4) { opacity: 1; z-index: 1; transition: opacity 1.4s ease; }
 .ga-grade { background: linear-gradient(0deg, color-mix(in srgb, var(--sky) 92%, transparent) 0%, color-mix(in srgb, var(--sky) 68%, transparent) 42%, color-mix(in srgb, var(--sky) 38%, transparent) 100%); }
 
 /* top line: name, links, the dial */
@@ -54,7 +56,7 @@ html, html * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.28)
 .ga-top nav { display: flex; gap: 22px; font-size: 14px; }
 .ga-top nav a { text-decoration: none; opacity: 0.86; border-bottom: 1px solid transparent; padding-bottom: 2px; }
 .ga-top nav a:hover, .ga-top nav a[aria-current="page"] { opacity: 1; border-color: currentColor; }
-.ga-cta { border-radius: 999px; padding: 7px 16px; font-size: 14px; font-weight: 600; line-height: 1.2; text-decoration: none; white-space: nowrap; background: var(--acc); color: #141414; transition: background 0.2s, color 0.2s; }
+.ga-cta { border-radius: 999px; padding: 7px 16px; font-size: 14px; font-weight: 600; line-height: 1.2; text-decoration: none; white-space: nowrap; background: var(--acc); color: #141414; }
 .ga-cta:hover { background: #fff; }
 .ga-dial { margin-left: auto; display: flex; align-items: center; gap: 16px; }
 /* footer: under every open column's paper, on the scene */
@@ -75,8 +77,10 @@ html, html * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.28)
 .ga[data-t="night"] .moon { opacity: 0.9; }
 .ga-times { display: flex; border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 999px; padding: 3px; background: color-mix(in srgb, var(--sky) 60%, transparent); }
 .ga-times button { font-size: 13px; padding: 5px 12px; border-radius: 999px; line-height: 1.2; white-space: nowrap; }
-.ga-times button[aria-pressed="true"] { background: #fff; color: #111; }
-.ga-times button:hover:not([aria-pressed="true"]) { background: rgba(255, 255, 255, 0.16); }
+/* the lit pill follows data-t, which the inline script sets before paint (aria-pressed only catches up after hydration) */
+.ga-times button:hover { background: rgba(255, 255, 255, 0.16); }
+.ga[data-t="day"] .ga-times button:nth-child(1), .ga[data-t="golden"] .ga-times button:nth-child(2),
+.ga[data-t="evening"] .ga-times button:nth-child(3), .ga[data-t="night"] .ga-times button:nth-child(4) { background: #fff; color: #111; }
 .ga-credit { font-size: 12px; opacity: 0.82; white-space: nowrap; min-width: 150px; }
 .ga-credit a { text-decoration: underline; text-underline-offset: 3px; }
 
@@ -84,7 +88,7 @@ html, html * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.28)
 .co-strip { position: relative; z-index: 1; display: grid; height: calc(100dvh - var(--top)); transition: grid-template-columns 0.6s var(--ease); }
 .co-col { position: relative; overflow: hidden; min-width: 0; border-right: 1px solid rgba(255, 255, 255, 0.18); }
 .co-col:last-child { border-right: 0; }
-.co-face { position: absolute; inset: 0; width: 100%; display: flex; flex-direction: column; padding: 22px 18px 18px; color: #fff; text-decoration: none; transition: opacity 0.3s, background 0.2s; }
+.co-face { position: absolute; inset: 0; width: 100%; display: flex; flex-direction: column; padding: 22px 18px 18px; color: #fff; text-decoration: none; transition: opacity 0.3s; } /* no colour fades on theme-coloured things: they fought the palette fade and flickered */
 .co-face::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--acc); transform: scaleX(0); transform-origin: left; transition: transform 0.5s var(--ease); }
 .co-face:hover { background: color-mix(in srgb, var(--sky) 42%, transparent); }
 .co-face:hover::before, .co-face:focus-visible::before { transform: scaleX(1); }
@@ -103,7 +107,7 @@ html, html * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.28)
 @keyframes co-in { from { opacity: 0; } to { opacity: 1; } }
 
 /* portrait slot (a photo replaces it when Daman sends one) */
-.portrait { position: relative; aspect-ratio: 4 / 5; display: grid; place-items: center; border-radius: 4px; overflow: hidden; font-size: 12px; background: color-mix(in srgb, var(--sky) 50%, rgba(255, 255, 255, 0.12)); color: rgba(255, 255, 255, 0.75); }
+.portrait { position: relative; aspect-ratio: 4 / 5; display: grid; place-items: center; border-radius: var(--radius); overflow: hidden; font-size: 12px; background: color-mix(in srgb, var(--sky) 50%, rgba(255, 255, 255, 0.12)); color: rgba(255, 255, 255, 0.75); }
 .portrait svg { width: 46%; height: auto; stroke: rgba(255, 255, 255, 0.5); fill: none; stroke-width: 1.2; }
 .portrait span { position: absolute; bottom: 10px; left: 0; right: 0; text-align: center; }
 .portrait img { width: 100%; height: 100%; object-fit: cover; }
@@ -115,17 +119,17 @@ html, html * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.28)
   --line: color-mix(in srgb, var(--p-ink) 18%, var(--p-bg));
   --fill: color-mix(in srgb, var(--p-ink) 8%, var(--p-bg));
   background: var(--p-bg); color: var(--p-ink); border-radius: var(--radius); padding: 30px 34px 64px; min-height: 100%;
-  container-type: inline-size; transition: background 1.4s, color 1.4s;
+  container-type: inline-size; /* colours fade through the palette variables, not here */
 }
 .paper .portrait { background: var(--fill); color: var(--mut); }
 .paper .portrait svg { stroke: color-mix(in srgb, var(--p-ink) 35%, var(--p-bg)); }
-.btn { white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); padding: 8px 14px; border-radius: 4px; text-decoration: none; font-weight: 550; font-size: 14px; line-height: 1.2; transition: background 0.2s, color 0.2s, border-color 0.2s; }
+.btn { white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); padding: 8px 14px; border-radius: var(--radius); text-decoration: none; font-weight: 550; font-size: 14px; line-height: 1.2; }
 .btn.on { border-color: var(--ink); }
 .btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .tagrow { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--mut); font-size: 13px; }
 .up { display: inline-flex; align-items: center; gap: 8px; font-weight: 550; margin-bottom: 24px; padding: 4px 0; text-decoration: none; }
 .up:hover { text-decoration: underline; text-underline-offset: 3px; }
-.draft { display: inline-block; font-size: 12px; color: var(--mut); border: 1px dashed var(--mut); border-radius: 3px; padding: 1px 7px; margin-top: 28px; }
+.draft { display: inline-block; font-size: 12px; color: var(--mut); border: 1px dashed var(--mut); border-radius: var(--radius); padding: 1px 7px; margin-top: 28px; }
 
 /* lane */
 .lh h1 { font: 400 clamp(40px, 3.6vw, 60px)/1 var(--serif); letter-spacing: -0.02em; }
@@ -141,16 +145,17 @@ html, html * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.28)
 .stats span { font-size: 13px; color: var(--mut); }
 .rows { margin-top: 10px; }
 .row { display: grid; grid-template-columns: 96px 1fr auto; gap: 16px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); text-decoration: none; }
-.row .th { position: relative; aspect-ratio: 16 / 10; border-radius: 3px; overflow: hidden; background: var(--fill); }
+.row .th { position: relative; aspect-ratio: 16 / 10; border-radius: var(--radius); overflow: hidden; background: var(--fill); }
 .row .th img { width: 100%; height: 100%; object-fit: cover; }
 .row b { display: block; font-weight: 600; line-height: 1.25; }
 .row small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--mut); font-size: 13px; line-height: 1.4; margin-top: 2px; }
-.row em { font-style: normal; font-size: 13px; color: var(--ink); white-space: nowrap; max-width: 170px; overflow: hidden; text-overflow: ellipsis; }
+.row em { display: grid; justify-items: end; gap: 1px; font-style: normal; font-size: 13px; color: var(--ink); white-space: nowrap; max-width: 190px; text-align: right; }
+.row em span { color: var(--mut); font-size: 12px; }
 .row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 
 /* the "you" column: the heading over the scene, the story on paper below */
 .hero { padding: 40px 26px 40px; }
-.hero h1 { font: 400 clamp(44px, 5.2vw, 92px)/0.96 var(--serif); letter-spacing: -0.025em; text-wrap: balance; max-width: 15ch; }
+.hero h1 { font: 400 clamp(40px, 4vw, 72px)/1 var(--serif); letter-spacing: -0.025em; text-wrap: balance; max-width: 26ch; }
 .hero p { font-size: clamp(16px, 1.3vw, 20px); max-width: 44ch; margin-top: 18px; opacity: 0.92; }
 /* the four lanes as one ruled row */
 .hero .go { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 560px; margin-top: 26px; border: 1px solid rgba(255, 255, 255, 0.45); }
@@ -158,11 +163,11 @@ html, html * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.28)
 .hero .go a:last-child { border-right: 0; }
 .hero .go a small { font-size: 12px; font-weight: 400; opacity: 0.88; }
 .hero .go a:hover { background: #fff; color: #111; }
-.hero .avail { font-size: 13px; margin-top: 14px; opacity: 0.9; }
 
 /* hero: the two calls to action */
 .hero .ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
-.cta-1, .cta-2 { border-radius: 999px; padding: 10px 20px; font-size: 15px; font-weight: 600; line-height: 1.2; text-decoration: none; transition: background 0.2s, color 0.2s, border-color 0.2s; }
+.cta-1, .cta-2 { border-radius: 999px; padding: 10px 20px; font-size: 15px; font-weight: 600; line-height: 1.2; text-decoration: none; }
+.cta-2 { transition: background 0.2s, color 0.2s; }
 .cta-1 { background: var(--acc); color: #141414; }
 .cta-1:hover { background: #fff; }
 .cta-2 { border: 1px solid rgba(255, 255, 255, 0.7); }
@@ -202,7 +207,7 @@ html, html * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.28)
 .case .proof div { padding: 14px 16px 14px 0; border-bottom: 1px solid var(--line); }
 .case .proof dt { font: 400 clamp(22px, 3.2cqi, 30px)/1.1 var(--serif); color: var(--ink); }
 .case .proof dd { font-size: 13px; color: var(--mut); margin-top: 2px; }
-.case .cover { position: relative; margin-top: 32px; background: var(--fill); border-radius: 6px; overflow: hidden; aspect-ratio: 16 / 9; }
+.case .cover { position: relative; margin-top: 32px; background: var(--fill); border-radius: var(--radius); overflow: hidden; aspect-ratio: 16 / 9; }
 .case .cover img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 .case .sum { margin-top: 32px; font-size: 17px; line-height: 1.55; max-width: 66ch; text-wrap: pretty; }
 .case .secs { margin-top: 32px; display: grid; gap: 28px; }
@@ -211,12 +216,14 @@ html, html * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.28)
 @container (min-width: 760px) { .case .sec { grid-template-columns: 170px 1fr; gap: 24px; } }
 .case .dec { display: grid; margin-top: 10px; border-top: 1px solid var(--line); }
 .case .dec div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-.case .dec b { font-weight: 600; font-size: 12px; letter-spacing: 0.04em; padding-top: 2px; }
+.case .dec b { font-weight: 600; }
 .case .dec span { color: var(--mut); }
 .case .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0 24px; margin-top: 10px; border-top: 1px solid var(--line); }
-.case .facts div { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 12px; letter-spacing: 0.04em; }
+.case .facts div { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
 .case .facts dt { color: var(--mut); }
 .case .facts dd { text-align: right; }
+.case .facts .wide { grid-column: 1 / -1; }
+.case .facts .wide dd { text-align: left; }
 .case .pn { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--ink); }
 .case .pn a { display: inline-flex; align-items: center; gap: 8px; font-weight: 550; padding: 4px 0; text-decoration: none; }
 .case .pn a:hover { text-decoration: underline; text-underline-offset: 3px; }
@@ -227,23 +234,21 @@ html, html * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.28)
 /* align-items: start, because a button centres its content and short captions pushed pictures down; 4 per row on desktop, 2 on phones */
 .figs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr)); gap: 20px 14px; align-items: start; }
 .fig { text-align: left; display: block; width: 100%; }
-.fig .frame { position: relative; border-radius: 6px; overflow: hidden; aspect-ratio: 16 / 10; background: var(--fill); }
+.fig .frame { position: relative; border-radius: var(--radius); overflow: hidden; aspect-ratio: 16 / 10; background: var(--fill); }
 .fig .frame img, .fig .frame video, .fig .frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; border: 0; }
-.fig .frame.portrait { aspect-ratio: 9 / 16; }
+.fig .frame.tall { aspect-ratio: 9 / 16; }
 .fig .frame.wide { aspect-ratio: 16 / 9; }
 .fig .frame img { transition: scale 1.2s var(--ease); }
 .fig:hover .frame img { scale: 1.03; }
 .fig .cap-line { display: flex; gap: 10px; margin-top: 10px; font-size: 13px; color: var(--mut); line-height: 1.45; }
-.fig .cap-line .n { color: var(--ink); font-weight: 600; }
-.play { position: absolute; inset: 0; display: grid; place-items: center; background: rgb(0 0 0 / 0.22); transition: background 0.5s var(--ease); }
+.play { position: absolute; inset: 0; display: grid; place-items: end start; padding: 16px; /* corner, not centre: posters carry their own title */ background: rgb(0 0 0 / 0.22); transition: background 0.5s var(--ease); }
 .fig:hover .play { background: rgb(0 0 0 / 0.08); }
 .play span { display: inline-flex; align-items: center; gap: 10px; background: var(--ink); color: var(--bg); border-radius: 999px; padding: 10px 20px; font-weight: 550; font-size: 15px; transition: transform 0.5s var(--ease); }
 .fig:hover .play span { transform: scale(1.06); }
-.play small { position: absolute; right: 12px; bottom: 12px; font-size: 12px; color: #fff; background: rgb(0 0 0 / 0.55); padding: 4px 10px; border-radius: 999px; }
 .lightbox { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; background: rgb(8 8 10 / 0.95); color: #eee; padding: 16px 24px 20px; }
 .lightbox .lb-top, .lightbox .lb-bot { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .lightbox .lb-img { flex: 1; min-height: 0; display: grid; place-items: center; padding: 16px 0; }
-.lightbox .lb-img img { max-height: 100%; max-width: 100%; object-fit: contain; border-radius: 6px; }
+.lightbox .lb-img img { max-height: 100%; max-width: 100%; object-fit: contain; border-radius: var(--radius); }
 .lightbox .lb-bot p { flex: 1; text-align: center; color: #aaa; font-size: 14px; }
 .lightbox button { border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 999px; padding: 6px 14px; font-size: 14px; }
 .lightbox button:hover { background: #fff; color: #111; }
@@ -288,6 +293,9 @@ html, html * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.28)
 .nf h1 { font: 400 clamp(40px, 7cqi, 72px)/1 var(--serif); letter-spacing: -0.02em; }
 .nf p { margin-top: 14px; color: var(--mut); }
 .nf .acts { margin-top: 22px; display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* narrow desktops: the header ran 55 px past the edge at 1000 px; the arc drawing goes first, the pills and credit stay */
+@media (min-width: 1000px) and (max-width: 1199px) { .ga-dial svg { display: none; } }
 
 /* ---------- phones and small tablets: the columns stack ---------- */
 @media (max-width: 999px) {
