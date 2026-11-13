@@ -20,10 +20,7 @@ export default function Home() {
   return (
     <>
       <div className="hero">
-        <p className="badge"><i aria-hidden="true" />{site.status} · {site.location}</p>
-        <h1>
-          {about.head[0]} <em>{about.head[1]}</em>
-        </h1>
+        <h1>{about.head.join(" ")}</h1>
         <p>{about.line}</p>
         <div className="ctas">
           <a className="cta-1" href="#featured">View work</a>
@@ -31,22 +28,21 @@ export default function Home() {
         </div>
         <div className="go" aria-label="Lanes">
           {lanes().map((l) => (
-            <Link key={l.id} href={`/${l.id}/`}>{laneLabel[l.id]}</Link>
+            <Link key={l.id} href={`/${l.id}/`}>{laneLabel[l.id]}<small className="num">{projects.filter((p) => trackOf(p) === l.id).length} projects</small></Link>
           ))}
         </div>
+        <div className="avail">{site.status} · {site.location}</div>
       </div>
       <section className="paper featured" id="featured" aria-labelledby="featured-h">
         <h2 id="featured-h">Featured work</h2>
-        <div className="cards">
+        <div className="rows">
           {featured.map((p) => {
             const c = coverOf(p);
             return (
-              <Link key={p.slug} className="card" href={`/projects/${p.slug}/`}>
-                <span className="th">{c && <img src={asset(c.src)} srcSet={srcSet(c.src)} sizes="(max-width: 999px) 100vw, 20vw" alt="" loading="lazy" />}</span>
-                <b>{nameOf(p)}</b>
-                <small>{p.tagline}</small>
-                <span className="tags"><span>{laneLabel[trackOf(p)]}</span>{p.stack.slice(0, 3).map((x) => <span key={x}>{x}</span>)}</span>
-                <em className="num">{shortOf(p)}</em>
+              <Link key={p.slug} className="row" href={`/projects/${p.slug}/`}>
+                <span className="th">{c && <img src={asset(c.src)} srcSet={srcSet(c.src)} sizes="120px" alt="" loading="lazy" />}</span>
+                <span><b>{nameOf(p)}</b><small>{p.tagline}</small></span>
+                <em className="num">{`${laneLabel[trackOf(p)]} · ${shortOf(p)}`}</em>
               </Link>
             );
           })}

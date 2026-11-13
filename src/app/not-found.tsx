@@ -4,7 +4,7 @@ import { site } from "@/content";
 
 /** 404: on static export this is out/404.html, which GitHub Pages serves for unknown paths. */
 export const metadata: Metadata = {
-  title: `404 — ${site.name}`,
+  title: `404 | ${site.name}`,
   description: "That page doesn't exist.",
   robots: { index: false, follow: false },
 };

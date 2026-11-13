@@ -20,7 +20,7 @@ export function generateStaticParams(): Params[] {
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const p = getProject((await params).slug);
   if (!p) return { title: "Not found" };
-  const title = `${nameOf(p)} — ${site.name}`;
+  const title = `${nameOf(p)} | ${site.name}`;
   const ogImage = p.gallery[0]?.src ?? "/og.png";
   return {
     title,
@@ -62,7 +62,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
         <h1>{title}</h1>
         <p className="tag">{p.tagline}</p>
         <p className="tagrow meta">
-          <span>{laneLabel[lane]}</span><span>{p.year}</span><span>{STATUS[p.status] ?? p.status}</span><span>{p.stack.join(", ")}</span>
+          <span>{laneLabel[lane]}</span><span>{p.year}</span><span>{STATUS[p.status] ?? p.status}</span>
         </p>
         {(p.href || p.repo || p.caseStudy) && (
           <div className="acts">
@@ -102,8 +102,9 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
         <section className="blk">
           <h3>Facts</h3>
           <dl className="facts">
+            <div><dt>STACK</dt><dd>{p.stack.join(" · ").toUpperCase()}</dd></div>
             {p.facts.map((f) => (
-              <div key={f.label}><dt>{f.label}</dt><dd className={p.specAccent === f.label ? "hot" : undefined}>{f.value}</dd></div>
+              <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>
             ))}
           </dl>
         </section>

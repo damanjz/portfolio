@@ -11,7 +11,7 @@ import resume from "@/resume.json";
  */
 
 export const metadata: Metadata = {
-  title: `Resume — ${site.name}`,
+  title: `Resume | ${site.name}`,
   description: `${site.name}: AI agents, data and BI, 3D environments. Experience, projects, education and skills.`,
   alternates: { canonical: "/resume/" },
 };

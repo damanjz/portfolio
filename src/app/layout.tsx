@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Source_Serif_4 } from "next/font/google";
+import { Instrument_Sans, Newsreader } from "next/font/google";
 import "./globals.css";
 import "./pipe.css";
 import { site, seo, lanes, laneLabel, projects, trackOf, nameOf, about, scenes } from "@/content";
@@ -7,9 +7,9 @@ import { StructuredData } from "./structured-data";
 import Shell, { type Face } from "@/components/Shell";
 
 // Two families, self-hosted by next/font at build time (no runtime request to Google):
-// Source Serif 4 for display, Inter for text.
-const serif = Source_Serif_4({ variable: "--font-serif", subsets: ["latin"], style: ["normal", "italic"], axes: ["opsz"], display: "swap" });
-const sans = Inter({ variable: "--font-sans", subsets: ["latin"], display: "swap" });
+// Newsreader for display, Instrument Sans for text.
+const serif = Newsreader({ variable: "--font-serif", subsets: ["latin"], style: ["normal", "italic"], axes: ["opsz"], display: "swap" });
+const sans = Instrument_Sans({ variable: "--font-sans", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(seo.url),
@@ -34,13 +34,15 @@ const faces: Face[] = [
 ];
 const laneOfSlug = Object.fromEntries(projects.map((p) => [p.slug, trackOf(p)]));
 const sceneList = scenes.map((s) => ({ ...s }));
+// Stamped once at build time, so the server render and the browser agree.
+const updated = new Date().toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "Asia/Kolkata" });
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable}`}>
       <body>
         <StructuredData />
-        <Shell faces={faces} laneOfSlug={laneOfSlug} scenes={sceneList} email={site.email}>
+        <Shell faces={faces} laneOfSlug={laneOfSlug} scenes={sceneList} email={site.email} updated={updated}>
           {children}
         </Shell>
       </body>

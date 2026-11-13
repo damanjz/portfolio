@@ -16,7 +16,7 @@ export function generateStaticParams(): Params[] {
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const t = getTrack((await params).track);
   if (!t) return { title: "Not found" };
-  const title = `${laneLabel[t.id]}: ${t.role} — ${site.name}`;
+  const title = `${laneLabel[t.id]}: ${t.role} | ${site.name}`;
   const description = `${t.intro} ${t.introEm}`;
   return {
     title,

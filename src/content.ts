@@ -14,7 +14,7 @@ export const site = {
   bio: "Agents graded by their own evals. Reports where every number reconciles to SQL. All of it runs on local models.",
   email: "daman.w3d@gmail.com", // public work contact
   // Title < 60 chars (Google truncates ~60); keywords front-loaded.
-  metaTitle: "Daman Reddy — AI Agents, Data Systems and BI",
+  metaTitle: "Daman Reddy: AI Agents, Data Systems and BI",
   // Description < 160 chars (Google truncates ~155); primary keywords early.
   metaDescription:
     "Daman Reddy, Hyderabad: AI agents graded by their own evals, BI reports reconciled to SQL (Power BI, Tableau), local models. Also a 3D environment artist.",
@@ -134,7 +134,7 @@ export const projects: Project[] = [
     },
     year: "Jun 2026", // repo created 2026-06-20
     summary:
-      "A password manager that never phones home — Rust core, encrypted local vault, zero cloud dependency.",
+      "A password manager that never phones home: Rust core, encrypted local vault, no cloud dependency.",
     gallery: [
       { src: "/shots/protec/app.webp", alt: "Protec's vault with an entry open: username, revealed password, URL, notes and tags (demo data)", caption: "The vault, with demo entries: one secret revealed at a time, copied with a shortcut, cleared from the clipboard after." },
       { src: "/shots/protec/how-it-works.webp", alt: "Diagram: browser extension to desktop app over native messaging, Windows Hello unlock, Rust core encryption, vault file on disk", caption: "How it works: the extension talks to the app over native messaging, optional Windows Hello unlock, and the Rust core encrypts a vault that never leaves the disk." },
@@ -145,15 +145,15 @@ export const projects: Project[] = [
     sections: [
       {
         heading: "Problem",
-        body: "Every mainstream password manager is someone else's database with a subscription attached. The vault — the most sensitive file a person owns — lives on infrastructure they don't control, reachable by anyone who breaches it. The requirement was simple to state and hard to build: a vault that never leaves the disk, unlocks with hardware biometrics, and still autofills in the browser like the cloud products do.",
+        body: "Every mainstream password manager is someone else's database with a subscription attached. The vault, the most sensitive file a person owns, lives on infrastructure they don't control, reachable by anyone who breaches it. The requirement was simple to state and hard to build: a vault that never leaves the disk, unlocks with hardware biometrics, and still autofills in the browser like the cloud products do.",
       },
       {
         heading: "Build",
-        body: "A Rust core owns cryptography and storage; a Tauri + Svelte shell renders it. The browser extension talks to the desktop app over native messaging — no local server, no open port. Windows Hello is an optional extra unlock; the master password always works.",
+        body: "A Rust core owns cryptography and storage; a Tauri + Svelte shell renders it. The browser extension talks to the desktop app over native messaging, with no local server and no open port. Windows Hello is an optional extra unlock; the master password always works.",
       },
       {
         heading: "Hardening",
-        body: "A six-area whole-codebase security audit shipped 16 fixes. Entry secrets — password, notes, TOTP seed, custom fields — zeroize on drop so they don't linger in memory. Plaintext reveals are rate-limited to block bulk exfiltration. The extension confirms nonces, matches the HTTPS scheme, and checks the message sender before it will fill anything.",
+        body: "A six-area whole-codebase security audit shipped 16 fixes. Entry secrets (password, notes, TOTP seed, custom fields) zeroize on drop so they don't linger in memory. Plaintext reveals are rate-limited to block bulk exfiltration. The extension confirms nonces, matches the HTTPS scheme, and checks the message sender before it will fill anything.",
       },
     ],
     decisions: [
@@ -185,27 +185,27 @@ export const projects: Project[] = [
     metric: { label: "routing", value: "88%" },
     year: "2026",
     summary:
-      "A self-hosted support-triage pipeline: a local Ollama model routes tickets and drafts KB-grounded replies for human approval — every prompt change gated by an eval corpus.",
+      "A self-hosted support-triage pipeline: a local Ollama model routes tickets and drafts KB-grounded replies for human approval. Every prompt change is gated by an eval corpus.",
     gallery: [
       { src: "/shots/n8n-automation/canvas.webp", alt: "n8n canvas of a separate guardrails test workflow: test cases fan out to guardrail checks for jailbreaks, NSFW content, PII, secret keys and topic drift, each with pass and fail paths, collected by a results node", caption: "A separate guardrails test workflow on n8n: test cases fan out to checks for jailbreaks, NSFW content, PII, secret keys and topic drift, each with a pass and a fail path. The triage pipeline itself runs on local Ollama." },
     ],
     sections: [
       {
         heading: "Problem",
-        body: "Support inboxes are repetitive but not quite scriptable — routing and drafting need judgment. Cloud AI could do it, but piping a support inbox through someone else's API means paying rent on your own mail, forever. A home rig can run the model.",
+        body: "Support inboxes are repetitive but not quite scriptable: routing and drafting need judgment. Cloud AI could do it, but piping a support inbox through someone else's API means paying rent on your own mail, forever. A home rig can run the model.",
       },
       {
         heading: "Build",
-        body: "A self-hosted n8n pipeline: inbound support email is triaged by a local Ollama model, which routes each ticket and drafts a reply grounded in a knowledge base. Nothing sends automatically — drafts land in an approval queue for a human. A live dashboard shows tickets, stats, and the pending-drafts count, with a daily digest email.",
+        body: "A self-hosted n8n pipeline: inbound support email is triaged by a local Ollama model, which routes each ticket and drafts a reply grounded in a knowledge base. Nothing sends automatically. Drafts land in an approval queue for a human. A live dashboard shows tickets, stats, and the pending-drafts count, with a daily digest email.",
       },
       {
         heading: "Measurement",
-        body: "No prompt change ships on gut feel. A 40-case eval corpus gates the pipeline; AI-primary routing was promoted only when it beat the rules baseline — 88% against 70%. Ops is built for unattended running: exactly-once email processing, a keep-alive task at logon, nightly backups, and a stress-test suite that proves the recovery behaviour.",
+        body: "No prompt change ships on gut feel. A 40-case eval corpus gates the pipeline; AI-primary routing was promoted only when it beat the rules baseline, 88% against 70%. Ops is built for unattended running: exactly-once email processing, a keep-alive task at logon, nightly backups, and a stress-test suite that proves the recovery behaviour.",
       },
     ],
     decisions: [
       { choice: "LOCAL OLLAMA > CLOUD API", reason: "a support inbox never leaves the machine" },
-      { choice: "EVAL CORPUS GATE", reason: "88% vs 70% baseline — measured, then shipped" },
+      { choice: "EVAL CORPUS GATE", reason: "88% vs 70% baseline: measured, then shipped" },
       { choice: "HUMAN APPROVAL QUEUE", reason: "AI drafts; a person sends" },
     ],
     facts: [
@@ -232,10 +232,10 @@ export const projects: Project[] = [
     metric: { label: "stack", value: "Next 15 · Prisma 6" },
     year: "Mar 2026", // repo created 2026-03-13
     summary:
-      "VOLT HQ — a full Next.js 15 techwear storefront: membership identity, dynamic clearance leveling, secure Server Action checkouts.",
+      "VOLT HQ is a full Next.js 15 techwear storefront with membership identity, dynamic clearance leveling and Server Action checkouts.",
     gallery: [
-      { src: "/shots/volt-techwear-store/shop.webp", alt: "VOLT archive page: product grid of techwear with category filters", caption: "The archive — category filters, search and sort over the full catalogue." },
-      { src: "/shots/volt-techwear-store/home.webp", alt: "VOLT home page: DEFY LIMITS hero with the current drop", caption: "The storefront — industrial techwear aesthetic, built to feel like a product, not a demo." },
+      { src: "/shots/volt-techwear-store/shop.webp", alt: "VOLT archive page: product grid of techwear with category filters", caption: "The archive: category filters, search and sort over the full catalogue." },
+      { src: "/shots/volt-techwear-store/home.webp", alt: "VOLT home page: DEFY LIMITS hero with the current drop", caption: "The storefront: an industrial techwear look over a working shop." },
       { src: "/shots/volt-techwear-store/product-detail.webp", alt: "VOLT product page for the Phantom Shell Windbreaker with size selector and Add to Loadout button", caption: "Product detail page: size picker, stock state and add-to-cart. Demo catalogue and prices from the local seed database." },
       { src: "/shots/volt-techwear-store/cart-drawer.webp", alt: "VOLT cart drawer listing one Phantom Shell Windbreaker, size M, with coupon field and subtotal", caption: "Loadout drawer after adding an item: quantity controls, coupon field, subtotal. Demo data." },
       { src: "/shots/volt-techwear-store/black-site.webp", alt: "VOLT Black Site page with locked classified product cards", caption: "Black Site: members-only drop with locked prototype cards for signed-out visitors. Demo data." },
@@ -243,15 +243,15 @@ export const projects: Project[] = [
     sections: [
       {
         heading: "Idea",
-        body: "VOLT HQ is a techwear brand rendered as a full commerce system — 'master the urban void.' The goal was a storefront with a real point of view: industrial aesthetics, a members-only fiction (The Syndicate), and the plumbing to back it up rather than a pretty front end over nothing.",
+        body: "VOLT HQ is a techwear brand rendered as a full commerce system, under the line 'master the urban void.' The storefront has industrial aesthetics and a members-only fiction (The Syndicate), with working accounts, gating and checkout behind it.",
       },
       {
         heading: "Build",
-        body: "A high-performance Next.js 15 app with Tailwind v4. Persistent membership identity via NextAuth, backed by Prisma and PostgreSQL. Members hold a dynamic 'clearance level' that gates access to Black Site vaults and unlocks products. Checkout runs through secure Server Actions so the sensitive path stays on the server.",
+        body: "A Next.js 15 app with Tailwind v4. Persistent membership identity via NextAuth, backed by Prisma and PostgreSQL. Members hold a dynamic 'clearance level' that gates access to Black Site vaults and unlocks products. Checkout runs through secure Server Actions so the sensitive path stays on the server.",
       },
       {
         heading: "Systems, not screens",
-        body: "The interesting part isn't the visuals — it's that identity, leveling, and checkout form one coherent system. Clearance state persists, drives what a member can see, and feeds the purchase flow. A full-stack exercise dressed as a brand.",
+        body: "Identity, leveling and checkout share one model. Clearance state persists, drives what a member can see, and feeds the purchase flow.",
       },
     ],
     decisions: [
@@ -298,7 +298,7 @@ export const projects: Project[] = [
     },
     year: "Mar 2026", // repo created 2026-03-10
     summary:
-      "A sleek Windows video player in Python + PySide6 — a deliberate homage to Windows Media Player 12. Native desktop, no web wrapper.",
+      "A Windows video player in Python and PySide6, built as a homage to Windows Media Player 12. Native desktop, no web wrapper.",
     gallery: [
       { src: "/shots/flux-player/player.webp", alt: "Flux Player playing a portrait guitar reel, with the seek bar, transport controls and Now Playing list", caption: "Playback: the Windows Media Player 12 layout rebuilt in Qt, with the Now Playing list beside the video." },
       { src: "/shots/flux-player/player-2.webp", alt: "Flux Player paused on a close-up of guitar pickups and a painted body", caption: "Native controls: seek, speed, repeat and shuffle, no browser underneath." },
@@ -309,15 +309,15 @@ export const projects: Project[] = [
     sections: [
       {
         heading: "Homage",
-        body: "Windows Media Player 12 had a specific, confident look that later players abandoned. flux-player is a deliberate homage — the same silhouette and feel, rebuilt from scratch with a modern toolkit instead of nostalgia alone.",
+        body: "Windows Media Player 12 had a specific, confident look that later players abandoned. flux-player is a deliberate homage: the same silhouette and feel, rebuilt from scratch with a modern toolkit.",
       },
       {
         heading: "Build",
-        body: "A desktop video player in Python with PySide6 (Qt). A native application — real OS widgets, real window chrome — not an Electron app pretending to be one. That choice keeps it light and makes it feel like it belongs on the desktop.",
+        body: "A desktop video player in Python with PySide6 (Qt). A native application with real OS widgets and real window chrome, and no Electron underneath. That choice keeps it light and makes it feel like it belongs on the desktop.",
       },
       {
         heading: "Why native",
-        body: "Wrapping a web view would have been faster to build and worse to use. Going native with Qt means the player starts fast, sits at a sensible memory footprint, and behaves like desktop software — the whole point of paying tribute to a desktop-era classic.",
+        body: "Wrapping a web view would have been faster to build and worse to use. Going native with Qt means the player starts fast, sits at a sensible memory footprint, and behaves like desktop software, which is the point of a tribute to a desktop-era classic.",
       },
     ],
     decisions: [
@@ -328,7 +328,7 @@ export const projects: Project[] = [
       { label: "LANGUAGE", value: "PYTHON" },
       { label: "TOOLKIT", value: "PYSIDE6 (QT)" },
       { label: "PLATFORM", value: "WINDOWS" },
-      { label: "RUNTIME", value: "NATIVE — NO WEBVIEW" },
+      { label: "RUNTIME", value: "NATIVE · NO WEBVIEW" },
       { label: "STATUS", value: "PUBLIC" },
     ],
     specAccent: "RUNTIME",
@@ -465,7 +465,7 @@ export const projects: Project[] = [
     summary:
       "A customer-support agent for Larkfield Coffee Co., a fictional Indian coffee-gear brand: it answers from the help centre with citations, looks up orders and stock, and starts a return or raises a ticket only after the customer confirms. It runs on a local 27B model at zero cost per query. The data is synthetic; the engineering and the numbers are real.",
     reels: [
-      { src: "/shots/fde-support-agent/reel.mp4", poster: "/shots/fde-support-agent/title.webp", caption: "REEL — A RETURN REQUEST, ANSWERED, CONFIRMED AND MEASURED" },
+      { src: "/shots/fde-support-agent/reel.mp4", poster: "/shots/fde-support-agent/title.webp", caption: "REEL: A RETURN REQUEST, ANSWERED, CONFIRMED AND MEASURED" },
     ],
     cover: { src: "/shots/fde-support-agent/cover.webp", alt: "88% on a 60-case eval, mean of three runs, against 85% keyword-only and 37% with no retrieval", caption: "" },
     gallery: [
@@ -517,7 +517,7 @@ export const projects: Project[] = [
     summary:
       "A webhook hub for Larkfield Coffee Co. (fictional): every storefront order event reaches the warehouse, helpdesk and accounting systems exactly once in effect, and in order, through slow commits, rate limits, outages and worker crashes. All three destinations are local mock providers.",
     reels: [
-      { src: "/shots/fde-integration-hub/reel.mp4", poster: "/shots/fde-integration-hub/title.webp", caption: "REEL — 500 EVENTS THROUGH THE HUB UNDER CHAOS" },
+      { src: "/shots/fde-integration-hub/reel.mp4", poster: "/shots/fde-integration-hub/title.webp", caption: "REEL: 500 EVENTS THROUGH THE HUB UNDER CHAOS" },
     ],
     cover: { src: "/shots/fde-integration-hub/cover.webp", alt: "1,476 deliveries under chaos: 0 lost, duplicated or out of order", caption: "" },
     gallery: [
@@ -569,7 +569,7 @@ export const projects: Project[] = [
     summary:
       "Document extraction for Larkfield Coffee Co. (fictional): drop in a supplier invoice or courier delivery note, as a PDF or a scan, and get validated JSON. Code checks every total, tax rule and GST number, and only the doubtful fields go to a review screen. Fully local, because invoices carry bank details.",
     reels: [
-      { src: "/shots/fde-doc-extraction/reel.mp4", poster: "/shots/fde-doc-extraction/title.webp", caption: "REEL — AN INVOICE FROM UPLOAD TO REVIEW" },
+      { src: "/shots/fde-doc-extraction/reel.mp4", poster: "/shots/fde-doc-extraction/title.webp", caption: "REEL: AN INVOICE FROM UPLOAD TO REVIEW" },
     ],
     cover: { src: "/shots/fde-doc-extraction/cover.webp", alt: "0 silent errors in 1,130 fields; 0 bad documents auto-accepted vs 17 for raw extraction", caption: "" },
     gallery: [
@@ -621,7 +621,7 @@ export const projects: Project[] = [
     summary:
       "A text-to-SQL agent over the 12-month sales warehouse of Larkfield Coffee Co. (fictional): a lead asks in plain English and sees the SQL, the rows and a checked one-line summary. A read-only database role with no access to customers' personal data is the control that must hold.",
     reels: [
-      { src: "/shots/fde-ask-your-data/reel.mp4", poster: "/shots/fde-ask-your-data/title.webp", caption: "REEL — A QUESTION, ITS SQL, ITS ROWS" },
+      { src: "/shots/fde-ask-your-data/reel.mp4", poster: "/shots/fde-ask-your-data/title.webp", caption: "REEL: A QUESTION, ITS SQL, ITS ROWS" },
     ],
     cover: { src: "/shots/fde-ask-your-data/cover.webp", alt: "90% on 40 gold questions against 42% for raw schema and 18% for table names only", caption: "" },
     gallery: [
@@ -673,7 +673,7 @@ export const projects: Project[] = [
     summary:
       "An eval and monitoring harness for the AI features of Larkfield Coffee Co. (fictional). It runs a feature's golden cases on any model, pairs the results case by case, says whether a difference is real, and blocks a change in CI when it regresses or fails a must-pass category.",
     reels: [
-      { src: "/shots/fde-eval-harness/reel.mp4", poster: "/shots/fde-eval-harness/title.webp", caption: "REEL — THREE MODELS, ONE NOISE FLOOR, ONE GATE" },
+      { src: "/shots/fde-eval-harness/reel.mp4", poster: "/shots/fde-eval-harness/title.webp", caption: "REEL: THREE MODELS, ONE NOISE FLOOR, ONE GATE" },
     ],
     cover: { src: "/shots/fde-eval-harness/cover.webp", alt: "Noise floor: 4 of 60 cases flipped with nothing changed; three models scored 53, 55 and 48 of 60", caption: "" },
     gallery: [
@@ -725,7 +725,7 @@ export const projects: Project[] = [
     summary:
       "A voice front end for the Larkfield support agent (fictional customer): hold a button and speak, and the same agent answers out loud with the same confirmation rules. Speech to text and text to speech run on the CPU, so the GPU stays free for the agent's model.",
     reels: [
-      { src: "/shots/fde-voice-intake/reel.mp4", poster: "/shots/fde-voice-intake/title.webp", caption: "REEL — A SPOKEN RETURN, READ BACK AND CONFIRMED" },
+      { src: "/shots/fde-voice-intake/reel.mp4", poster: "/shots/fde-voice-intake/title.webp", caption: "REEL: A SPOKEN RETURN, READ BACK AND CONFIRMED" },
     ],
     cover: { src: "/shots/fde-voice-intake/cover.webp", alt: "25 of 25 voiced requests reached the right tool and order id; typed 25 of 25; quiet clips 5 of 5 made no agent call", caption: "" },
     gallery: [
@@ -1227,23 +1227,23 @@ export const projects: Project[] = [
     metric: { label: "performance", value: "~100 fps @ target" },
     year: "2026",
     summary:
-      "A composition-driven, semi-stylized medieval village in Unreal Engine 5 — built to tell a story by itself and read clearly in motion. My MA Animation technical showcase.",
+      "A composition-driven, semi-stylized medieval village in Unreal Engine 5, built to tell a story by itself and read clearly in motion. My MA Animation technical showcase.",
     youtube: "BFrPzJXAXRU",
     gallery: [
-      { src: "/art/umbraxis-vista.webp", alt: "Umbraxis village vista", caption: "The establishing vista — windmill, red rooftops, a lily-pad river, stylized cumulus over hazy mountains." },
-      { src: "/art/umbraxis-path.webp", alt: "Umbraxis forest path", caption: "A birch-lined path with dappled light and faint magic wisps in the shade — leading lines into the frame." },
-      { src: "/art/umbraxis-shot3.webp", alt: "Umbraxis environment shot", caption: "Value grouping and light anchors do the composition work — semi-stylized so lighting reads at a glance." },
+      { src: "/art/umbraxis-vista.webp", alt: "Umbraxis village vista", caption: "The establishing vista: windmill, red rooftops, a lily-pad river, stylized cumulus over hazy mountains." },
+      { src: "/art/umbraxis-path.webp", alt: "Umbraxis forest path", caption: "A birch-lined path with dappled light and faint magic wisps in the shade, with leading lines into the frame." },
+      { src: "/art/umbraxis-shot3.webp", alt: "Umbraxis environment shot", caption: "Value grouping and light anchors do the composition work. Semi-stylized, so lighting reads at a glance." },
       { src: "/art/umbraxis-shot2.webp", alt: "Umbraxis environment shot", caption: "Emissive stylized materials with a fully dynamic day/night cycle and a randomized weather system." },
-      { src: "/art/umbraxis-shot5.webp", alt: "Umbraxis environment shot", caption: "Blockout-to-beauty — spline-driven castle walls and river, blueprint-authored buildings." },
+      { src: "/art/umbraxis-shot5.webp", alt: "Umbraxis environment shot", caption: "Blockout to beauty: spline-driven castle walls and river, blueprint-authored buildings." },
     ],
     sections: [
       {
         heading: "The brief",
-        body: "Under a clear blue sky brushed with soft pink clouds, a quiet medieval village of round stone towers and red-tiled roofs — a landscape that tells a story by itself. Umbraxis is my MA Animation technical showcase: composition-driven, semi-stylized environment building that has to read clearly in motion. The touchstones were Genshin's Mondstadt, Zelda: Breath of the Wild, and Studio Ghibli's Howl's Moving Castle.",
+        body: "Under a clear blue sky brushed with soft pink clouds, a quiet medieval village of round stone towers and red-tiled roofs: a landscape that tells a story by itself. Umbraxis is my MA Animation technical showcase: composition-driven, semi-stylized environment building that has to read clearly in motion. The touchstones were Genshin's Mondstadt, Zelda: Breath of the Wild, and Studio Ghibli's Howl's Moving Castle.",
       },
       {
         heading: "How it was built",
-        body: "Unreal Engine 5.6 as the primary engine, with Lumen for lighting and Nanite for foliage. Buildings and workspaces are authored as Blueprint actors; the castle walls and the flowing river are spline-driven. Assets are largely sourced and then reworked — the skill is in combining and re-authoring them through material and shader edits (blends and masks) so a bought asset stops looking bought.",
+        body: "Unreal Engine 5.6 as the primary engine, with Lumen for lighting and Nanite for foliage. Buildings and workspaces are authored as Blueprint actors; the castle walls and the flowing river are spline-driven. Assets are largely sourced and then reworked. The skill is in combining and re-authoring them through material and shader edits (blends and masks) so a bought asset stops looking bought.",
       },
       {
         heading: "Lighting & atmosphere",
@@ -1251,11 +1251,11 @@ export const projects: Project[] = [
       },
       {
         heading: "Making it run",
-        body: "The PC target was 60 fps; it landed around 100. Getting there meant profiling with stat fps and stat gpu to find what was pulling compute down — dynamic shadows and pre-lighting composition were the culprits — then leaning on camera culling, LODs, and Nanite overrides, which saved a lot.",
+        body: "The PC target was 60 fps; it landed around 100. Getting there meant profiling with stat fps and stat gpu to find what was pulling compute down (dynamic shadows and pre-lighting composition were the culprits), then leaning on camera culling, LODs, and Nanite overrides, which saved a lot.",
       },
       {
         heading: "What broke, and what I learned",
-        body: "Water reflectivity fought me every time I panned or rendered — overlapping materials where one had emission enabled — until I tracked it down and fixed it. A GPU driver update broke DirectX 12 and crashed Unreal at random, a hard lesson that the newest of everything has drawbacks. Blueprint pivot points drifted and scrambled whole classes, so I'd reset the pivot and re-add the actor at its original transform. The real takeaways were earlier planning for system integration, the economics of asset reuse, and a sharper critical eye for what a shot actually needs.",
+        body: "Water reflectivity fought me every time I panned or rendered, from overlapping materials where one had emission enabled, until I tracked it down and fixed it. A GPU driver update broke DirectX 12 and crashed Unreal at random, a hard lesson that the newest of everything has drawbacks. Blueprint pivot points drifted and scrambled whole classes, so I'd reset the pivot and re-add the actor at its original transform. The real takeaways were earlier planning for system integration, the economics of asset reuse, and a sharper critical eye for what a shot actually needs.",
       },
     ],
     facts: [
@@ -1270,7 +1270,7 @@ export const projects: Project[] = [
   {
     slug: "cinematic-car",
     name: "Cinematic Car Render",
-    tagline: "Studio product lighting — deep blacks, warm rim, colored gels.",
+    tagline: "Studio product lighting: deep blacks, warm rim, colored gels.",
     discipline: "craft",
     category: "product-render",
     stack: ["Blender", "Cycles", "Compositing"],
@@ -1280,19 +1280,19 @@ export const projects: Project[] = [
     metric: { label: "focus", value: "light & form" },
     year: "2026",
     summary:
-      "A moody Blender studio render — dramatic rim lighting and colored gels against near-black, all about reading form through light.",
+      "A moody Blender studio render: dramatic rim lighting and colored gels against near-black, all about reading form through light.",
     gallery: [
-      { src: "/art/car-hero.webp", alt: "cinematic car render front", caption: "Near-black body read entirely through rim light — warm key, cool fill, minimal detail noise." },
+      { src: "/art/car-hero.webp", alt: "cinematic car render front", caption: "Near-black body read entirely through rim light: warm key, cool fill, minimal detail noise." },
       { src: "/art/car-2.webp", alt: "cinematic car render angle", caption: "Colored gels shape the surfaces; the environment stays dark so the silhouette carries the frame." },
     ],
     sections: [
       {
         heading: "The exercise",
-        body: "This is a lighting study more than a modeling one: take a sports car into a dark studio and make it read through light alone. Deep blacks, a warm rim to describe the silhouette, and red/blue gels to give the panels shape without flooding them with detail.",
+        body: "A lighting study: take a sports car into a dark studio and make it read through light alone. Deep blacks, a warm rim to describe the silhouette, and red/blue gels to give the panels shape without flooding them with detail.",
       },
       {
         heading: "The approach",
-        body: "Rendered in Blender with Cycles. The restraint is the point — most of the body sits in shadow, and a few carefully placed lights do the describing. It's the same instinct as the environment work, turned inward on a single hero object: composition and value first, everything else second.",
+        body: "Rendered in Blender with Cycles. The restraint is the point: most of the body sits in shadow, and a few carefully placed lights do the describing. It's the same instinct as the environment work, turned inward on a single hero object: composition and value first, everything else second.",
       },
     ],
     facts: [
@@ -1315,9 +1315,9 @@ export const projects: Project[] = [
     metric: { label: "approach", value: "procedural" },
     year: "2026",
     summary:
-      "Stylized and procedural Blender experiments — cel-shaded illustration and node-based generators that build scenes from rules, not by hand.",
+      "Stylized and procedural Blender experiments: cel-shaded illustration and node-based generators that build scenes from rules.",
     gallery: [
-      { src: "/art/vending-toon.webp", alt: "toon-shaded vending machine", caption: "A cel-shaded vending machine — flat toon look, clean outlines, deliberately illustrative." },
+      { src: "/art/vending-toon.webp", alt: "toon-shaded vending machine", caption: "A cel-shaded vending machine: flat toon look, clean outlines, deliberately illustrative." },
     ],
     sections: [
       {
@@ -1326,7 +1326,7 @@ export const projects: Project[] = [
       },
       {
         heading: "Building generators",
-        body: "The procedural side is where the artist and the engineer overlap. I've built Blender generators — a castle generator, a medieval building and city generator, a flock system — using Geometry Nodes so a whole layout comes from parameters. It's the same systems instinct as the software work: make a tool, then let the tool make the output.",
+        body: "The procedural side is where the artist and the engineer overlap. I've built Blender generators (a castle generator, a medieval building and city generator, a flock system) using Geometry Nodes so a whole layout comes from parameters. It's the same systems instinct as the software work: make a tool, then let the tool make the output.",
       },
     ],
     facts: [
@@ -1349,27 +1349,27 @@ export const projects: Project[] = [
     metric: { label: "format", value: "9:16 · social" },
     year: "2025",
     summary:
-      "Looks-development for a set of graphic-finish electric guitars — low-key studio lighting, textured bodies, and compositing built for a vertical social cut. Made for the output, then posted.",
+      "Looks-development for a set of graphic-finish electric guitars: low-key studio lighting, textured bodies, and compositing built for a vertical social cut. Made for the output, then posted.",
     reels: [
-      { src: "/art/gtr-reel-lineup.mp4", poster: "/art/gtr-lineup.webp", portrait: true, caption: "REEL.01 — THE LINEUP · THREE SIGNATURE FINISHES · 9:16" },
-      { src: "/art/gtr-reel-1.mp4", poster: "/art/gtr-slayer.webp", portrait: true, caption: "REEL.02 — HEADSTOCK PASS · RIM-LIT ON BLACK" },
-      { src: "/art/gtr-reel-2.mp4", poster: "/art/gtr-detail.webp", portrait: true, caption: "REEL.03 — HARDWARE PASS · PICKUPS & BRIDGE" },
-      { src: "/art/gtr-reel-3.mp4", poster: "/art/gtr-body.webp", portrait: true, caption: "REEL.04 — BODY GRAPHIC PASS · TEXTURED WRAP" },
+      { src: "/art/gtr-reel-lineup.mp4", poster: "/art/gtr-lineup.webp", portrait: true, caption: "REEL.01: THE LINEUP · THREE SIGNATURE FINISHES · 9:16" },
+      { src: "/art/gtr-reel-1.mp4", poster: "/art/gtr-slayer.webp", portrait: true, caption: "REEL.02: HEADSTOCK PASS · RIM-LIT ON BLACK" },
+      { src: "/art/gtr-reel-2.mp4", poster: "/art/gtr-detail.webp", portrait: true, caption: "REEL.03: HARDWARE PASS · PICKUPS & BRIDGE" },
+      { src: "/art/gtr-reel-3.mp4", poster: "/art/gtr-body.webp", portrait: true, caption: "REEL.04: BODY GRAPHIC PASS · TEXTURED WRAP" },
     ],
     gallery: [
-      { src: "/art/gtr-lineup.webp", alt: "three signature electric guitars lit against black", caption: "The lineup — three signature-graphic guitars, rim-lit against near-black so the silhouettes read first." },
-      { src: "/art/gtr-body.webp", alt: "guitar body with EMG pickups over graphic wrap", caption: "The body pass — EMG pickups and tune-o-matic bridge over a war-art graphic wrap, lit to hold the surface detail." },
-      { src: "/art/gtr-slayer.webp", alt: "guitar headstock with graphic decal, shallow depth of field", caption: "A headstock at shallow depth of field — the finish artwork and logo carry the frame; everything else falls to black." },
-      { src: "/art/gtr-detail.webp", alt: "guitar neck and body detail", caption: "Detail pass — hardware, inlays, and the graphic finish, framed vertical for the social cut." },
+      { src: "/art/gtr-lineup.webp", alt: "three signature electric guitars lit against black", caption: "The lineup: three signature-graphic guitars, rim-lit against near-black so the silhouettes read first." },
+      { src: "/art/gtr-body.webp", alt: "guitar body with EMG pickups over graphic wrap", caption: "The body pass: EMG pickups and tune-o-matic bridge over a war-art graphic wrap, lit to hold the surface detail." },
+      { src: "/art/gtr-slayer.webp", alt: "guitar headstock with graphic decal, shallow depth of field", caption: "A headstock at shallow depth of field: the finish artwork and logo carry the frame; everything else falls to black." },
+      { src: "/art/gtr-detail.webp", alt: "guitar neck and body detail", caption: "Detail pass: hardware, inlays, and the graphic finish, framed vertical for the social cut." },
     ],
     sections: [
       {
         heading: "The brief",
-        body: "A set of signature-graphic electric guitars, treated as a product-placement piece rather than a modeling one. The job was looks-development: lighting, texturing, and compositing the guitars into a studio set that sells the object — the way a product ad would — with the final vertical cut in mind from the first frame.",
+        body: "A set of signature-graphic electric guitars, treated as a product-placement piece. The job was looks-development: lighting, texturing, and compositing the guitars into a studio set that sells the object the way a product ad would, with the final vertical cut in mind from the first frame.",
       },
       {
         heading: "The approach",
-        body: "Rendered in Blender with Cycles. The set is low-key — near-black studio, guitars on wall mounts, described by rim light so the silhouette and the finish artwork read before anything else. Texturing carries the graphic body wraps and the hardware (EMG pickups, tune-o-matic bridges, logo decals); compositing ties the passes together. The whole scene was built for the output: framed 9:16, cut into short reels, and posted to Instagram.",
+        body: "Rendered in Blender with Cycles. The set is low-key: near-black studio, guitars on wall mounts, described by rim light so the silhouette and the finish artwork read before anything else. Texturing carries the graphic body wraps and the hardware (EMG pickups, tune-o-matic bridges, logo decals); compositing ties the passes together. The whole scene was built for the output: framed 9:16, cut into short reels, and posted to Instagram.",
       },
     ],
     facts: [
@@ -1395,12 +1395,12 @@ export const projects: Project[] = [
     metric: { label: "approach", value: "procedural" },
     year: "2025",
     summary:
-      "A volumetric cloud study at golden hour — two soft cumulus forms lit warm on top and cool below, sitting in a smoothly graded dusk sky. Generated as volume rather than painted, so the light reads through the whole form.",
+      "A volumetric cloud study at golden hour: two soft cumulus forms lit warm on top and cool below, sitting in a smoothly graded dusk sky. Generated as volume rather than painted, so the light reads through the whole form.",
     gallery: [
-      { src: "/art/proc-clouds.webp", alt: "two golden-hour volumetric clouds against a dusk sky", caption: "Two cumulus forms at golden hour — warm light catching the tops, cooler shadow beneath, in a graded dusk sky." },
+      { src: "/art/proc-clouds.webp", alt: "two golden-hour volumetric clouds against a dusk sky", caption: "Two cumulus forms at golden hour: warm light catching the tops, cooler shadow beneath, in a graded dusk sky." },
     ],
     sections: [
-      { heading: "The study", body: "A focused lighting-and-volume study: two soft cumulus clouds at golden hour. The goal was believable scattering — warm light raking the tops, the underside falling to cool shadow — with the forms reading as volume, not flat cards." },
+      { heading: "The study", body: "A focused lighting-and-volume study: two soft cumulus clouds at golden hour. The goal was believable scattering (warm light raking the tops, the underside falling to cool shadow), with the forms reading as volume." },
       { heading: "Why procedural", body: "Built as volumetrics rather than painted so the light genuinely travels through the cloud. It's the same instinct as the rest of the craft work: describe the thing with rules and let the render resolve it." },
     ],
     facts: [
@@ -1422,12 +1422,12 @@ export const projects: Project[] = [
     metric: { label: "approach", value: "procedural" },
     year: "2024",
     summary:
-      "A dense city block seen from above — skyscrapers, setbacks, rooftop clutter of HVAC units and antennas — rendered as untextured clay so the scale, massing and geometry carry the frame on their own.",
+      "A dense city block seen from above (skyscrapers, setbacks, rooftop clutter of HVAC units and antennas), rendered as untextured clay so the scale, massing and geometry carry the frame on their own.",
     gallery: [
-      { src: "/art/cityscape.webp", alt: "aerial greyscale clay render of a dense city", caption: "An aerial clay render of a dense downtown — rooftop detail, setbacks and towers, left untextured so massing reads first." },
+      { src: "/art/cityscape.webp", alt: "aerial greyscale clay render of a dense city", caption: "An aerial clay render of a dense downtown: rooftop detail, setbacks and towers, left untextured so massing reads first." },
     ],
     sections: [
-      { heading: "Scale from geometry", body: "A downtown seen from above, rendered in greyscale clay. Stripping colour and texture puts all the weight on geometry — the massing of towers, the rhythm of setbacks, the clutter of rooftop mechanicals — to see whether the scene holds on scale alone." },
+      { heading: "Scale from geometry", body: "A downtown seen from above, rendered in greyscale clay. Stripping colour and texture puts all the weight on geometry (the massing of towers, the rhythm of setbacks, the clutter of rooftop mechanicals) to see whether the scene holds on scale alone." },
       { heading: "Built by rules", body: "The density is the point: enough buildings, each with believable rooftop detail, that placing them by hand isn't the move. It's an environment/scale exercise in the same procedural vein as the generators." },
     ],
     facts: [
@@ -1452,7 +1452,7 @@ export const projects: Project[] = [
     summary:
       "A nocturnal environment study: a highway-side stop where fog, a receding run of streetlights, and a neon-edged fuel canopy do all the work. Almost monochrome until the red-and-blue neon pulls the eye to the corner.",
     gallery: [
-      { src: "/art/highway-stop.webp", alt: "foggy roadside gas stop at night with neon canopy", caption: "A roadside stop at night — barriers curving into fog, streetlights receding, a neon-trimmed canopy glowing at the edge." },
+      { src: "/art/highway-stop.webp", alt: "foggy roadside gas stop at night with neon canopy", caption: "A roadside stop at night: barriers curving into fog, streetlights receding, a neon-trimmed canopy glowing at the edge." },
     ],
     sections: [
       { heading: "Atmosphere first", body: "This is a mood piece: an empty roadside at night, carried by fog, falloff, and a few warm pools of streetlight. The near-monochrome palette makes the single hit of red-and-blue neon land hard." },
@@ -1478,13 +1478,13 @@ export const projects: Project[] = [
     metric: { label: "study", value: "interior lighting" },
     year: "2024",
     summary:
-      "An interior lighting study — a modern living room after dark, its mood set by nested square ceiling frames, a warm standing lamp, and the glow they throw across a sectional, marble table and patterned floor.",
+      "An interior lighting study: a modern living room after dark, its mood set by nested square ceiling frames, a warm standing lamp, and the glow they throw across a sectional, marble table and patterned floor.",
     gallery: [
-      { src: "/art/interior-study.webp", alt: "warm modern living room at night with nested light fixtures", caption: "A living room after dark — nested light-frame fixtures and a single lamp carry a warm, low-key evening mood." },
+      { src: "/art/interior-study.webp", alt: "warm modern living room at night with nested light fixtures", caption: "A living room after dark: nested light-frame fixtures and a single lamp carry a warm, low-key evening mood." },
     ],
     sections: [
       { heading: "Light as the subject", body: "The room is furnished plainly on purpose; the piece is really about the light. Nested square fixtures and one warm lamp set a low-key evening key, with the fill falling off into the corners of the space." },
-      { heading: "Materials in low light", body: "It's also a materials test — how the sofa fabric, marble top, and patterned floor hold up when they're described almost entirely by warm, indirect light rather than a bright key." },
+      { heading: "Materials in low light", body: "It's also a materials test: how the sofa fabric, marble top, and patterned floor hold up when they're described almost entirely by warm, indirect light rather than a bright key." },
     ],
     facts: [
       { label: "TYPE", value: "INTERIOR · LIGHTING" },
@@ -1713,16 +1713,17 @@ export const ethics: Record<Exclude<TrackId, "ai">, { title: string; body: strin
  * 3D training as background. Facts from the resume and this site only.
  */
 export const about = {
-  draft: true,
-  portrait: null as null | { src: string; alt: string },
+  draft: false,
+  // Stand-in until Daman sends a portrait: his own Umbraxis render.
+  portrait: { src: "/art/umbraxis-path.webp", alt: "A birch-lined path from Umbraxis, Daman's own render, standing in for a portrait" } as null | { src: string; alt: string },
   head: ["I build agents and reports", "you can check."] as [string, string],
-  line: "Agents graded by their own evals. Reports where every number reconciles to SQL. All of it runs on local models.",
+  line: "Each one ships with its proof: an eval score for the agents, a SQL reconciliation for the reports.",
   story: [
-    "I build AI agents and data systems, with AI as the co-pilot and my judgement at the wheel. I have no computer-science degree; I learned by shipping, and the work is public on GitHub.",
+    "I build AI agents and data systems, and everything I ship is public on GitHub.",
     "In 2026 that meant six agent builds for one fictional customer, each graded by its own eval: a support agent, an integration hub, document extraction, a read-only data agent, an eval harness and a voice intake line. All of it runs on local models.",
     "On the data side, six BI case studies in SQL, Python, Power BI and Tableau, one of them on 36.1M real air-quality readings. No report ships until its numbers match an independent SQL calculation.",
-    "The rule is the same everywhere: if it is not measured, it is not done.",
-    "Before this I trained as a 3D environment artist: an MA in Animation at the University of Salford and fifteen months on ad campaigns at Blur'd. It is where I learned composition and a critical eye.",
+    "The checks come from real failures. In a live test, the support agent accepted a customer's wrong account of an order under pushback and started an INR 12,998 return. It now compares what the customer names with what the order holds, and refuses the return when they do not match.",
+    "I came to software from 3D: an MA in Animation at the University of Salford and fifteen months on ad campaigns at Blur'd. I taught myself to build software with Claude Code, and I test everything before it ships.",
     "Today I lead product and design at Datatree Systems, building GrafiLabs. I am open to work.",
   ],
   timeline: [
@@ -1736,7 +1737,7 @@ export const about = {
     { title: "What I look at", body: "Studio Ghibli, Breath of the Wild, Arcane, Spider-Verse, Blade Runner 2049 and Roger Deakins. Mood through light." },
     { title: "Languages", body: "Telugu, English, Hindi and beginner Japanese." },
     { title: "Behind a camera", body: "Winner of an inter-college photography competition. Composition came before code." },
-    { title: "How I work", body: "Local-first, measured before shipped, AI speeds it up and I own it." },
+    { title: "How I work", body: "Local-first and measured before it ships. AI speeds the work up; I own the result." },
   ],
 };
 
@@ -1757,7 +1758,8 @@ export function nameOf(p: Project): string {
 
 /** The short value beside a project in lists: its metric, or the year for art. */
 export function shortOf(p: Project): string {
-  return trackOf(p) === "art" || !p.metric ? p.year : p.metric.value;
+  // a metric with no number in it ("native") is not proof, so the year stands in
+  return trackOf(p) === "art" || !p.metric || !/d/.test(p.metric.value) ? p.year : p.metric.value;
 }
 
 export const seo = {

@@ -5,6 +5,17 @@ All notable changes to the portfolio. v6 ("dossier") is the live site; v5 ("thre
 
 ---
 
+## v7 — Columns in Golden Hour
+
+### v7.1 — De-slop pass — 2026-11-13
+- **Type**: Newsreader for display and Instrument Sans for text (were Source Serif 4 and Inter), still self-hosted by next/font.
+- **Colour**: one accent per time of day; the second accent is gone and numbers on the paper use ink. Golden hour is tinted umber, not purple. The dial sun has no glow.
+- **Home**: the heading is upright in one colour; availability is a plain line (the pill with the green dot is gone); the four lanes are one ruled row with project counts; Featured work is six full-width rows (was a card grid with tag pills); skills read as sentences, not chips (also on the resume page); a render from Umbraxis stands in for the portrait.
+- **Paper**: square corners, no shadow.
+- **Copy**: 62 em dashes rewritten across Systems, Art, captions and page titles; "not X, it is Y" lines and empty adjectives cut (VOLT, Flux Player, Cinematic Car Render); the hero line is one sentence; the bio opens with shipped work and names a real bug (a wrong INR 12,998 return) in place of a slogan; the "Draft copy" note is off.
+- **Case studies**: the stack moved from under the title into Facts; a metric with no number in it (Flux Player) shows the year.
+- **Footer**: says what the site is built with and the month it was last built.
+
 ## v6 — Dossier
 
 The landing becomes a dossier: who on the left, every work on the right. The three craft pages stay.

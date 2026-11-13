@@ -38,7 +38,7 @@ export function Portrait({ portrait }: { portrait?: Face["portrait"] }) {
 }
 
 /** The site frame: the scene, the top line with the dial, and the five columns. The page is the open column. */
-export default function Shell({ faces, laneOfSlug, scenes, email, children }: { faces: Face[]; laneOfSlug: Record<string, string>; scenes: Scene[]; email: string; children: React.ReactNode }) {
+export default function Shell({ faces, laneOfSlug, scenes, email, updated, children }: { faces: Face[]; laneOfSlug: Record<string, string>; scenes: Scene[]; email: string; updated: string; children: React.ReactNode }) {
   const path = usePathname() ?? "/";
   const parts = path.split("/").filter(Boolean);
   const col = parts[0] === "projects" ? laneOfSlug[parts[1]] ?? "you" : faces.some((f) => f.id === parts[0]) ? parts[0] : "you";
@@ -123,7 +123,7 @@ export default function Shell({ faces, laneOfSlug, scenes, email, children }: { 
                   <>
                     <h2>{f.label}</h2>
                     <span className="n">{f.sub}</span>
-                    {f.lede && <p className="lede hide-m">{f.lede[0]} <em>{f.lede[1]}</em></p>}
+                    {f.lede && <p className="lede hide-m">{f.lede.join(" ")}</p>}
                     <span className="names hide-m"><span>{f.location}</span><span>{f.status}</span></span>
                     <div className="hide-m" style={{ marginTop: "auto" }}><Portrait portrait={f.portrait} /></div>
                   </>
@@ -157,7 +157,8 @@ export default function Shell({ faces, laneOfSlug, scenes, email, children }: { 
                       <a href="https://www.artstation.com/damanpsd">ArtStation</a>
                       <a href="https://www.linkedin.com/in/daman-reddy">LinkedIn</a>
                     </nav>
-                    <p>© 2026 Daman Reddy · Hyderabad · Built local-first. No cookies, no analytics, no trackers.</p>
+                    <p>Built with Next.js and exported as static files to GitHub Pages. Last updated {updated}.</p>
+                    <p>© 2026 Daman Reddy · Hyderabad · No cookies, no analytics, no trackers.</p>
                   </footer>
                 </div>
               )}

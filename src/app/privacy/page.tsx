@@ -3,7 +3,7 @@ import Link from "next/link";
 import { site } from "@/content";
 
 export const metadata: Metadata = {
-  title: `Privacy — ${site.name}`,
+  title: `Privacy | ${site.name}`,
   description: "This site sets no cookies and runs no analytics or trackers. What is and is not collected.",
   alternates: { canonical: "/privacy/" },
 };
