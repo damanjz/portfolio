@@ -19,11 +19,11 @@ const OUT = join(ROOT, "out");
 const CHROME = process.env.CHROME;
 if (!CHROME) throw new Error("Set CHROME to a Chromium executable");
 
-// The banner's four figures (measured 2026-11-13; see README, Results).
+// The banner's four figures (measured 2026-11-13; projects and pages 2026-11-20; see README, Results).
 const FIGURES = [
   ["0", "third-party requests, measured"],
-  ["26", "projects across four lanes"],
-  ["33", "static pages, no backend"],
+  ["27", "projects across four lanes"],
+  ["34", "static pages, no backend"],
   ["76 s", "median deploy, last 10 runs"],
 ];
 

@@ -3,7 +3,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset=".github/assets/header-phone-light.png">
   <source media="(prefers-color-scheme: dark)" srcset=".github/assets/header-dark.png">
   <source media="(prefers-color-scheme: light)" srcset=".github/assets/header-light.png">
-  <img src=".github/assets/header-light.png" width="100%" alt="Portfolio. A portfolio where every number comes from the project it describes. 0 third-party requests, measured. 26 projects across four lanes. 33 static pages, no backend. 76 s median deploy, last 10 runs.">
+  <img src=".github/assets/header-light.png" width="100%" alt="Portfolio. A portfolio where every number comes from the project it describes. 0 third-party requests, measured. 27 projects across four lanes. 34 static pages, no backend. 76 s median deploy, last 10 runs.">
 </picture>
 
 Daman Reddy's portfolio: AI agents and integrations, BI and data, AI-assisted systems, and 3D environment art. It is a Next.js 16 static export on GitHub Pages, with every project, metric and pipeline card kept in one content file. It exists so each project can be judged on measured numbers rather than adjectives.
@@ -15,8 +15,8 @@ Daman Reddy's portfolio: AI agents and integrations, BI and data, AI-assisted sy
 | Figure | Result | How it is produced |
 |---|---|---|
 | Third-party requests | 0 | Headless Chromium on the live site, 2026-11-13: load and full scroll of `/`, `/ai/`, `/data/`, `/projects/fde-support-agent/`, `/projects/umbraxis/` and `/resume/`; all 506 requests went to `damanjz.github.io` (browser resource timing) |
-| Projects | 26, across four lanes | The `projects` array in `src/content.ts`: AI 6, Data 6, Systems 6, Art 8 |
-| Static pages | 33 | `<loc>` entries in the live [sitemap.xml](https://damanjz.github.io/portfolio/sitemap.xml), 2026-11-13; no backend, no database |
+| Projects | 27, across four lanes | The `projects` array in `src/content.ts`, 2026-11-20: AI 7, Data 6, Systems 6, Art 8 |
+| Static pages | 34 | `<loc>` entries in the built `out/sitemap.xml` ([live](https://damanjz.github.io/portfolio/sitemap.xml)), 2026-11-20; no backend, no database |
 | Deploy time | 76 s median (75.5 s), range 46 to 116 s | The last 10 `deploy.yml` runs on `main`, 2026-10-12 to 2026-11-13, start to finish, from the GitHub Actions API |
 
 ## How it works

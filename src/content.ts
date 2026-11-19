@@ -749,6 +749,61 @@ export const projects: Project[] = [
     ],
   },
   {
+    slug: "fde-control-tower",
+    name: "Tarangini control tower",
+    tagline: "Ranks a distributor's disruptions by rupees at risk, triages each from the contract clauses, and waits for a person before moving goods.",
+    discipline: "systems",
+    category: "applied-ai",
+    stack: ["Python", "FastAPI", "Postgres + pgvector", "Ollama", "Next.js 16", "TypeScript"],
+    status: "public",
+    href: "https://github.com/damanjz/fde-control-tower",
+    hrefLabel: "view source",
+    metric: { label: "43-case triage eval", value: "43/43 vs 2/43 no tools" },
+    year: "Nov 2026",
+    summary:
+      "A logistics control tower for Tarangini Distribution, a fictional Indian FMCG distributor with 4 distribution centres, 36 cities and about 344 trucks carrying Rs 13.87 Cr of goods on the demo morning. It takes in messy ERP, GPS and carrier feeds without losing a record, ranks disruptions by rupees at risk, and has a local 27B model triage each one from the customers' own contract clauses. A person approves any fix that moves more than Rs 5,00,000 of goods. The data is synthetic; the engineering and the numbers are real.",
+    reels: [
+      { src: "/shots/fde-control-tower/reel.mp4", poster: "/shots/fde-control-tower/title.webp", caption: "One closed highway, from alert to approved fix." },
+    ],
+    cover: { src: "/shots/fde-control-tower/cover.webp", alt: "43 of 43 triage cases passed, against 2 of 43 for the same model without tools; 0 honesty failures, 31-34 s median on a clean GPU, Rs 0.00 per run", caption: "" },
+    gallery: [
+      { src: "/shots/fde-control-tower/result.webp", alt: "43 of 43 triage cases passed, against 2 of 43 for the same model without tools; 0 honesty failures, 31-34 s median on a clean GPU, Rs 0.00 per run", caption: "The headline: agent run 7, the first on the final code, passed 43 of 43 triage cases. The same model without tools passed 2. 0 honesty failures in all seven runs." },
+      { src: "/shots/fde-control-tower/architecture.webp", alt: "Architecture: dirty feeds through validation into Postgres, the impact engine, the agent loop with tools and honesty checks, playbooks, approval and the outbox", caption: "Architecture: code prices every penalty, the model reads those figures and quotes the clause, checks gate what it says, and a person approves large moves." },
+      { src: "/shots/fde-control-tower/trace.webp", alt: "Trace of one incident, NH44 closed near Adilabad, from the alert through impact, agent tools, checks and approval", caption: "NH44 closed near Adilabad, traced: Rs 1,73,622 at risk, the waiver clause fetched and quoted, a Rs 160 fix approved, exposure down to Rs 0." },
+      { src: "/shots/fde-control-tower/case.webp", alt: "The NH44 case as the VP Operations sees it: caught, priced, the contract quote checked against the PDF, and the recommended fix beside Approve", caption: "One case at a time: caught, priced by code, the clause checked against the PDF, and the fix waiting for Approve." },
+      { src: "/shots/fde-control-tower/replay.webp", alt: "The recorded agent run replayed step by step, with each tool call and its time", caption: "Watch the agent work: the real recorded run replays one step at a time, and the recommendation appears only at the decision." },
+      { src: "/shots/fde-control-tower/approved.webp", alt: "The Ganga Freight strike after approval: Rs 1,78,163 avoided, shipments moved to another carrier, approved by the VP Operations", caption: "A fix that moves more than Rs 5,00,000 of goods waits for the VP Operations. Here the strike re-route is approved and its Rs 1,78,163 avoided." },
+      { src: "/shots/fde-control-tower/data-health.webp", alt: "Data health: every feed, how much of it got through, and the records held back for a person", caption: "Data health: each feed's accepted share and the records held back, each with a reason and a fix to replay or discard." },
+    ],
+    sections: [
+      {
+        heading: "Problem",
+        body: "Tarangini has about 344 trucks and Rs 13.87 Cr of goods on the road. Its feeds arrive dirty, a late truck can trigger contract penalties and a weather waiver that expires in hours, and the person deciding needs the money, the clause and a fix in front of them at once. The tower must not lose a record, must not let a model invent a clause or a number, and must cost nothing to run.",
+      },
+      {
+        heading: "Build",
+        body: "ERP files in three header dialects, a signed GPS webhook, a carrier API and a weather feed go through validation and deduplication. A refused record goes to a dead-letter queue with a reason and a fix it can be replayed with, and reprocessing the same input changes nothing. An impact engine prices each incident from the contract's own clauses: late delivery, fill rate and the weather waiver. The agent fetches the incident, the exposure and the exact clause; code checks every quote, rupee figure and shipment id, retries once, then falls back to the rule plan and says so. Three roles get row filters and masked fields in one data layer, and every action writes an append-only audit row.",
+      },
+      {
+        heading: "Measurement",
+        body: "43 triage cases with gold from the deterministic engine and code-only scoring, no LLM judge. Agent run 7, the first on the final code, passed 43/43; the same model without tools passed 2/43, citing a clause it never fetched in 40 cases. The seven runs scored 40, 33, 40, 41, 43, 41 and 43, with 0 honesty failures in the final answers in every run: no invented figure, out-of-scope detail or unfetched clause. Median 31-34 s per incident on a clean GPU, Rs 0.00 per run. A chaos drill fed 158 bad ERP rows through dropped carriers and a killed tower: 0 lost, 0 duplicated, and three faults it found were fixed at the cause.",
+      },
+    ],
+    decisions: [
+      { choice: "Money in code", reason: "the impact engine prices every penalty from the contract's numbers; the model reads the figures and never makes one" },
+      { choice: "Fetch clauses by id", reason: "told to fetch the clauses that apply, the agent searched for them and run 2 fell to 33/43; an exact lookup fixed it at the cause" },
+      { choice: "One case at a time", reason: "the first UI was a dense console with the payoff below the fold; it was remade around one case, its money, its clause and its fix" },
+    ],
+    facts: [
+      { label: "Type", value: "Control tower, agent + tools" },
+      { label: "Model", value: "Local 27B, Ollama" },
+      { label: "Eval", value: "43/43, agent run 7" },
+      { label: "Without tools", value: "2/43" },
+      { label: "Chaos drill", value: "158 bad rows, 0 lost" },
+      { label: "Status", value: "Public repo" },
+    ],
+  },
+  {
     slug: "finance-bi",
     name: "finance-bi",
     tagline: "Five years of personal finance, four questions, one honest report.",
@@ -1505,10 +1560,10 @@ export const tracks: Track[] = [
     id: "ai",
     role: "AI agents and integrations",
     cover: "/shots/fde-support-agent/result.webp",
-    intro: "Six builds for one fictional customer,",
+    intro: "Seven builds for two fictional customers,",
     introEm: "each graded by its own eval before it counts.",
     stats: [
-      { value: "6", label: "builds, one customer" },
+      { value: "7", label: "builds, two customers" },
       { value: "88%", label: "support agent, 60-case eval" },
       { value: "0", label: "lost in 1,476 deliveries" },
     ],
@@ -1658,7 +1713,7 @@ export const about = {
   line: "Each one ships with its proof: an eval score for the agents, a SQL reconciliation for the reports.",
   story: [
     "I build AI agents and data systems, and everything I ship is public on GitHub.",
-    "In 2026 that meant six agent builds for one fictional customer, each graded by its own eval: a support agent, an integration hub, document extraction, a read-only data agent, an eval harness and a voice intake line. All of it runs on local models.",
+    "In 2026 that meant seven agent builds for two fictional customers, each graded by its own eval: a support agent, an integration hub, document extraction, a read-only data agent, an eval harness and a voice intake line for a coffee-gear brand, and a logistics control tower for an FMCG distributor. All of it runs on local models.",
     "On the data side, six BI case studies in SQL, Python, Power BI and Tableau, one of them on 36.1M real air-quality readings. No report ships until its numbers match an independent SQL calculation.",
     "The checks come from real failures. In a live test, the support agent accepted a customer's wrong account of an order under pushback and started an INR 12,998 return. It now compares what the customer names with what the order holds, and refuses the return when they do not match.",
     "I came to software from 3D: an MA in Animation at the University of Salford and fifteen months on ad campaigns at Blur'd. I taught myself to build software with Claude Code, and I test everything before it ships.",

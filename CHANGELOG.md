@@ -7,6 +7,10 @@ All notable changes to the portfolio. v6 ("dossier") is the live site; v5 ("thre
 
 ## v7 — Columns in Golden Hour
 
+### v7.4 — Seventh FDE project — 2026-11-20
+- **Added** `fde-control-tower` (Tarangini control tower) to the AI lane, now 7 works, 27 in all: result card, cover, self-hosted reel with its title card as poster, architecture and trace diagrams, four screenshots of the app, and a link to its public repo.
+- **Counts**: AI lane intro and stats say seven builds for two fictional customers; About, `llms.txt`, README figures, share image and README header updated (27 projects, 34 static pages).
+
 ### v7.3 — Theme fixes, code check, second de-slop pass — 2026-11-13
 - **Theme changes**: no more flicker on buttons and paper (their own colour fades fought the palette fade); text swaps colour halfway instead of fading into the paper; the new scene fades in over the old one (no dip to black); the dial lights the right time before the page loads; changes every minute, and stops once you pick a time.
 - **Fixes**: Featured and lane rows show results again (a regex typo showed dates); data cards colour on hover again; tall reel frames no longer pick up portrait styles; image viewer locks the page and returns focus; typo addresses under a lane open the right column; Back restores the column's scroll; header no longer overflows between 1000 and 1200 px.
