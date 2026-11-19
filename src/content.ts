@@ -750,7 +750,7 @@ export const projects: Project[] = [
   },
   {
     slug: "fde-control-tower",
-    name: "Tarangini control tower",
+    name: "fde-control-tower",
     tagline: "Ranks a distributor's disruptions by rupees at risk, triages each from the contract clauses, and waits for a person before moving goods.",
     discipline: "systems",
     category: "applied-ai",
