@@ -21,7 +21,7 @@
  },
  {
   "k": "p",
-  "t": "Creative technologist with 4.5 years of experience in 3D and product design, working across data and BI analysis, AI-assisted software development and 3D environment art. MA Animation with Merit (University of Salford, UK). In 2026 built six local AI systems and six BI case studies, each measured against baselines or gated by automated checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no computer-science degree, work published on GitHub."
+  "t": "Creative technologist with 4.5 years of experience in 3D and product design, working across data and BI analysis, AI-assisted software and 3D environment art. MA Animation with Merit (University of Salford, UK). In 2026 built seven local AI systems and six BI case studies, each measured against baselines or gated by automated checks, and shipped software in Rust, TypeScript and Python. Self-taught developer using Claude Code; no CS degree, work on GitHub."
  },
  {
   "k": "h",
@@ -92,13 +92,23 @@
  },
  {
   "k": "entry",
+  "l": "Tarangini Control Tower, fictional Indian FMCG distributor: Python, FastAPI, PostgreSQL, Ollama",
+  "r": "Nov 2026",
+  "u": "https://github.com/damanjz/fde-control-tower"
+ },
+ {
+  "k": "b",
+  "t": "Built an AI control tower: messy ERP, GPS and carrier feeds ingested with 0 data loss, disruptions ranked by rupees at risk, a local 27B agent quoting the exact contract clause; 43 of 43 triage cases vs 2 of 43 without tools."
+ },
+ {
+  "k": "entry",
   "l": "FDE Portfolio, fictional client: Python, FastAPI, PostgreSQL, pgvector, Ollama",
   "r": "Nov 2026",
   "u": "https://damanjz.github.io/portfolio/systems/"
  },
  {
   "k": "b",
-  "t": "Shipped six local AI systems on synthetic data, each scored against baselines: a tool-using RAG support agent at 88% on 60 cases (vs 37% without retrieval), text-to-SQL at 90% (vs 42%), and invoice extraction with 0 silent errors in 1,130 fields."
+  "t": "Shipped six local AI systems on synthetic data, all scored vs baselines: a tool-using RAG support agent at 88% on 60 cases (vs 37% without retrieval), text-to-SQL at 90% (vs 42%), invoice extraction with 0 silent errors in 1,130 fields."
  },
  {
   "k": "b",
@@ -106,7 +116,7 @@
  },
  {
   "k": "b",
-  "t": "Built an eval and regression-gate harness (McNemar test, bootstrap, CI gate) that measured a 4-of-60 noise floor and blocked a faster model failing 2 of 10 safety cases; adversarial reviews caught scorer and test bugs before publishing."
+  "t": "Built an eval harness and regression gate (McNemar, bootstrap, CI) that measured a 4-of-60 noise floor and blocked a faster model failing 2 of 10 safety cases; adversarial reviews caught scorer and test bugs before publishing."
  },
  {
   "k": "h",
